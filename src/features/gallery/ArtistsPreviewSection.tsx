@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowUpRight } from "lucide-react";
-import { StampFrame } from "@/components/ui/stamp-frame";
 
 const artists = [
   { name: "Artista Ejemplo 1", specialty: "Pintura Abstracta", slug: "artista-ejemplo-1" },
@@ -52,18 +51,18 @@ export function ArtistsPreviewSection() {
         </div>
 
         {/* Artists List - Mobile Stories Style */}
-        <div className="md:border-t md:border-border">
+        <div>
           {/* Mobile: Cards Style */}
           <div className="md:hidden space-y-6">
             {artists.map((artist, index) => (
               <Link
                 key={artist.slug}
                 to={`/artistas/${artist.slug}`}
-                className="group scroll-reveal stories-card block bg-background border-2 border-border rounded-3xl overflow-hidden"
+                className="group scroll-reveal stories-card block overflow-hidden rounded-2xl bg-background shadow-sm transition-transform duration-300 hover:scale-[1.01] hover:shadow-md"
               >
                 <div className="p-8 h-full flex flex-col justify-center items-center text-center">
                   <span className="text-label mb-4">{String(index + 1).padStart(2, "0")}</span>
-                  <h3 className="text-handwriting text-3xl font-bold mb-2 group-hover:scale-105 transition-transform">
+                  <h3 className="font-display text-lg font-semibold uppercase tracking-[0.16em] mb-2 group-hover:scale-105 transition-transform">
                     {artist.name}
                   </h3>
                   <p className="text-label">{artist.specialty}</p>
@@ -74,17 +73,17 @@ export function ArtistsPreviewSection() {
           </div>
 
           {/* Desktop: List Style */}
-          <div className="hidden md:block">
+          <div className="hidden md:flex md:flex-col md:gap-4">
             {artists.map((artist, index) => (
               <Link
                 key={artist.slug}
                 to={`/artistas/${artist.slug}`}
-                className="group scroll-reveal flex items-center justify-between py-6 md:py-8 border-b border-border hover:bg-muted/30 transition-colors px-4 -mx-4"
+                className="group scroll-reveal flex items-center justify-between rounded-2xl py-6 md:py-8 px-2 md:px-4 hover:bg-muted/30 transition-colors"
               >
                 <div className="flex items-center gap-6 md:gap-12">
                   <span className="text-label w-8">{String(index + 1).padStart(2, "0")}</span>
                   <div>
-                    <h3 className="text-handwriting text-2xl md:text-3xl font-bold group-hover:translate-x-2 transition-transform">
+                    <h3 className="font-display text-base md:text-lg font-semibold uppercase tracking-[0.16em] group-hover:translate-x-2 transition-transform">
                       {artist.name}
                     </h3>
                     <p className="text-label mt-1">{artist.specialty}</p>
