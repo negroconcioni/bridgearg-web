@@ -4,7 +4,6 @@ import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/PageTransition";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag } from "lucide-react";
-import { StampFrame } from "@/components/ui/stamp-frame";
 import bridgeWork1 from "@/assets/bridgearg-work1.jpg";
 import bridgeWork2 from "@/assets/bridgearg-work2.jpg";
 import bridgeWork3 from "@/assets/bridgearg-work3.jpg";
@@ -65,83 +64,63 @@ const ObrasPage = () => {
 
           {/* Works Grid */}
           <section ref={sectionRef} className="section-padded relative">
-            {/* Lateral text "AMBASSADORS OF ARGENTINE ART" */}
-            <div className="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 -rotate-90 origin-center z-10">
-              <p className="text-technical text-muted-foreground whitespace-nowrap text-xs tracking-[0.3em]">
-                AMBASSADORS OF ARGENTINE ART
-              </p>
-            </div>
 
             <div className="container mx-auto lg:pl-16">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 md:gap-8">
                 {allWorks.map((work, index) => (
                   <div key={work.id} className="scroll-reveal group">
-                    {index % 4 === 0 ? (
-                      <StampFrame variant="rounded" className="w-full">
-                        <div className="art-image-container aspect-[4/5] relative">
-                          <img
-                            src={work.image}
-                            alt={work.title}
-                            className="w-full h-full object-cover"
-                          />
-                          {!work.available && (
-                            <div className="absolute inset-0 bg-foreground/60 flex items-center justify-center">
-                              <span className="text-technical text-background bg-foreground/80 px-4 py-2">
-                                Vendida
-                              </span>
-                            </div>
-                          )}
-                          <div className="absolute top-4 left-4">
-                            <span className="text-label bg-background/90 px-2 py-1">
-                              {String(index + 1).padStart(2, "0")}
+                    <div className="flex h-full flex-col border border-border bg-card">
+                      {/* Image */}
+                      <div className="relative aspect-[4/5] overflow-hidden bg-muted">
+                        <img
+                          src={work.image}
+                          alt={work.title}
+                          className="h-full w-full object-cover"
+                        />
+                        {!work.available && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-foreground/60">
+                            <span className="bg-foreground/80 px-4 py-2 text-background text-technical">
+                              Vendida
                             </span>
                           </div>
-                        </div>
-                      </StampFrame>
-                    ) : (
-                      <div className={index % 4 === 1 ? "rounded-2xl overflow-hidden" : ""}>
-                        <div className="art-image-container aspect-[4/5] relative">
-                          <img
-                            src={work.image}
-                            alt={work.title}
-                            className="w-full h-full object-cover"
-                          />
-                          {!work.available && (
-                            <div className="absolute inset-0 bg-foreground/60 flex items-center justify-center">
-                              <span className="text-technical text-background bg-foreground/80 px-4 py-2">
-                                Vendida
-                              </span>
-                            </div>
-                          )}
-                          <div className="absolute top-4 left-4">
-                            <span className="text-label bg-background/90 px-2 py-1">
-                              {String(index + 1).padStart(2, "0")}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Details */}
-                    <div className="p-6 border-t border-border">
-                      <p className="text-label mb-1">{work.artist}</p>
-                      <h3 className="font-display font-medium text-lg mb-2">{work.title}</h3>
-                      <div className="space-y-1 mb-4">
-                        <p className="text-label">{work.year} · {work.medium}</p>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="font-display font-semibold text-lg">{work.price}</span>
-                        {work.available && (
-                          <Button
-                            variant="acquire"
-                            size="sm"
-                            onClick={() => handleAcquire(work.title)}
-                            className="flex items-center gap-2"
-                          >
-                            <ShoppingBag className="w-4 h-4" />
-                            Adquirir
-                          </Button>
                         )}
+                        <div className="absolute left-4 top-4">
+                          <span className="bg-background/90 px-2 py-1 text-label">
+                            {String(index + 1).padStart(2, "0")}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Info block */}
+                      <div className="flex flex-1 flex-col justify-between border-t border-border/80 bg-card px-6 py-5">
+                        <div>
+                          <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                            {work.artist}
+                          </p>
+                          <h3 className="mb-3 font-display text-lg font-semibold text-foreground">
+                            {work.title}
+                          </h3>
+                          <div className="space-y-1 text-xs text-muted-foreground">
+                            <p>{work.year}</p>
+                            <p>{work.medium}</p>
+                          </div>
+                        </div>
+                        <div className="mt-6 flex items-center justify-between">
+                          <span className="font-display text-base font-semibold text-foreground">
+                            {work.price}
+                          </span>
+                          {work.available && (
+                            <Button
+                              variant="acquire"
+                              size="sm"
+                              onClick={() => handleAcquire(work.title)}
+                              className="flex items-center gap-2"
+                            >
+                              <ShoppingBag className="w-4 h-4" />
+                              Adquirir
+                            </Button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>

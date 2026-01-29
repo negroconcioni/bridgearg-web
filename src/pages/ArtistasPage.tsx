@@ -4,7 +4,6 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/PageTransition";
 import { ArrowUpRight } from "lucide-react";
-import { StampFrame } from "@/components/ui/stamp-frame";
 import bridgeWork1 from "@/assets/bridgearg-work1.jpg";
 import bridgeWork2 from "@/assets/bridgearg-work2.jpg";
 import bridgeWork3 from "@/assets/bridgearg-work3.jpg";
@@ -96,21 +95,21 @@ const ArtistasPage = () => {
                     to={`/artistas/${artist.slug}`}
                     className="group scroll-reveal stories-card block overflow-hidden"
                   >
-                    <StampFrame variant="rounded" className="w-full">
-                      <div className="aspect-[4/5] relative">
+                    <div className="relative w-full overflow-hidden rounded-2xl bg-background shadow-sm">
+                      <div className="relative aspect-[4/5] overflow-hidden rounded-2xl">
                         <img
                           src={artist.image}
                           alt={artist.name}
-                          className="w-full h-full object-cover"
+                          className="h-full w-full rounded-2xl object-cover"
                         />
-                        <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-foreground/80 to-transparent">
-                          <p className="text-background text-label mb-1">{artist.specialty}</p>
-                          <h2 className="font-display text-3xl font-bold text-background">
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-foreground/80 to-transparent p-6">
+                          <p className="mb-1 text-label text-background">{artist.specialty}</p>
+                          <h2 className="font-display text-lg font-semibold uppercase tracking-[0.16em] text-background">
                             {artist.name}
                           </h2>
                         </div>
                       </div>
-                    </StampFrame>
+                    </div>
                   </Link>
                 ))}
               </div>
@@ -123,20 +122,20 @@ const ArtistasPage = () => {
                     to={`/artistas/${artist.slug}`}
                     className="group scroll-reveal overflow-hidden"
                   >
-                    <StampFrame variant="rounded" className="w-full">
-                      <div className="art-image-container aspect-[4/5] relative">
+                    <div className="relative w-full overflow-hidden rounded-2xl bg-background shadow-sm transition-transform duration-300 ease-out hover:scale-[1.01] hover:shadow-md">
+                      <div className="art-image-container relative aspect-[4/5] rounded-2xl overflow-hidden">
                         <img
                           src={artist.image}
                           alt={artist.name}
-                          className="w-full h-full object-cover"
+                          className="h-full w-full rounded-2xl object-cover"
                         />
-                        <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/80 transition-colors duration-300 flex items-center justify-center">
-                          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-center p-6">
-                            <p className="text-background text-label mb-2">{artist.specialty}</p>
-                            <h2 className="text-handwriting text-3xl font-bold text-background mb-4">
+                        <div className="absolute inset-0 flex items-center justify-center bg-foreground/0 transition-colors duration-300 group-hover:bg-foreground/80">
+                          <div className="p-6 text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                            <p className="mb-2 text-background text-label">{artist.specialty}</p>
+                            <h2 className="mb-4 font-display text-base md:text-lg font-semibold uppercase tracking-[0.16em] text-background">
                               {artist.name}
                             </h2>
-                            <p className="text-background/70 text-sm max-w-xs mx-auto">
+                            <p className="mx-auto text-sm text-background/70 max-w-xs">
                               {artist.bio}
                             </p>
                             <div className="mt-6 flex items-center justify-center gap-2 text-background">
@@ -146,7 +145,7 @@ const ArtistasPage = () => {
                           </div>
                         </div>
                       </div>
-                    </StampFrame>
+                    </div>
                   </Link>
                 ))}
               </div>

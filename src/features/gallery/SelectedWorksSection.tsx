@@ -5,7 +5,6 @@ import bridgeWork1 from "@/assets/bridgearg-work1.jpg";
 import bridgeWork2 from "@/assets/bridgearg-work2.jpg";
 import bridgeWork3 from "@/assets/bridgearg-work3.jpg";
 import bridgeWork4 from "@/assets/bridgearg-work4.jpg";
-import { StampFrame } from "@/components/ui/stamp-frame";
 
 const selectedWorks = [
   {
@@ -45,12 +44,6 @@ const selectedWorks = [
 export function SelectedWorksSection() {
   return (
     <section className="section-padded border-t border-border relative">
-      {/* Lateral text "AMBASSADORS OF ARGENTINE ART" */}
-      <div className="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 -rotate-90 origin-center z-10">
-        <p className="text-technical text-muted-foreground whitespace-nowrap text-xs tracking-[0.3em]">
-          AMBASSADORS OF ARGENTINE ART
-        </p>
-      </div>
 
       <div className="container mx-auto lg:pl-16">
         {/* Section Header */}
@@ -70,38 +63,40 @@ export function SelectedWorksSection() {
         </div>
 
         {/* Works Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
           {selectedWorks.map((work, index) => (
             <Link
               key={work.id}
               to={`/artistas/${work.slug}`}
               className="group"
             >
-              <StampFrame variant="rounded" className="w-full">
-                <div className="relative aspect-[4/5] overflow-hidden">
+              <div className="relative w-full overflow-hidden rounded-2xl bg-background shadow-sm transition-transform duration-300 ease-out group-hover:scale-[1.01] group-hover:shadow-lg">
+                <div className="relative aspect-[4/5] overflow-hidden rounded-2xl">
                   <img
                     src={work.image}
                     alt={work.title}
-                    className="w-full h-full object-cover"
+                    className="h-full w-full rounded-2xl object-cover"
                   />
 
                   {/* Overlay Content - Simple fade on hover with rounded corners */}
-                  <div className="absolute bottom-0 left-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gradient-to-t from-foreground/80 to-transparent rounded-b-xl">
+                  <div className="absolute bottom-0 left-0 right-0 rounded-b-2xl bg-gradient-to-t from-foreground/80 to-transparent p-6 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                     <div className="text-background">
-                      <p className="text-handwriting text-xl text-background/90 mb-1">{work.artist}</p>
+                      <p className="mb-1 text-sm font-semibold uppercase tracking-[0.16em] text-background/80">
+                        {work.artist}
+                      </p>
                       <h3 className="font-display text-lg font-medium">{work.title}</h3>
-                      <p className="text-technical mt-2 text-background/50">{work.year}</p>
+                      <p className="mt-2 text-technical text-background/50">{work.year}</p>
                     </div>
                   </div>
 
                   {/* Index Number */}
-                  <div className="absolute top-4 left-4">
-                    <span className="text-label bg-background/90 px-2 py-1">
+                  <div className="absolute left-4 top-4">
+                    <span className="bg-background/90 px-2 py-1 text-label">
                       {String(index + 1).padStart(2, "0")}
                     </span>
                   </div>
                 </div>
-              </StampFrame>
+              </div>
             </Link>
           ))}
         </div>

@@ -41,8 +41,8 @@ export function Footer() {
             <h4 className="text-technical text-foreground mb-4">Contacto</h4>
             <div className="space-y-2">
               <p className="text-label">info@bridgearg.com</p>
-              <p className="text-label">Buenos Aires, Argentina</p>
-              <p className="text-label">New York, Estados Unidos</p>
+              <p className="text-label">Córdoba, Argentina</p>
+              <p className="text-label">Miami, Estados Unidos</p>
             </div>
           </div>
         </div>

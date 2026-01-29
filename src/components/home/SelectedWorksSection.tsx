@@ -45,12 +45,6 @@ const selectedWorks = [
 export function SelectedWorksSection() {
   return (
     <section className="section-padded border-t border-border relative">
-      {/* Lateral text "AMBASSADORS OF ARGENTINE ART" */}
-      <div className="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 -rotate-90 origin-center z-10">
-        <p className="text-technical text-muted-foreground whitespace-nowrap text-xs tracking-[0.3em]">
-          AMBASSADORS OF ARGENTINE ART
-        </p>
-      </div>
 
       <div className="container mx-auto lg:pl-16">
         {/* Section Header */}

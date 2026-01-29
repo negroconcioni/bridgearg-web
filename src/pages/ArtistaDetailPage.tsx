@@ -4,7 +4,6 @@ import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/PageTransition";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
-import { StampFrame } from "@/components/ui/stamp-frame";
 import bridgeWork1 from "@/assets/bridgearg-work1.jpg";
 import bridgeWork2 from "@/assets/bridgearg-work2.jpg";
 import bridgeWork3 from "@/assets/bridgearg-work3.jpg";
@@ -126,15 +125,15 @@ const ArtistaDetailPage = () => {
             <div className="container mx-auto">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
                 {/* Portrait */}
-                <StampFrame variant="rounded" className="w-full">
-                  <div className="aspect-[4/5]">
+                <div className="w-full overflow-hidden rounded-2xl bg-background shadow-sm">
+                  <div className="relative aspect-[4/5] overflow-hidden rounded-2xl">
                     <img
                       src={artist.portrait}
                       alt={artist.name}
-                      className="w-full h-full object-cover"
+                      className="h-full w-full rounded-2xl object-cover"
                     />
                   </div>
-                </StampFrame>
+                </div>
 
                 {/* Info */}
                 <div className="flex flex-col justify-center">
@@ -169,53 +168,63 @@ const ArtistaDetailPage = () => {
                 <h2 className="text-display text-3xl md:text-5xl">Colección</h2>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 md:gap-8">
                 {artist.works.map((work, index) => (
-                  <div key={work.id} className="tech-box p-0 group">
-                    {/* Image */}
-                    <div className="art-image-container aspect-[4/5]">
-                      <img
-                        src={work.image}
-                        alt={work.title}
-                        className="w-full h-full object-cover"
-                      />
-                      {!work.available && (
-                        <div className="absolute inset-0 bg-foreground/60 flex items-center justify-center">
-                          <span className="text-technical text-background bg-foreground/80 px-4 py-2">
-                            Vendida
+                  <div key={work.id} className="group">
+                    <div className="flex h-full flex-col border border-border bg-card">
+                      {/* Image */}
+                      <div className="relative aspect-[4/5] overflow-hidden bg-muted">
+                        <img
+                          src={work.image}
+                          alt={work.title}
+                          className="h-full w-full object-cover"
+                        />
+                        {!work.available && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-foreground/60">
+                            <span className="bg-foreground/80 px-4 py-2 text-background text-technical">
+                              Vendida
+                            </span>
+                          </div>
+                        )}
+                        {/* Index */}
+                        <div className="absolute top-4 left-4">
+                          <span className="bg-background/90 px-2 py-1 text-label">
+                            {String(index + 1).padStart(2, "0")}
                           </span>
                         </div>
-                      )}
-                      {/* Index */}
-                      <div className="absolute top-4 left-4">
-                        <span className="text-label bg-background/90 px-2 py-1">
-                          {String(index + 1).padStart(2, "0")}
-                        </span>
                       </div>
-                    </div>
 
-                    {/* Details */}
-                    <div className="p-6 border-t border-border">
-                      <p className="text-label mb-1">{artist.name}</p>
-                      <h3 className="font-display font-medium text-lg mb-2">{work.title}</h3>
-                      <div className="space-y-1 mb-4">
-                        <p className="text-label">{work.year}</p>
-                        <p className="text-label">{work.medium}</p>
-                        <p className="text-label">{work.dimensions}</p>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="font-display font-semibold text-lg">{work.price}</span>
-                        {work.available && (
-                          <Button
-                            variant="acquire"
-                            size="sm"
-                            onClick={() => handleAcquire(work.title)}
-                            className="flex items-center gap-2"
-                          >
-                            <ShoppingBag className="w-4 h-4" />
-                            Adquirir
-                          </Button>
-                        )}
+                      {/* Details */}
+                      <div className="flex flex-1 flex-col justify-between border-t border-border/80 bg-card px-6 py-5">
+                        <div>
+                          <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                            {artist.name}
+                          </p>
+                          <h3 className="mb-3 font-display text-lg font-semibold text-foreground">
+                            {work.title}
+                          </h3>
+                          <div className="space-y-1 text-xs text-muted-foreground">
+                            <p>{work.year}</p>
+                            <p>{work.medium}</p>
+                            <p>{work.dimensions}</p>
+                          </div>
+                        </div>
+                        <div className="mt-6 flex items-center justify-between">
+                          <span className="font-display text-base font-semibold text-foreground">
+                            {work.price}
+                          </span>
+                          {work.available && (
+                            <Button
+                              variant="acquire"
+                              size="sm"
+                              onClick={() => handleAcquire(work.title)}
+                              className="flex items-center gap-2"
+                            >
+                              <ShoppingBag className="w-4 h-4" />
+                              Adquirir
+                            </Button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
