@@ -1,1 +1,8 @@
 node_modules
+dist
+.env
+server/.env
+server/node_modules
+server/dist
+server/prisma/*.db
+server/prisma/*.db-journal
