@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
+import { submitContact } from "@/lib/api";
+import { Loader2 } from "lucide-react";
 
 const ContactoPage = () => {
   const [formData, setFormData] = useState({
@@ -14,14 +16,27 @@ const ContactoPage = () => {
     subject: "",
     message: "",
   });
+  const [sending, setSending] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Mensaje enviado",
-      description: "Gracias por contactarnos. Te responderemos pronto.",
-    });
-    setFormData({ name: "", email: "", subject: "", message: "" });
+    setSending(true);
+    try {
+      await submitContact(formData);
+      toast({
+        title: "Mensaje enviado",
+        description: "Gracias por contactarnos. Te responderemos pronto.",
+      });
+      setFormData({ name: "", email: "", subject: "", message: "" });
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: err instanceof Error ? err.message : "No se pudo enviar el mensaje.",
+        variant: "destructive",
+      });
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -103,8 +118,15 @@ const ContactoPage = () => {
                     />
                   </div>
 
-                  <Button type="submit" variant="hero" size="lg" className="w-full md:w-auto">
-                    Enviar Mensaje
+                  <Button type="submit" variant="hero" size="lg" className="w-full md:w-auto" disabled={sending}>
+                    {sending ? (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        Enviando…
+                      </>
+                    ) : (
+                      "Enviar Mensaje"
+                    )}
                   </Button>
                 </form>
 
