@@ -1,5 +1,13 @@
 # Integración: Resend + Stripe Webhooks
 
+## Flujo de contacto (frontend → backend → Resend)
+
+- El **frontend** (Vite + React) envía el formulario con `POST` a `VITE_API_URL/api/contact` (ej. `http://localhost:3000/api/contact`). No se expone ninguna API key en el cliente.
+- El **backend** (Node + Express) recibe la petición, valida el body y envía el email con **Resend**. La API key de Resend solo vive en `server/.env` (`RESEND_API_KEY`).
+- **CORS** está habilitado: el servidor acepta peticiones desde el origen del frontend (`CLIENT_URL`). Por defecto se permiten `http://localhost:5173` y `http://localhost:8080`. En producción definí `CLIENT_URL` con la URL de tu sitio (ej. `https://bridgearg.com`).
+
+---
+
 ## 1. Resend (emails de contacto)
 
 ### Obtener API Key
