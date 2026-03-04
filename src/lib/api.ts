@@ -15,11 +15,70 @@ export interface WorkFromApi {
   dimensions: string | null;
 }
 
-export async function getWorks(artistSlug?: string): Promise<WorkFromApi[]> {
+/** Relación artist en select de obras (artists.name, artists.slug). */
+export type ObraRowArtist = { name: string; slug: string } | null;
+
+/** Filas de obras con relación artists (snake_case). artist_slug se mantiene para routing. */
+export type ObraRow = {
+  id: number;
+  titulo: string;
+  precio: number;
+  imagen_url: string;
+  status: string;
+  artist_id: number;
+  artist_slug: string;
+  year: string | null;
+  medium: string | null;
+  dimensions: string | null;
+  artists: ObraRowArtist;
+};
+
+function mapObraRowToWork(row: ObraRow): WorkFromApi {
+  const artistName = row.artists?.name ?? "";
+  const artistSlug = row.artist_slug ?? row.artists?.slug ?? "";
+  return {
+    id: row.id,
+    titulo: row.titulo,
+    precio: row.precio,
+    priceDisplay: `USD ${(row.precio / 100).toLocaleString("en-US")}`,
+    imagenUrl: row.imagen_url,
+    status: row.status,
+    available: row.status === "disponible",
+    artistName,
+    artistSlug,
+    year: row.year,
+    medium: row.medium,
+    dimensions: row.dimensions,
+  };
+}
+
+async function fetchWorksFromApi(artistSlug?: string): Promise<WorkFromApi[]> {
   const url = artistSlug ? `${API_BASE}/api/works?artistSlug=${encodeURIComponent(artistSlug)}` : `${API_BASE}/api/works`;
   const res = await fetch(url);
   if (!res.ok) throw new Error("Error al cargar obras");
   return res.json();
+}
+
+export async function getWorks(artistSlug?: string): Promise<WorkFromApi[]> {
+  const { supabase, isSupabaseConfigured } = await import("@/lib/supabaseClient");
+
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const select = "id,titulo,precio,imagen_url,status,artist_id,artist_slug,year,medium,dimensions,artists(name,slug)";
+      let query = supabase.from("obras").select(select).order("id", { ascending: true });
+      if (artistSlug) {
+        query = query.eq("artist_slug", artistSlug);
+      }
+      const { data, error } = await query;
+      if (error) throw new Error(error.message ?? "Error al cargar obras desde Supabase");
+      const mapped = (data ?? []).map(mapObraRowToWork);
+      if (mapped.length > 0) return mapped;
+    } catch (err) {
+      console.warn("Supabase obras failed, falling back to API:", err);
+    }
+  }
+
+  return fetchWorksFromApi(artistSlug);
 }
 
 export async function createCheckoutSession(obraId: number): Promise<{ url: string | null }> {

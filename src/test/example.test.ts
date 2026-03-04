@@ -1,7 +1,8 @@
 import { describe, it, expect } from "vitest";
+import { getWorkImageUrl } from "@/lib/work-images";
 
-describe("example", () => {
-  it("should pass", () => {
-    expect(true).toBe(true);
+describe("app", () => {
+  it("getWorkImageUrl returns string for known slug", () => {
+    expect(typeof getWorkImageUrl("bridgearg-work1.jpg")).toBe("string");
   });
 });

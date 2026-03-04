@@ -3,10 +3,14 @@ import { Resend } from "resend";
 import { contactEmailHtml } from "../lib/email-template.js";
 
 const router = Router();
-const resend = new Resend(process.env.RESEND_API_KEY);
 
-const FROM = process.env.RESEND_FROM_EMAIL ?? "onboarding@resend.dev";
-const TO = process.env.RESEND_TO_EMAIL ?? "";
+const RESEND_API_KEY = process.env.RESEND_API_KEY?.trim();
+const FROM = process.env.RESEND_FROM_EMAIL?.trim() ?? "onboarding@resend.dev";
+const TO = process.env.RESEND_TO_EMAIL?.trim() ?? "";
+
+function isResendConfigured(): boolean {
+  return Boolean(RESEND_API_KEY && TO);
+}
 
 function validateContactBody(body: unknown): { name: string; email: string; subject: string; message: string } | null {
   if (!body || typeof body !== "object") return null;
@@ -31,13 +35,14 @@ router.post("/contact", async (req: Request, res: Response): Promise<void> => {
     return;
   }
 
-  if (!TO) {
-    console.error("RESEND_TO_EMAIL no configurado");
-    res.status(500).json({ error: "Servicio de contacto no configurado" });
+  if (!isResendConfigured()) {
+    console.error("Resend no configurado: definí RESEND_API_KEY y RESEND_TO_EMAIL en server/.env");
+    res.status(503).json({ error: "Servicio de contacto no configurado" });
     return;
   }
 
   try {
+    const resend = new Resend(RESEND_API_KEY);
     const html = contactEmailHtml(payload);
     const { error } = await resend.emails.send({
       from: FROM,

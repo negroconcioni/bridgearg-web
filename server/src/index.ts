@@ -10,6 +10,12 @@ const app = express();
 const PORT = process.env.PORT ?? 3000;
 const CLIENT_URL = process.env.CLIENT_URL ?? "http://localhost:5173";
 
+// Orígenes permitidos para CORS (frontend). Siempre trim para evitar espacios que rompan CORS.
+const CORS_ORIGINS = CLIENT_URL.split(",").map((s) => s.trim()).filter(Boolean);
+if (CORS_ORIGINS.length === 1 && CORS_ORIGINS[0] === "http://localhost:5173") {
+  CORS_ORIGINS.push("http://localhost:8080");
+}
+
 // Webhook debe recibir body raw para verificar firma de Stripe
 app.use(
   "/api/webhook",
@@ -22,7 +28,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: CLIENT_URL,
+    origin: CORS_ORIGINS,
     credentials: true,
   })
 );
