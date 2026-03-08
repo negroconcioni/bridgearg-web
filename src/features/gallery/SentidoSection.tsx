@@ -1,3 +1,4 @@
+import { OptimizedImage } from "@/components/OptimizedImage";
 import bridgeBrand from "@/assets/bridgearg-brand.jpg";
 
 export function SentidoSection() {
@@ -6,9 +7,9 @@ export function SentidoSection() {
       <div className="container mx-auto">
         {/* Section Header */}
         <div className="mb-12 md:mb-16">
-          <span className="text-label block mb-4">01 / Filosofía</span>
+          <span className="text-label block mb-4">01 / Philosophy</span>
           <h2 className="text-display text-4xl md:text-6xl">
-            Nuestro<br />Sentido
+            Our<br />Approach
           </h2>
         </div>
 
@@ -16,40 +17,38 @@ export function SentidoSection() {
           {/* Text Content */}
           <div className="space-y-8">
             <div className="tech-box">
-              <h3 className="text-technical text-foreground mb-4">Puente Cultural</h3>
+              <h3 className="text-technical text-foreground mb-4">Cultural Bridge</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                BridgeArg nace como un puente entre el arte argentino y el mercado 
-                estadounidense. Una marca que conecta talento, cultura y oportunidades, 
-                acercando lo hecho a mano, lo auténtico y lo humano a un entorno 
-                profesional, legal y sustentable.
+                BridgeArg was born as a bridge between Argentine art and the US market.
+                A brand that connects talent, culture, and opportunity—bringing the handmade,
+                the authentic, and the human into a professional, legal, and sustainable context.
               </p>
             </div>
 
             <div className="tech-box">
-              <h3 className="text-technical text-foreground mb-4">Identidad Visual</h3>
+              <h3 className="text-technical text-foreground mb-4">Visual Identity</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                Una identidad inspirada en la idea de unión, confianza y acompañamiento: 
-                entre países, disciplinas y personas. Un sistema visual sobrio y cálido 
-                que pone al arte en el centro, y a BridgeArg como sostén silencioso del proceso.
+                An identity inspired by connection, trust, and accompaniment: between countries,
+                disciplines, and people. A restrained yet warm visual system that places art
+                at the center, with BridgeArg as the silent support of the process.
               </p>
             </div>
 
             <div className="tech-box">
-              <h3 className="text-technical text-foreground mb-4">Compromiso</h3>
+              <h3 className="text-technical text-foreground mb-4">Commitment</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                Un logotipo simple y confiable, que busca abrir puertas y tender puentes. 
-                Una cromática inspirada en la materialidad y el origen. Tipografías 
-                contemporáneas con sensibilidad humana.
+                A simple, trustworthy mark that aims to open doors and build bridges.
+                A palette inspired by materiality and origin. Contemporary type with a human sensibility.
               </p>
             </div>
           </div>
 
           {/* Image */}
           <div className="art-image-container aspect-[4/5] lg:aspect-auto lg:h-full">
-            <img
+            <OptimizedImage
               src={bridgeBrand}
               alt="BridgeARG Brand Identity"
-              className="w-full h-full object-cover"
+              className="h-full w-full"
             />
           </div>
         </div>

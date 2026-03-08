@@ -1,11 +1,24 @@
 -- Normalizar obras: artist_id → artists. Ejecutar después de 002_create_artists.sql.
--- Crea artists desde datos existentes en obras, añade FK y elimina artist_name.
+-- Crea artists desde datos existentes en obras, añade FK y elimina artist_name (si existe).
 
--- 1. Poblar artists con valores distintos de obras (si hay filas)
-INSERT INTO public.artists (name, slug)
-SELECT DISTINCT o.artist_name, o.artist_slug
-FROM public.obras o
-WHERE NOT EXISTS (SELECT 1 FROM public.artists a WHERE a.slug = o.artist_slug);
+-- 1. Poblar artists desde obras (con o sin columna artist_name)
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'obras' AND column_name = 'artist_name'
+  ) THEN
+    INSERT INTO public.artists (name, slug)
+    SELECT DISTINCT o.artist_name, o.artist_slug
+    FROM public.obras o
+    WHERE NOT EXISTS (SELECT 1 FROM public.artists a WHERE a.slug = o.artist_slug);
+  ELSE
+    INSERT INTO public.artists (name, slug)
+    SELECT DISTINCT o.artist_slug, o.artist_slug
+    FROM public.obras o
+    WHERE NOT EXISTS (SELECT 1 FROM public.artists a WHERE a.slug = o.artist_slug);
+  END IF;
+END $$;
 
 -- 2. Añadir columna artist_id (nullable de momento)
 ALTER TABLE public.obras ADD COLUMN IF NOT EXISTS artist_id BIGINT;

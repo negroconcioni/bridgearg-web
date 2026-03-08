@@ -4,11 +4,11 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
-  { label: "Inicio", path: "/" },
-  { label: "Artistas", path: "/artistas" },
-  { label: "Obras", path: "/obras" },
-  { label: "Nosotros", path: "/nosotros" },
-  { label: "Contacto", path: "/contacto" },
+  { label: "Home", path: "/" },
+  { label: "Artists", path: "/artistas" },
+  { label: "Works", path: "/obras" },
+  { label: "About", path: "/nosotros" },
+  { label: "Contact", path: "/contacto" },
 ];
 
 export function Header() {
@@ -47,7 +47,7 @@ export function Header() {
                 className="ml-4"
                 asChild
               >
-                <Link to="/contacto">SOY ARTISTA</Link>
+                <Link to="/contacto">Artist Inquiries</Link>
               </Button>
             </nav>
 
@@ -55,7 +55,7 @@ export function Header() {
             <button
               onClick={() => setIsOpen(true)}
               className="md:hidden p-2 hover:bg-muted transition-colors"
-              aria-label="Abrir menú"
+              aria-label="Open menu"
             >
               <Menu className="w-6 h-6" />
             </button>
@@ -79,7 +79,7 @@ export function Header() {
               <button
                 onClick={() => setIsOpen(false)}
                 className="p-2 hover:bg-muted transition-colors"
-                aria-label="Cerrar menú"
+                aria-label="Close menu"
               >
                 <X className="w-6 h-6" />
               </button>

@@ -25,7 +25,7 @@ export function HeroSection() {
         <div className="max-w-5xl">
           {/* Label */}
           <div className="mb-8 animate-fade-up hidden md:block">
-            <span className="text-label">Galería de Arte Contemporáneo</span>
+            <span className="text-label">Contemporary Art Gallery</span>
           </div>
 
           {/* Main Title - Hidden on mobile, shown on desktop */}
@@ -36,18 +36,17 @@ export function HeroSection() {
 
           {/* Subtitle */}
           <p className="text-lg md:text-xl text-muted-foreground max-w-xl mb-12 animate-fade-up animate-stagger-2 font-light leading-relaxed">
-            Conectamos el arte argentino con el mundo. 
-            Una plataforma que tiende puentes entre artistas emergentes 
-            y coleccionistas internacionales.
+            We connect Argentine art with the world.
+            A platform bridging emerging artists and international collectors.
           </p>
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 animate-fade-up animate-stagger-3">
             <Button variant="hero" asChild>
-              <Link to="/artistas">Explorar Artistas</Link>
+              <Link to="/artistas">Explore Artists</Link>
             </Button>
             <Button variant="technical" asChild>
-              <Link to="/obras">Ver Obras</Link>
+              <Link to="/obras">View Works</Link>
             </Button>
           </div>
         </div>

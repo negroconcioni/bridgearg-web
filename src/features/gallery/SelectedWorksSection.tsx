@@ -1,44 +1,17 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowUpRight } from "lucide-react";
+import { OptimizedImage } from "@/components/OptimizedImage";
 import bridgeWork1 from "@/assets/bridgearg-work1.jpg";
 import bridgeWork2 from "@/assets/bridgearg-work2.jpg";
 import bridgeWork3 from "@/assets/bridgearg-work3.jpg";
 import bridgeWork4 from "@/assets/bridgearg-work4.jpg";
 
 const selectedWorks = [
-  {
-    id: 1,
-    title: "Sin Título I",
-    artist: "Artista Ejemplo 1",
-    year: "2024",
-    image: bridgeWork1,
-    slug: "artista-ejemplo-1",
-  },
-  {
-    id: 2,
-    title: "Composición Abstracta",
-    artist: "Artista Ejemplo 2",
-    year: "2024",
-    image: bridgeWork2,
-    slug: "artista-ejemplo-2",
-  },
-  {
-    id: 3,
-    title: "Paisaje Interior",
-    artist: "Artista Ejemplo 3",
-    year: "2023",
-    image: bridgeWork3,
-    slug: "artista-ejemplo-3",
-  },
-  {
-    id: 4,
-    title: "Fragmentos",
-    artist: "Artista Ejemplo 4",
-    year: "2024",
-    image: bridgeWork4,
-    slug: "artista-ejemplo-4",
-  },
+  { id: 1, title: "Untitled I", artist: "Artist Example 1", year: "2024", image: bridgeWork1, slug: "artista-ejemplo-1" },
+  { id: 2, title: "Abstract Composition", artist: "Artist Example 2", year: "2024", image: bridgeWork2, slug: "artista-ejemplo-2" },
+  { id: 3, title: "Interior Landscape", artist: "Artist Example 3", year: "2023", image: bridgeWork3, slug: "artista-ejemplo-3" },
+  { id: 4, title: "Fragments", artist: "Artist Example 4", year: "2024", image: bridgeWork4, slug: "artista-ejemplo-4" },
 ];
 
 export function SelectedWorksSection() {
@@ -49,14 +22,14 @@ export function SelectedWorksSection() {
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 md:mb-16">
           <div>
-            <span className="text-label block mb-4">02 / Colección</span>
+            <span className="text-label block mb-4">02 / Curated Collection</span>
             <h2 className="text-display text-4xl md:text-6xl">
               Selected<br />Works
             </h2>
           </div>
           <Button variant="technical" asChild>
             <Link to="/obras" className="flex items-center gap-2">
-              Ver todas las obras
+              View All Works
               <ArrowUpRight className="w-4 h-4" />
             </Link>
           </Button>
@@ -72,10 +45,11 @@ export function SelectedWorksSection() {
             >
               <div className="relative w-full overflow-hidden rounded-2xl bg-background shadow-sm transition-transform duration-300 ease-out group-hover:scale-[1.01] group-hover:shadow-lg">
                 <div className="relative aspect-[4/5] overflow-hidden rounded-2xl">
-                  <img
+                  <OptimizedImage
                     src={work.image}
-                    alt={work.title}
-                    className="h-full w-full rounded-2xl object-cover"
+                    title={work.title}
+                    artistName={work.artist}
+                    className="h-full w-full"
                   />
 
                   {/* Overlay Content - Simple fade on hover with rounded corners */}
