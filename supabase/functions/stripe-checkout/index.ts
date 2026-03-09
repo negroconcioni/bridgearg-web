@@ -9,40 +9,49 @@ const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
   apiVersion: "2024-11-20",
 });
 
-const LOCALHOST_ORIGINS = [
-  "http://localhost:5173",
-  "http://127.0.0.1:5173",
-  "http://localhost:3000",
-  "http://127.0.0.1:3000",
-  "http://localhost:8080",
-  "http://127.0.0.1:8080",
-];
+function normalizeOrigin(value: string): string | null {
+  try {
+    return new URL(value.replace(/\/$/, "")).origin;
+  } catch (_e) {
+    return null;
+  }
+}
+
+function normalizeUrl(value: string): string | null {
+  try {
+    return new URL(value.replace(/\/$/, "")).toString().replace(/\/$/, "");
+  } catch (_e) {
+    return null;
+  }
+}
 
 function getAllowedOrigins(): string[] {
-  const origins = [...LOCALHOST_ORIGINS];
-  const clientUrl = Deno.env.get("CLIENT_URL");
-  if (clientUrl?.trim()) {
-    try {
-      const origin = new URL(clientUrl.replace(/\/$/, "")).origin;
-      if (origin && !origins.includes(origin)) origins.push(origin);
-    } catch (_e) {
-      // ignore invalid URL
-    }
+  const origins = new Set<string>();
+  const configuredOrigins = [Deno.env.get("CLIENT_URL") ?? "", ...(Deno.env.get("CORS_ORIGIN") ?? "").split(",")];
+
+  for (const candidate of configuredOrigins) {
+    const normalized = normalizeOrigin(candidate.trim());
+    if (normalized) origins.add(normalized);
   }
-  const extra = Deno.env.get("CORS_ORIGIN");
-  if (extra?.trim() && !origins.includes(extra.trim())) origins.push(extra.trim());
-  return origins;
+
+  return Array.from(origins);
+}
+
+function getClientUrl(): string | null {
+  const value = Deno.env.get("CLIENT_URL")?.trim();
+  return value ? normalizeUrl(value) : null;
 }
 
 function getCorsHeaders(req: Request): Record<string, string> {
   const origin = req.headers.get("Origin") ?? "";
   const allowed = getAllowedOrigins();
-  const allowOrigin = allowed.includes(origin) ? origin : (Deno.env.get("CORS_ORIGIN") ?? "*");
+  const allowOrigin = allowed.includes(origin) ? origin : (allowed[0] ?? "*");
   return {
     "Access-Control-Allow-Origin": allowOrigin,
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
     "Access-Control-Max-Age": "86400",
+    Vary: "Origin",
   };
 }
 
@@ -89,6 +98,14 @@ Deno.serve(async (req) => {
     });
   }
 
+  const clientUrl = getClientUrl();
+  if (!clientUrl) {
+    return new Response(JSON.stringify({ error: "CLIENT_URL missing or invalid" }), {
+      status: 500,
+      headers: withCors(req, { "Content-Type": "application/json" }),
+    });
+  }
+
   const supabase = createClient(supabaseUrl, supabaseServiceRole);
 
   const { data: artwork, error: fetchError } = await supabase
@@ -119,8 +136,6 @@ Deno.serve(async (req) => {
   const medium = (artwork as { medium?: string }).medium;
   const artistName = ((artwork as { artists?: { name: string } }).artists?.name) ?? "";
   const description = [artistName, medium, year].filter(Boolean).join(" · ");
-
-  const clientUrl = (Deno.env.get("CLIENT_URL") ?? "http://localhost:5173").replace(/\/$/, "");
 
   try {
     const session = await stripe.checkout.sessions.create({

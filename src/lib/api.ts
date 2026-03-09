@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
+const API_BASE = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
 
 /** Format price in USD with en-US locale (e.g. "USD 4,500.00"). */
 export function formatPriceUSD(amountUsd: number): string {
