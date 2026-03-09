@@ -11,7 +11,7 @@ const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
 });
 const cryptoProvider = Stripe.createSubtleCryptoProvider();
 const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SIGNING_SECRET") ?? Deno.env.get("STRIPE_WEBHOOK_SECRET")!;
-const resendApiKey = Deno.env.get("RESEND_API_KEY");
+const resendApiKey = Deno.env.get("RESEND_API_KEY")?.trim();
 const fromEmail = Deno.env.get("RESEND_FROM_EMAIL") ?? "onboarding@resend.dev";
 
 const CORS_HEADERS = {

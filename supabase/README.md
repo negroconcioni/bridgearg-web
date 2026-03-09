@@ -50,9 +50,9 @@ Si tu app lee de la tabla **`obras`** en lugar de `artworks`, ejecutá además `
 
 Si ya tenés las migraciones aplicadas y solo querés agregar datos:
 
-1. **Supabase Studio (local):** http://127.0.0.1:54323 → SQL Editor → New query → pegá el contenido de `seed_artworks.sql` → Run.
+1. **Supabase Studio (local):** http://localhost:54323 → SQL Editor → New query → pegá el contenido de `seed_artworks.sql` → Run.
 2. **O por terminal:**  
-   `psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -f supabase/seed_artworks.sql`  
+   `psql "postgresql://postgres:postgres@localhost:54322/postgres" -f supabase/seed_artworks.sql`  
    (La URL puede variar; la mostrada es la que suele dar `supabase start`.)
 
 ---
@@ -72,7 +72,7 @@ supabase db dump -f supabase/dump_production.sql
 Abre `dump_production.sql`, dejá solo los `INSERT` de las tablas que te interesan (por ejemplo `artists` y `artworks`) o las secciones que no entren en conflicto con el schema local, y luego:
 
 ```bash
-psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -f supabase/dump_production.sql
+psql "postgresql://postgres:postgres@localhost:54322/postgres" -f supabase/dump_production.sql
 ```
 
 (Reemplazá la URL por la de tu DB local si es distinta.)
@@ -80,7 +80,7 @@ psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -f supabase/dump_
 ### 2. Exportar/importar desde el Dashboard
 
 - En el **Dashboard de Supabase (producción)** → Table Editor → tabla `artworks` (y `artists` si aplica) → Export as CSV.
-- En **Supabase Studio local** (http://127.0.0.1:54323) podés crear las filas a mano o usar un script que lea el CSV y haga `INSERT` vía API o SQL.
+- En **Supabase Studio local** (http://localhost:54323) podés crear las filas a mano o usar un script que lea el CSV y haga `INSERT` vía API o SQL.
 
 ### 3. Script que lee de producción e inserta en local
 
