@@ -64,7 +64,7 @@ Deno.serve(async (req) => {
   }
 
   const session = event.data.object as Stripe.Checkout.Session;
-  const artworkIdRaw = session.metadata?.artwork_id ?? session.metadata?.obra_id;
+  const artworkIdRaw = session.metadata?.artwork_id;
   const customerEmail = session.customer_details?.email ?? session.customer_email ?? null;
 
   if (!artworkIdRaw) {

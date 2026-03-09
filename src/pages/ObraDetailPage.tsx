@@ -5,11 +5,11 @@ import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/PageTransition";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ShoppingBag, Loader2, Package, FileCheck } from "lucide-react";
-import { getWork, createCheckout, type WorkFromApi, CheckoutError } from "@/lib/api";
+import { getWork, createCheckout, type WorkFromApi, CheckoutError, FALLBACK_ARTIST_NAME } from "@/lib/api";
 import { WorkImage } from "@/components/WorkImage";
 import { toast } from "@/hooks/use-toast";
 
-const ObraDetailPage = () => {
+const ArtworkDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const workId = id ? parseInt(id, 10) : NaN;
   const [work, setWork] = useState<WorkFromApi | null>(null);
@@ -110,7 +110,7 @@ const ObraDetailPage = () => {
             <div className="container mx-auto text-center">
               <h1 className="text-display text-4xl mb-4">Work not found</h1>
               <Button variant="technical" asChild>
-                <Link to="/obras">Back to Works</Link>
+                <Link to="/artworks">Back to Works</Link>
               </Button>
             </div>
           </main>
@@ -129,6 +129,7 @@ const ObraDetailPage = () => {
     .filter(Boolean)
     .join(" · ") || null;
   const weightText = work.weight_kg != null ? `${work.weight_kg} kg` : null;
+  const artistName = work.artistName?.trim() || FALLBACK_ARTIST_NAME;
 
   return (
     <PageTransition>
@@ -137,7 +138,7 @@ const ObraDetailPage = () => {
         <main>
           <div className="container mx-auto pt-8">
             <Link
-              to="/obras"
+              to="/artworks"
               className="inline-flex items-center gap-2 text-label hover:text-foreground transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -153,8 +154,8 @@ const ObraDetailPage = () => {
                   <div className="relative aspect-[4/5] overflow-hidden rounded-2xl">
                     <WorkImage
                       imagenUrl={work.imagenUrl}
-                      title={work.titulo}
-                      artistName={work.artistName}
+                      title={work.title}
+                      artistName={artistName}
                       className="h-full w-full rounded-2xl"
                     />
                     {work.status === "sold" && (
@@ -169,11 +170,15 @@ const ObraDetailPage = () => {
 
                 <div className="flex flex-col justify-center">
                   <p className="text-label mb-2">
-                    <Link to={`/artistas/${work.artistSlug}`} className="hover:text-foreground transition-colors">
-                      {work.artistName}
-                    </Link>
+                    {work.artistSlug ? (
+                      <Link to={`/artistas/${work.artistSlug}`} className="hover:text-foreground transition-colors">
+                        {artistName}
+                      </Link>
+                    ) : (
+                      artistName
+                    )}
                   </p>
-                  <h1 className="text-display text-4xl md:text-5xl lg:text-6xl mb-6">{work.titulo}</h1>
+                  <h1 className="text-display text-4xl md:text-5xl lg:text-6xl mb-6">{work.title}</h1>
                   {(work.year || work.medium) && (
                     <p className="text-muted-foreground text-sm mb-6">
                       {[work.year, work.medium].filter(Boolean).join(" · ")}
@@ -276,4 +281,4 @@ const ObraDetailPage = () => {
   );
 };
 
-export default ObraDetailPage;
+export default ArtworkDetailPage;

@@ -24,7 +24,7 @@ export function Footer() {
               <Link to="/artistas" className="block text-label hover:text-foreground transition-colors">
                 Artists
               </Link>
-              <Link to="/obras" className="block text-label hover:text-foreground transition-colors">
+              <Link to="/artworks" className="block text-label hover:text-foreground transition-colors">
                 Works
               </Link>
               <Link to="/nosotros" className="block text-label hover:text-foreground transition-colors">

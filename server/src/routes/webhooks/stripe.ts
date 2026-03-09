@@ -5,7 +5,7 @@ import { getSupabase, supabase } from "../../lib/supabase.js";
 import { prisma } from "../../lib/prisma.js";
 
 const router = Router();
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2024-06-20" });
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2025-02-24.acacia" });
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 const resend = new Resend(process.env.RESEND_API_KEY);
 const fromEmail = process.env.RESEND_FROM_EMAIL ?? "onboarding@resend.dev";
@@ -43,79 +43,84 @@ router.post("/", async (req: express.Request, res: Response): Promise<void> => {
   }
 
   const session = event.data.object as Stripe.Checkout.Session;
-  const obraIdRaw = session.metadata?.obra_id;
+  const artworkIdRaw = session.metadata?.artwork_id;
   const customerEmail = session.customer_details?.email ?? session.customer_email;
 
-  if (!obraIdRaw) {
-    console.warn("checkout.session.completed without metadata.obra_id");
+  if (!artworkIdRaw) {
+    console.warn("checkout.session.completed without metadata.artwork_id");
     res.status(200).send("ok");
     return;
   }
 
-  const obraId = parseInt(obraIdRaw, 10);
-  if (Number.isNaN(obraId) || obraId < 1) {
+  const artworkId = parseInt(artworkIdRaw, 10);
+  if (Number.isNaN(artworkId) || artworkId < 1) {
     res.status(200).send("ok");
     return;
   }
 
   try {
     if (supabase) {
-      const { error } = await supabase.from("obras").update({ status: "sold" }).eq("id", obraId);
+      const { error } = await supabase.from("artworks").update({ status: "sold" }).eq("id", artworkId);
       if (error) {
-        console.error("Supabase update obra status:", error);
+        console.error("Supabase update artwork status:", error);
         throw error;
       }
-      console.log(`Obra ${obraId} marked as sold (Supabase).`);
+      console.log(`Artwork ${artworkId} marked as sold (Supabase).`);
     } else {
-      await prisma.obra.update({
-        where: { id: obraId },
+      await prisma.artwork.update({
+        where: { id: artworkId },
         data: { status: "sold" },
       });
-      console.log(`Obra ${obraId} marked as sold (Prisma).`);
+      console.log(`Artwork ${artworkId} marked as sold (Prisma).`);
     }
   } catch (e) {
-    console.error("Error updating obra status:", e);
-    res.status(500).send("Error updating obra");
+    console.error("Error updating artwork status:", e);
+    res.status(500).send("Error updating artwork");
     return;
   }
 
-  let obraTitle = "";
+  let artworkTitle = "";
   let artistName = "";
   let yearMedium = "";
 
   if (supabase) {
     try {
       const { data } = await getSupabase()
-        .from("obras")
-        .select("titulo, year, medium, artists(name)")
-        .eq("id", obraId)
+        .from("artworks")
+        .select("title, year, medium, artists(name)")
+        .eq("id", artworkId)
         .single();
       if (data) {
-        obraTitle = (data as { titulo?: string }).titulo ?? "";
-        const a = (data as { artists?: { name: string } }).artists;
-        artistName = a?.name ?? "";
-        const y = (data as { year?: string }).year;
-        const m = (data as { medium?: string }).medium;
+        const artworkFromSupabase = data as {
+          title?: string;
+          year?: string;
+          medium?: string;
+          artists?: { name?: string } | null;
+        };
+        artworkTitle = artworkFromSupabase.title ?? "";
+        artistName = artworkFromSupabase.artists?.name ?? "";
+        const y = artworkFromSupabase.year;
+        const m = artworkFromSupabase.medium;
         yearMedium = [y, m].filter(Boolean).join(" · ");
       }
     } catch (e) {
-      console.warn("Could not fetch obra from Supabase for email:", e);
+      console.warn("Could not fetch artwork from Supabase for email:", e);
     }
   }
 
-  if (!obraTitle && prisma) {
+  if (!artworkTitle && prisma) {
     try {
-      const obra = await prisma.obra.findUnique({
-        where: { id: obraId },
-        select: { titulo: true, artistName: true, year: true, medium: true },
+      const artwork = await prisma.artwork.findUnique({
+        where: { id: artworkId },
+        select: { title: true, year: true, medium: true, artist: { select: { name: true } } },
       });
-      if (obra) {
-        obraTitle = obra.titulo;
-        artistName = obra.artistName ?? "";
-        yearMedium = [obra.year, obra.medium].filter(Boolean).join(" · ");
+      if (artwork) {
+        artworkTitle = artwork.title;
+        artistName = artwork.artist?.name ?? "";
+        yearMedium = [artwork.year, artwork.medium].filter(Boolean).join(" · ");
       }
     } catch (e) {
-      console.warn("Could not fetch obra from Prisma for email:", e);
+      console.warn("Could not fetch artwork from Prisma for email:", e);
     }
   }
 
@@ -124,10 +129,10 @@ router.post("/", async (req: express.Request, res: Response): Promise<void> => {
       await resend.emails.send({
         from: fromEmail,
         to: customerEmail,
-        subject: `Your acquisition — ${obraTitle || "BridgeArg"}`,
+        subject: `Your acquisition — ${artworkTitle || "BridgeArg"}`,
         html: buildConfirmationEmailHtml({
           customerEmail,
-          obraTitle: obraTitle || "Your piece",
+          artworkTitle: artworkTitle || "Your piece",
           artistName,
           yearMedium,
         }),
@@ -143,11 +148,11 @@ router.post("/", async (req: express.Request, res: Response): Promise<void> => {
 
 function buildConfirmationEmailHtml(params: {
   customerEmail: string;
-  obraTitle: string;
+  artworkTitle: string;
   artistName: string;
   yearMedium: string;
 }): string {
-  const { obraTitle, artistName, yearMedium } = params;
+  const { artworkTitle, artistName, yearMedium } = params;
   const line2 = [artistName, yearMedium].filter(Boolean).join(" · ");
   return `
 <!DOCTYPE html>
@@ -164,7 +169,7 @@ function buildConfirmationEmailHtml(params: {
     <p style="margin: 0 0 32px; font-size: 15px; line-height: 1.6; color: #404040;">Your purchase has been confirmed. We will be in touch regarding shipping and documentation.</p>
     <div style="border: 1px solid #e5e5e5; padding: 24px; margin-bottom: 32px;">
       <p style="margin: 0 0 4px; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #737373;">Piece</p>
-      <p style="margin: 0; font-size: 18px; font-weight: 600; color: #171717;">${escapeHtml(obraTitle)}</p>
+      <p style="margin: 0; font-size: 18px; font-weight: 600; color: #171717;">${escapeHtml(artworkTitle)}</p>
       ${line2 ? `<p style="margin: 8px 0 0; font-size: 14px; color: #525252;">${escapeHtml(line2)}</p>` : ""}
     </div>
     <p style="margin: 0; font-size: 13px; color: #737373;">White-glove international shipping and export documentation are included. You will receive a Certificate of Authenticity—physical and digital—signed by the artist.</p>

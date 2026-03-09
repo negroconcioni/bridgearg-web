@@ -46,7 +46,7 @@ export function HeroSection() {
               <Link to="/artistas">Explore Artists</Link>
             </Button>
             <Button variant="technical" asChild>
-              <Link to="/obras">View Works</Link>
+              <Link to="/artworks">View Works</Link>
             </Button>
           </div>
         </div>

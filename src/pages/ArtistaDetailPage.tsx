@@ -146,14 +146,14 @@ const ArtistaDetailPage = () => {
                   {works.map((work, index) => (
                     <Link
                       key={work.id}
-                      to={`/obras/${work.id}`}
+                      to={`/artworks/${work.id}`}
                       className="group block h-full"
                     >
                       <div className="flex h-full flex-col border border-border bg-card transition-shadow hover:shadow-md">
                         <div className="relative aspect-[4/5] overflow-hidden bg-muted">
                           <WorkImage
                             imagenUrl={work.imagenUrl}
-                            title={work.titulo}
+                            title={work.title}
                             artistName={artist.name}
                             className="h-full w-full"
                           />
@@ -176,7 +176,7 @@ const ArtistaDetailPage = () => {
                               {artist.name}
                             </p>
                             <h3 className="mb-3 font-display text-lg font-semibold text-foreground">
-                              {work.titulo}
+                              {work.title}
                             </h3>
                             <div className="space-y-1 text-xs text-muted-foreground">
                               {work.year && <p>{work.year}</p>}

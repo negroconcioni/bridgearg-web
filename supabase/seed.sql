@@ -24,7 +24,7 @@ BEGIN
   END IF;
 END $$;
 
--- 2) Obras de prueba en artworks
+-- 2) Artworks de prueba
 INSERT INTO public.artworks (title, image_url, status, price_usd, dimensions, weight_kg, artist_id, year, medium)
 SELECT 'Untitled I', 'bridgearg-work1.jpg', 'available'::public.artwork_status_enum, 4500.00, '120 x 150 cm', 5.2, a.id, '2024', 'Oil on canvas'
 FROM public.artists a WHERE a.name = 'Artist Example 1' LIMIT 1;

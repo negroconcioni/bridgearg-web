@@ -1,33 +1,36 @@
 # Supabase – Tablas y migraciones
 
-## Subir la tabla `obras` a Supabase
+## Subir la tabla `artworks` a Supabase
 
 1. Entrá al [Dashboard de Supabase](https://supabase.com/dashboard) → tu proyecto.
 2. En el menú izquierdo: **SQL Editor** → **New query**.
-3. Copiá y pegá todo el contenido de `migrations/001_create_obras.sql`.
+3. Copiá y pegá el contenido de `migrations/002_create_artists.sql`, luego `migrations/005_create_artworks.sql` y por último `migrations/006_artworks_dimensions_cm.sql`.
 4. Clic en **Run** (o Ctrl+Enter).
-5. *(Opcional)* Para cargar datos de ejemplo: nueva query, pegá el contenido de `seed_obras.sql` y ejecutá.
+5. *(Opcional)* Para cargar datos de ejemplo: nueva query, pegá el contenido de `seed_artworks.sql` y ejecutá.
 
-Listo: la tabla `public.obras` queda creada con RLS (lectura pública, escritura solo con `service_role`).
+Listo: las tablas `public.artists` y `public.artworks` quedan creadas con RLS (lectura pública, escritura solo con `service_role`).
 
-## Estructura de `obras`
+## Estructura de `artworks`
 
 | Columna      | Tipo        | Descripción                          |
 |-------------|-------------|--------------------------------------|
 | id          | bigint      | Autoincremental, PK                  |
-| titulo      | text        | Título de la obra                    |
-| precio      | integer     | En centavos (ej: 450000 = USD 4,500) |
+| title       | text        | Título de la artwork                 |
 | imagen_url  | text        | URL o path de la imagen              |
-| status      | text        | `disponible` \| `vendido`            |
-| artist_slug  | text        | Slug del artista                     |
-| artist_name | text        | Nombre del artista                   |
+| status      | enum        | `available` \| `reserved` \| `sold`  |
+| price_usd   | numeric     | Precio en USD                        |
+| artist_id   | bigint      | FK a `artists.id`                    |
 | year        | text        | Opcional                             |
 | medium      | text        | Opcional                             |
 | dimensions  | text        | Opcional                             |
+| weight_kg   | numeric     | Opcional                             |
+| width_cm    | numeric     | Opcional                             |
+| height_cm   | numeric     | Opcional                             |
+| depth_cm    | numeric     | Opcional                             |
 | created_at  | timestamptz |                                      |
 | updated_at  | timestamptz |                                      |
 
-Para leer estas obras desde el frontend con el cliente Supabase (anon key), usá `getSupabase().from('obras').select('*')`; la policy permite `SELECT` a todos.
+Para leer estas artworks desde el frontend con el cliente Supabase (anon key), usá `getSupabase().from('artworks').select('*')`; la policy permite `SELECT` a todos.
 
 ---
 
@@ -43,8 +46,7 @@ Desde la raíz del proyecto, con Supabase local levantado (`supabase start`):
 supabase db reset
 ```
 
-Eso aplica todas las migraciones y ejecuta `supabase/seed.sql`, dejando artistas y obras de prueba en `artworks`.  
-Si tu app lee de la tabla **`obras`** en lugar de `artworks`, ejecutá además `seed_artists.sql` y `seed_obras.sql` en el SQL Editor (en ese orden).
+Eso aplica todas las migraciones y ejecuta `supabase/seed.sql`, dejando artists y artworks de prueba en `artworks`.
 
 ### Opción B: Solo ejecutar el seed sin reset
 

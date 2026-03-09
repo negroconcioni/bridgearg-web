@@ -3,28 +3,29 @@ import Stripe from "stripe";
 import { prisma } from "../lib/prisma.js";
 
 const router = Router();
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2024-06-20" });
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2025-02-24.acacia" });
 
-/** Creates a Stripe Checkout Session with price_usd and metadata (obraId). */
-async function createCheckoutSession(obraId: number): Promise<{ url: string | null }> {
+/** Creates a Stripe Checkout Session with price_usd and metadata (artworkId). */
+async function createCheckoutSession(artworkId: number): Promise<{ url: string | null }> {
   const clientUrl = process.env.CLIENT_URL ?? "http://localhost:5173";
 
-  const obra = await prisma.obra.findUnique({
-    where: { id: obraId },
+  const artwork = await prisma.artwork.findUnique({
+    where: { id: artworkId },
+    include: { artist: { select: { name: true } } },
   });
 
-  if (!obra) {
-    throw new Error("Obra no encontrada");
+  if (!artwork) {
+    throw new Error("Artwork not found");
   }
 
-  const status = obra.status?.toLowerCase() ?? "";
-  const isAvailable = status === "available" || status === "disponible";
-  const isSold = status === "sold" || status === "vendido";
+  const status = artwork.status?.toLowerCase() ?? "";
+  const isAvailable = status === "available";
+  const isSold = status === "sold";
   if (!isAvailable) {
-    throw new Error(isSold ? "La obra ya está vendida" : "La obra no está disponible para la compra");
+    throw new Error(isSold ? "Artwork already sold" : "Artwork is not available for purchase");
   }
 
-  const priceUsd = obra.priceUsd != null ? Number(obra.priceUsd) : obra.precio / 100;
+  const priceUsd = artwork.priceUsd != null ? Number(artwork.priceUsd) : 0;
   const unitAmountCents = Math.round(priceUsd * 100);
 
   const session = await stripe.checkout.sessions.create({
@@ -35,22 +36,22 @@ async function createCheckoutSession(obraId: number): Promise<{ url: string | nu
         price_data: {
           currency: "usd",
           product_data: {
-            name: obra.titulo,
-            description: `${obra.artistName ?? ""} · ${obra.medium ?? ""}${obra.year ? ` · ${obra.year}` : ""}`.trim(),
-            images: obra.imagenUrl.startsWith("http") ? [obra.imagenUrl] : undefined,
+            name: artwork.title,
+            description: `${artwork.artist?.name ?? ""} · ${artwork.medium ?? ""}${artwork.year ? ` · ${artwork.year}` : ""}`.trim(),
+            images: artwork.imageUrl.startsWith("http") ? [artwork.imageUrl] : undefined,
           },
           unit_amount: unitAmountCents,
         },
         quantity: 1,
       },
     ],
-    success_url: `${clientUrl}/obras?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${clientUrl}/obras`,
+    success_url: `${clientUrl}/artworks?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${clientUrl}/artworks`,
     shipping_address_collection: {
       allowed_countries: ["AR", "US", "MX", "CO", "ES", "FR", "DE", "GB", "IT"],
     },
     metadata: {
-      obra_id: String(obra.id),
+      artwork_id: String(artwork.id),
     },
   });
 
@@ -58,23 +59,23 @@ async function createCheckoutSession(obraId: number): Promise<{ url: string | nu
 }
 
 router.post("/checkout", async (req: Request, res: Response): Promise<void> => {
-  const { obraId } = req.body as { obraId?: number };
+  const { artworkId } = req.body as { artworkId?: number };
 
-  if (typeof obraId !== "number" || obraId < 1) {
-    res.status(400).json({ error: "obraId inválido" });
+  if (typeof artworkId !== "number" || artworkId < 1) {
+    res.status(400).json({ error: "Invalid artworkId" });
     return;
   }
 
   try {
-    const { url } = await createCheckoutSession(obraId);
+    const { url } = await createCheckoutSession(artworkId);
     res.status(200).json({ url });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Error al crear la sesión de pago";
-    if (message === "Obra no encontrada") {
+    const message = err instanceof Error ? err.message : "Error creating checkout session";
+    if (message === "Artwork not found") {
       res.status(404).json({ error: message });
       return;
     }
-    if (message === "La obra ya está vendida" || message === "La obra no está disponible para la compra") {
+    if (message === "Artwork already sold" || message === "Artwork is not available for purchase") {
       res.status(400).json({ error: message });
       return;
     }
@@ -84,21 +85,21 @@ router.post("/checkout", async (req: Request, res: Response): Promise<void> => {
 });
 
 router.post("/create-checkout-session", async (req: Request, res: Response): Promise<void> => {
-  const { obraId } = req.body as { obraId?: number };
-  if (typeof obraId !== "number" || obraId < 1) {
-    res.status(400).json({ error: "obraId inválido" });
+  const { artworkId } = req.body as { artworkId?: number };
+  if (typeof artworkId !== "number" || artworkId < 1) {
+    res.status(400).json({ error: "Invalid artworkId" });
     return;
   }
   try {
-    const { url } = await createCheckoutSession(obraId);
+    const { url } = await createCheckoutSession(artworkId);
     res.status(200).json({ url });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Error al crear la sesión de pago";
-    if (message === "Obra no encontrada") {
+    const message = err instanceof Error ? err.message : "Error creating checkout session";
+    if (message === "Artwork not found") {
       res.status(404).json({ error: message });
       return;
     }
-    if (message === "La obra ya está vendida" || message === "La obra no está disponible para la compra") {
+    if (message === "Artwork already sold" || message === "Artwork is not available for purchase") {
       res.status(400).json({ error: message });
       return;
     }

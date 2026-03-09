@@ -71,7 +71,7 @@ Deno.serve(async (req) => {
     });
   }
 
-  let body: { obraId?: number; artworkId?: number };
+  let body: { artworkId?: number };
   try {
     body = await req.json();
   } catch {
@@ -81,9 +81,9 @@ Deno.serve(async (req) => {
     });
   }
 
-  const artworkId = body.artworkId ?? body.obraId;
+  const { artworkId } = body;
   if (typeof artworkId !== "number" || artworkId < 1) {
-    return new Response(JSON.stringify({ error: "obraId or artworkId required (number >= 1)" }), {
+    return new Response(JSON.stringify({ error: "artworkId required (number >= 1)" }), {
       status: 400,
       headers: withCors(req, { "Content-Type": "application/json" }),
     });
@@ -155,8 +155,8 @@ Deno.serve(async (req) => {
           quantity: 1,
         },
       ],
-      success_url: `${clientUrl}/obras?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${clientUrl}/obras`,
+      success_url: `${clientUrl}/artworks?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${clientUrl}/artworks`,
       metadata: {
         artwork_id: String(artworkId),
       },

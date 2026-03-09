@@ -6,7 +6,7 @@ Crea una Stripe Checkout Session a partir de un ítem en la tabla `artworks`.
 
 **Endpoint:** `POST /functions/v1/stripe-checkout`
 
-**Body:** `{ "obraId": number }` o `{ "artworkId": number }`
+**Body:** `{ "artworkId": number }`
 
 **Respuesta:** `{ "url": string | null }` — URL de Stripe para redirigir al usuario.
 
@@ -17,8 +17,8 @@ Crea una Stripe Checkout Session a partir de un ítem en la tabla `artworks`.
 | `STRIPE_SECRET_KEY` | Clave secreta de Stripe (sk_test_... o sk_live_...) |
 | `SUPABASE_URL` | URL del proyecto (suele inyectarse; opcional configurarla) |
 | `SUPABASE_SERVICE_ROLE_KEY` | Service role key para leer `artworks` |
-| `CLIENT_URL` | **Requerido en producción.** URL del frontend (sin barra final). Se usa en `success_url` y `cancel_url` de Stripe. Ej: `https://tu-dominio.com`. En local default: `http://localhost:5173` |
-| `CORS_ORIGIN` | (Opcional) Origen permitido si no coincide con CLIENT_URL. CORS permite localhost (varios puertos) y el origen derivado de `CLIENT_URL` automáticamente. |
+| `CLIENT_URL` | **Requerido en producción.** URL del frontend (sin barra final). Se usa en `success_url` y `cancel_url` de Stripe. Ej: `https://tu-dominio.com`. |
+| `CORS_ORIGIN` | (Opcional) Origen permitido si no coincide con `CLIENT_URL`. Puede incluir uno o varios orígenes separados por coma. |
 
 ---
 
@@ -69,6 +69,6 @@ supabase functions deploy stripe-checkout
 supabase functions deploy stripe-webhook
 ```
 
-## Nota sobre `obras` vs `artworks`
+## Nota sobre `artworks`
 
-Estas funciones usan la tabla **`artworks`**. Si tu catálogo sigue en la tabla `obras`, el frontend puede seguir usando la API de backend (Express) para checkout; cuando migres a `artworks`, el mismo `work.id` (artwork id) se pasa a la Edge Function.
+Estas funciones usan únicamente la tabla **`artworks`** y esperan `artworkId` en el body/metadata de Stripe.
