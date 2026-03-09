@@ -12,44 +12,44 @@ export function Footer() {
               <span className="text-display text-3xl text-muted-foreground">arg</span>
             </Link>
             <p className="text-label max-w-xs leading-relaxed">
-              Conectando el arte argentino con el mercado internacional. 
-              Una plataforma para artistas, coleccionistas y amantes del arte.
+              Connecting Argentine art with the international market.
+              A platform for artists, collectors, and art enthusiasts.
             </p>
           </div>
 
           {/* Navigation */}
           <div>
-            <h4 className="text-technical text-foreground mb-4">Navegación</h4>
+            <h4 className="text-technical text-foreground mb-4">Navigation</h4>
             <nav className="space-y-2">
               <Link to="/artistas" className="block text-label hover:text-foreground transition-colors">
-                Artistas
+                Artists
               </Link>
               <Link to="/obras" className="block text-label hover:text-foreground transition-colors">
-                Obras
+                Works
               </Link>
               <Link to="/nosotros" className="block text-label hover:text-foreground transition-colors">
-                Nosotros
+                About
               </Link>
               <Link to="/contacto" className="block text-label hover:text-foreground transition-colors">
-                Contacto
+                Contact
               </Link>
             </nav>
           </div>
 
           {/* Contact */}
           <div>
-            <h4 className="text-technical text-foreground mb-4">Contacto</h4>
+            <h4 className="text-technical text-foreground mb-4">Contact</h4>
             <div className="space-y-2">
               <p className="text-label">info@bridgearg.com</p>
               <p className="text-label">Córdoba, Argentina</p>
-              <p className="text-label">Miami, Estados Unidos</p>
+              <p className="text-label">Miami, United States</p>
             </div>
           </div>
         </div>
 
         <div className="border-t border-border mt-12 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-label">
-            © {new Date().getFullYear()} BridgeARG. Todos los derechos reservados.
+            © {new Date().getFullYear()} BridgeARG. All rights reserved.
           </p>
           <div className="flex gap-6">
             <a href="#" className="text-label hover:text-foreground transition-colors">

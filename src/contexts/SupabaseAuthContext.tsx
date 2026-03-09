@@ -10,16 +10,10 @@ import {
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
 
-if (import.meta.env.DEV) {
-  const url = import.meta.env.VITE_SUPABASE_URL;
-  const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
-  if (!isSupabaseConfigured) {
-    console.info(
-      "[Supabase] No configurado: definí VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY en el archivo .env en la raíz del proyecto (no en server/.env) y reiniciá el dev server."
-    );
-  } else {
-    console.info("[Supabase] Configurado correctamente.");
-  }
+if (import.meta.env.DEV && !isSupabaseConfigured) {
+  console.info(
+    "[Supabase] No configurado: definí VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY en .env y reiniciá el dev server."
+  );
 }
 
 type AuthState = {

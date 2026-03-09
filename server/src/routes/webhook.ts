@@ -43,7 +43,7 @@ router.post("/webhook", async (req: RequestWithRawBody, res: Response): Promise<
         try {
           await prisma.obra.update({
             where: { id },
-            data: { status: "vendido" },
+            data: { status: "sold" },
           });
           console.log(`Obra ${id} marcada como vendida.`);
         } catch (e) {
