@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import { ArrowUpRight } from "lucide-react";
 
 const artists = [
-  { name: "Artista Ejemplo 1", specialty: "Pintura Abstracta", slug: "artista-ejemplo-1" },
-  { name: "Artista Ejemplo 2", specialty: "Arte Contemporáneo", slug: "artista-ejemplo-2" },
-  { name: "Artista Ejemplo 3", specialty: "Escultura", slug: "artista-ejemplo-3" },
-  { name: "Artista Ejemplo 4", specialty: "Técnica Mixta", slug: "artista-ejemplo-4" },
+  { name: "Artist Example 1", specialty: "Abstract Painting", slug: "artista-ejemplo-1" },
+  { name: "Artist Example 2", specialty: "Contemporary Art", slug: "artista-ejemplo-2" },
+  { name: "Artist Example 3", specialty: "Sculpture", slug: "artista-ejemplo-3" },
+  { name: "Artist Example 4", specialty: "Mixed Media", slug: "artista-ejemplo-4" },
 ];
 
 export function ArtistsPreviewSection() {
@@ -37,14 +37,14 @@ export function ArtistsPreviewSection() {
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 md:mb-16">
           <div>
-            <span className="text-label block mb-4">03 / Creadores</span>
+            <span className="text-label block mb-4">03 / Creators</span>
             <h2 className="text-display text-4xl md:text-6xl">
-              Artistas<br />Representados
+              Represented<br />Artists
             </h2>
           </div>
           <Button variant="technical" asChild>
             <Link to="/artistas" className="flex items-center gap-2">
-              Ver todos
+              View All
               <ArrowUpRight className="w-4 h-4" />
             </Link>
           </Button>

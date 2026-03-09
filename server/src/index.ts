@@ -4,6 +4,7 @@ import cors from "cors";
 import checkoutRouter from "./routes/checkout.js";
 import contactRouter from "./routes/contact.js";
 import webhookRouter from "./routes/webhook.js";
+import stripeWebhookRouter from "./routes/webhooks/stripe.js";
 import worksRouter from "./routes/works.js";
 
 const app = express();
@@ -16,11 +17,16 @@ if (CORS_ORIGINS.length === 1 && CORS_ORIGINS[0] === "http://localhost:5173") {
   CORS_ORIGINS.push("http://localhost:8080");
 }
 
-// Webhook debe recibir body raw para verificar firma de Stripe
+// Webhooks: body raw para verificar firma de Stripe
 app.use(
   "/api/webhook",
   express.raw({ type: "application/json" }),
   webhookRouter
+);
+app.use(
+  "/api/webhooks/stripe",
+  express.raw({ type: "application/json" }),
+  stripeWebhookRouter
 );
 
 // Resto de rutas usan JSON

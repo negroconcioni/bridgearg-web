@@ -1,18 +1,17 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/PageTransition";
-import { Button } from "@/components/ui/button";
-import { ShoppingBag, Loader2 } from "lucide-react";
-import { getWorks, createCheckoutSession, type WorkFromApi } from "@/lib/api";
-import { getWorkImageUrl } from "@/lib/work-images";
+import { Loader2 } from "lucide-react";
+import { getWorks, type WorkFromApi } from "@/lib/api";
+import { WorkImage } from "@/components/WorkImage";
 import { toast } from "@/hooks/use-toast";
 
 const ObrasPage = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [works, setWorks] = useState<WorkFromApi[]>([]);
   const [loading, setLoading] = useState(true);
-  const [acquiringId, setAcquiringId] = useState<number | null>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -39,26 +38,13 @@ const ObrasPage = () => {
         if (!cancelled) setWorks(data);
       })
       .catch(() => {
-        if (!cancelled) toast({ title: "Error", description: "No se pudieron cargar las obras.", variant: "destructive" });
+        if (!cancelled) toast({ title: "Error", description: "Could not load works.", variant: "destructive" });
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
     return () => { cancelled = true; };
   }, []);
-
-  const handleAcquire = async (workId: number) => {
-    setAcquiringId(workId);
-    try {
-      const { url } = await createCheckoutSession(workId);
-      if (url) window.location.href = url;
-      else toast({ title: "Error", description: "No se pudo iniciar el pago.", variant: "destructive" });
-    } catch (err) {
-      toast({ title: "Error", description: err instanceof Error ? err.message : "Error al iniciar el pago.", variant: "destructive" });
-    } finally {
-      setAcquiringId(null);
-    }
-  };
 
   return (
     <PageTransition>
@@ -67,13 +53,13 @@ const ObrasPage = () => {
         <main>
           <section className="section-padded border-b border-border">
             <div className="container mx-auto">
-              <span className="text-label block mb-4">Catálogo</span>
+              <span className="text-label block mb-4">Curated Collection</span>
               <h1 className="text-display text-5xl md:text-7xl lg:text-8xl">
-                Obras
+                Works
               </h1>
               <p className="text-muted-foreground text-lg mt-6 max-w-xl">
-                Explorá nuestra colección de obras de artistas contemporáneos argentinos.
-                Cada pieza ha sido seleccionada por su calidad artística y relevancia cultural.
+                Explore our collection of works by contemporary Argentine artists.
+                Each piece has been selected for its artistic quality and cultural relevance.
               </p>
             </div>
           </section>
@@ -87,19 +73,24 @@ const ObrasPage = () => {
               ) : (
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 md:gap-8">
                   {works.map((work, index) => (
-                    <div key={work.id} className="scroll-reveal group">
-                      <div className="flex h-full flex-col border border-border bg-card">
+                    <Link
+                      key={work.id}
+                      to={`/obras/${work.id}`}
+                      className="scroll-reveal group block h-full"
+                    >
+                      <div className="flex h-full flex-col border border-border bg-card transition-shadow hover:shadow-md">
                         <div className="relative aspect-[4/5] overflow-hidden bg-muted">
-                          <img
-                            src={getWorkImageUrl(work.imagenUrl)}
-                            alt={work.titulo}
-                            className="h-full w-full object-cover"
+                          <WorkImage
+                            imagenUrl={work.imagenUrl}
+                            title={work.titulo}
+                            artistName={work.artistName}
+                            className="h-full w-full"
                           />
                           {!work.available && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-foreground/60">
-                              <span className="bg-foreground/80 px-4 py-2 text-background text-technical">
-                                Vendida
-                              </span>
+                            <div className="absolute inset-0 flex items-center justify-center bg-foreground/50">
+                              <p className="px-4 py-2 text-center text-background/95 text-sm font-light italic max-w-[80%]">
+                                This piece is now part of a private collection
+                              </p>
                             </div>
                           )}
                           <div className="absolute left-4 top-4">
@@ -123,33 +114,19 @@ const ObrasPage = () => {
                             </div>
                           </div>
                           <div className="mt-6 flex items-center justify-between">
-                            <span className="font-display text-base font-semibold text-foreground">
-                              {work.priceDisplay}
-                            </span>
-                            {work.available ? (
-                              <Button
-                                variant="acquire"
-                                size="sm"
-                                onClick={() => handleAcquire(work.id)}
-                                disabled={acquiringId === work.id}
-                                className="flex items-center gap-2 pointer-events-auto"
-                              >
-                                {acquiringId === work.id ? (
-                                  <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                  <ShoppingBag className="h-4 w-4" />
-                                )}
-                                {acquiringId === work.id ? "Procesando…" : "Adquirir"}
-                              </Button>
+                            {!work.available ? (
+                              <p className="text-muted-foreground text-sm font-light italic">
+                                This piece is now part of a private collection
+                              </p>
                             ) : (
-                              <span className="pointer-events-none inline-flex items-center rounded border border-border bg-muted px-4 py-2 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
-                                Vendido
+                              <span className="font-display text-base font-semibold text-foreground">
+                                {work.priceDisplay}
                               </span>
                             )}
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               )}

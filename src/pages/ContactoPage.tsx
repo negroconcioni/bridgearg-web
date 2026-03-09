@@ -24,14 +24,14 @@ const ContactoPage = () => {
     try {
       await submitContact(formData);
       toast({
-        title: "Mensaje enviado",
-        description: "Gracias por contactarnos. Te responderemos pronto.",
+        title: "Message sent",
+        description: "Thank you for your inquiry. We will respond shortly.",
       });
       setFormData({ name: "", email: "", subject: "", message: "" });
     } catch (err) {
       toast({
         title: "Error",
-        description: err instanceof Error ? err.message : "No se pudo enviar el mensaje.",
+        description: err instanceof Error ? err.message : "Could not send your message.",
         variant: "destructive",
       });
     } finally {
@@ -47,13 +47,13 @@ const ContactoPage = () => {
           {/* Page Header */}
           <section className="section-padded border-b border-border">
             <div className="container mx-auto">
-              <span className="text-label block mb-4">Hablemos</span>
+              <span className="text-label block mb-4">Get in Touch</span>
               <h1 className="text-display text-5xl md:text-7xl lg:text-8xl">
-                Contacto
+                Inquire
               </h1>
               <p className="text-muted-foreground text-lg mt-6 max-w-xl">
-                ¿Interesado en alguna obra? ¿Querés saber más sobre nuestros artistas? 
-                Estamos aquí para ayudarte.
+                Interested in a work? Would you like to know more about our artists?
+                We are here to help.
               </p>
             </div>
           </section>
@@ -66,12 +66,12 @@ const ContactoPage = () => {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="tech-box">
                     <label className="text-technical text-foreground block mb-3">
-                      Nombre
+                      Name
                     </label>
                     <Input
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="Tu nombre"
+                      placeholder="Your name"
                       required
                       className="bg-transparent border-border focus:border-foreground"
                     />
@@ -93,12 +93,12 @@ const ContactoPage = () => {
 
                   <div className="tech-box">
                     <label className="text-technical text-foreground block mb-3">
-                      Asunto
+                      Subject
                     </label>
                     <Input
                       value={formData.subject}
                       onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                      placeholder="Consulta sobre..."
+                      placeholder="Inquiry about..."
                       required
                       className="bg-transparent border-border focus:border-foreground"
                     />
@@ -106,12 +106,12 @@ const ContactoPage = () => {
 
                   <div className="tech-box">
                     <label className="text-technical text-foreground block mb-3">
-                      Mensaje
+                      Message
                     </label>
                     <Textarea
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      placeholder="Tu mensaje..."
+                      placeholder="Your message..."
                       required
                       rows={5}
                       className="bg-transparent border-border focus:border-foreground resize-none"
@@ -122,10 +122,10 @@ const ContactoPage = () => {
                     {sending ? (
                       <>
                         <Loader2 className="h-5 w-5 animate-spin" />
-                        Enviando…
+                        Sending…
                       </>
                     ) : (
-                      "Enviar Mensaje"
+                      "Send Message"
                     )}
                   </Button>
                 </form>
@@ -156,7 +156,7 @@ const ContactoPage = () => {
                   </div>
 
                   <div className="tech-box">
-                    <h3 className="text-technical text-foreground mb-4">Redes</h3>
+                    <h3 className="text-technical text-foreground mb-4">Follow Us</h3>
                     <div className="flex gap-4">
                       <a href="#" className="text-label hover:text-foreground transition-colors">
                         Instagram
