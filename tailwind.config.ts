@@ -14,9 +14,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['Inter', 'sans-serif'],
-        mono: ['Space Mono', 'monospace'],
-        handwriting: ['Dancing Script', 'cursive'],
+        display: ["Onest", "sans-serif"],
+        mono: ["Onest", "sans-serif"],
+        handwriting: ["Onest", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

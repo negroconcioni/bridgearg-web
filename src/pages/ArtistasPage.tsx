@@ -1,155 +1,133 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/PageTransition";
-import { ArrowUpRight } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { OptimizedImage } from "@/components/OptimizedImage";
-import bridgeWork1 from "@/assets/bridgearg-work1.jpg";
-import bridgeWork2 from "@/assets/bridgearg-work2.jpg";
-import bridgeWork3 from "@/assets/bridgearg-work3.jpg";
-import bridgeWork4 from "@/assets/bridgearg-work4.jpg";
+import { getArtists, getWorks, type ArtistFromApi, type WorkFromApi } from "@/lib/api";
+import { toast } from "@/hooks/use-toast";
 
-const artists = [
-  {
-    id: 1,
-    name: "Artist Example 1",
-    specialty: "Abstract Painting",
-    bio: "Contemporary artist specializing in abstract painting with influences from Argentine expressionism.",
-    image: bridgeWork1,
-    slug: "artista-ejemplo-1",
-  },
-  {
-    id: 2,
-    name: "Artist Example 2",
-    specialty: "Contemporary Art",
-    bio: "Explorer of new visual narratives combining traditional techniques with digital media.",
-    image: bridgeWork2,
-    slug: "artista-ejemplo-2",
-  },
-  {
-    id: 3,
-    name: "Artist Example 3",
-    specialty: "Sculpture",
-    bio: "Sculptor working with organic materials and metals, creating pieces in dialogue with space.",
-    image: bridgeWork3,
-    slug: "artista-ejemplo-3",
-  },
-  {
-    id: 4,
-    name: "Artist Example 4",
-    specialty: "Mixed Media",
-    bio: "Multidisciplinary artist fusing painting, collage, and three-dimensional elements.",
-    image: bridgeWork4,
-    slug: "artista-ejemplo-4",
-  },
-];
+type ArtistCard = {
+  artist: ArtistFromApi;
+  featuredWork: WorkFromApi | null;
+};
+
+const bridgeDividerSrc = encodeURI("/assets/BRIDGEARG - Exportacion logos - PNG-21.png");
 
 const ArtistasPage = () => {
-  const sectionRef = useRef<HTMLElement>(null);
+  const [artists, setArtists] = useState<ArtistFromApi[]>([]);
+  const [works, setWorks] = useState<WorkFromApi[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("revealed");
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
+    let cancelled = false;
+    Promise.all([getArtists(), getWorks()])
+      .then(([artistsData, worksData]) => {
+        if (cancelled) return;
+        setArtists(artistsData);
+        setWorks(worksData);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          toast({ title: "Error", description: "Could not load artists.", variant: "destructive" });
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
 
-    const elements = sectionRef.current?.querySelectorAll(".scroll-reveal");
-    elements?.forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
+    return () => {
+      cancelled = true;
+    };
   }, []);
+
+  const artistCards = useMemo<ArtistCard[]>(() => {
+    const featuredWorkByArtistSlug = new Map<string, WorkFromApi>();
+
+    for (const work of works) {
+      if (!featuredWorkByArtistSlug.has(work.artistSlug)) {
+        featuredWorkByArtistSlug.set(work.artistSlug, work);
+      }
+    }
+
+    return artists.map((artist) => ({
+      artist,
+      featuredWork: featuredWorkByArtistSlug.get(artist.slug) ?? null,
+    }));
+  }, [artists, works]);
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-[#fcf8ea]">
         <Header />
         <main>
-          {/* Page Header */}
-          <section className="section-padded border-b border-border">
-            <div className="container mx-auto">
-              <span className="text-label block mb-4">Curated Collection</span>
-              <h1 className="text-display text-5xl md:text-7xl lg:text-8xl">
+          <section className="bg-[#fcf8ea] px-6 py-32 md:px-10">
+            <div className="mx-auto max-w-5xl text-center">
+              <h1 className="font-display text-5xl font-semibold tracking-tight text-[#1e1517] md:text-7xl">
                 Artists
               </h1>
-              <p className="text-muted-foreground text-lg mt-6 max-w-xl">
-                Meet the artists represented by our gallery.
-                Each brings a distinct vision of contemporary Argentine art.
+              <p className="mx-auto mt-6 max-w-2xl font-display text-base leading-8 text-[#1e1517]/72 md:text-lg">
+                A vanguard roster of contemporary voices shaping new dialogues between Argentina
+                and the global collector.
               </p>
             </div>
           </section>
 
-          {/* Artists Grid */}
-          <section ref={sectionRef} className="section-padded">
-            <div className="container mx-auto">
-              {/* Mobile: Stories Style */}
-              <div className="md:hidden space-y-8">
-                {artists.map((artist, index) => (
-                  <Link
-                    key={artist.id}
-                    to={`/artistas/${artist.slug}`}
-                    className="group scroll-reveal stories-card block overflow-hidden"
-                  >
-                    <div className="relative w-full overflow-hidden rounded-2xl bg-background shadow-sm">
-                      <div className="relative aspect-[4/5] overflow-hidden rounded-2xl">
-                        <OptimizedImage
-                          src={artist.image}
-                          alt={artist.name}
-                          className="h-full w-full rounded-2xl"
-                        />
-                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-foreground/80 to-transparent p-6">
-                          <p className="mb-1 text-label text-background">{artist.specialty}</p>
-                          <h2 className="font-display text-lg font-semibold uppercase tracking-[0.16em] text-background">
-                            {artist.name}
-                          </h2>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
+          <section className="bg-[#fcf8ea] px-6 pb-32 md:px-10">
+            <div className="mx-auto max-w-7xl">
+              {loading ? (
+                <div className="flex items-center justify-center py-24">
+                  <Loader2 className="h-8 w-8 animate-spin text-[#1e1517]/50" />
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-16 md:grid-cols-2 lg:grid-cols-3 lg:gap-20">
+                  {artistCards.map(({ artist, featuredWork }) => (
+                    <Link
+                      key={artist.id}
+                      to={`/artistas/${artist.slug}`}
+                      className="group flex flex-col items-center"
+                    >
+                      <div className="w-full max-w-[260px]">
+                        <div className="relative aspect-[2/3] overflow-hidden rounded-full bg-[#f3ecdd] transition-transform duration-500 ease-out group-hover:scale-105">
+                          <OptimizedImage
+                            src={artist.imageUrl ?? ""}
+                            alt={artist.name}
+                            className="h-full w-full"
+                            imageClassName="object-cover transition-all duration-700 ease-out group-hover:scale-105 group-hover:opacity-0"
+                            logSrcOnError
+                          />
 
-              {/* Desktop: Grid Style */}
-              <div className="hidden md:grid grid-cols-2 gap-6">
-                {artists.map((artist, index) => (
-                  <Link
-                    key={artist.id}
-                    to={`/artistas/${artist.slug}`}
-                    className="group scroll-reveal overflow-hidden"
-                  >
-                    <div className="relative w-full overflow-hidden rounded-2xl bg-background shadow-sm transition-transform duration-300 ease-out hover:scale-[1.01] hover:shadow-md">
-                      <div className="art-image-container relative aspect-[4/5] rounded-2xl overflow-hidden">
-                        <OptimizedImage
-                          src={artist.image}
-                          alt={artist.name}
-                          className="h-full w-full rounded-2xl"
-                        />
-                        <div className="absolute inset-0 flex items-center justify-center bg-foreground/0 transition-colors duration-300 group-hover:bg-foreground/80">
-                          <div className="p-6 text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                            <p className="mb-2 text-background text-label">{artist.specialty}</p>
-                            <h2 className="mb-4 font-display text-base md:text-lg font-semibold uppercase tracking-[0.16em] text-background">
-                              {artist.name}
-                            </h2>
-                            <p className="mx-auto text-sm text-background/70 max-w-xs">
-                              {artist.bio}
-                            </p>
-                            <div className="mt-6 flex items-center justify-center gap-2 text-background">
-                              <span className="text-technical">View Works</span>
-                              <ArrowUpRight className="w-4 h-4" />
-                            </div>
-                          </div>
+                          {featuredWork ? (
+                            <OptimizedImage
+                              src={featuredWork.imagenUrl}
+                              title={featuredWork.title}
+                              artistName={artist.name}
+                              variant="artwork"
+                              className="absolute inset-0 h-full w-full"
+                              imageClassName="object-cover opacity-0 transition-all duration-700 ease-out group-hover:scale-105 group-hover:opacity-100"
+                            />
+                          ) : null}
                         </div>
                       </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
+
+                      <div className="pt-6 text-center">
+                        <p
+                          className="text-4xl text-[#1e1517]/90 md:text-5xl"
+                          style={{ fontFamily: "BestDB, serif" }}
+                        >
+                          {artist.name}
+                        </p>
+                        <img
+                          src={bridgeDividerSrc}
+                          alt=""
+                          className="mx-auto mt-3 h-3 w-auto object-contain opacity-25"
+                        />
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
           </section>
         </main>

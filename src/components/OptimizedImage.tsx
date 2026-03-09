@@ -20,6 +20,8 @@ export interface OptimizedImageProps {
   className?: string;
   /** Classes for the <img> element (in addition to object-cover + transitions). */
   imageClassName?: string;
+  /** Log the resolved src if the image fails to load. */
+  logSrcOnError?: boolean;
 }
 
 /**
@@ -39,6 +41,7 @@ export function OptimizedImage({
   variant = "plain",
   className = "",
   imageClassName = "",
+  logSrcOnError = false,
 }: OptimizedImageProps) {
   const [loaded, setLoaded] = useState(false);
 
@@ -75,6 +78,11 @@ export function OptimizedImage({
         className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${imageClassName}`}
         style={{ opacity: loaded ? 1 : 0 }}
         onLoad={() => setLoaded(true)}
+        onError={() => {
+          if (logSrcOnError) {
+            console.log("[OptimizedImage] Failed to load image src:", resolvedSrc);
+          }
+        }}
       />
     </div>
   );

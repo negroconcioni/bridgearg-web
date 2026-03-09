@@ -18,6 +18,7 @@ export const AnimatedRoutes = () => {
         <Route path="/" element={<Index />} />
         <Route path="/artistas" element={<ArtistasPage />} />
         <Route path="/artistas/:slug" element={<ArtistaDetailPage />} />
+        <Route path="/works" element={<ArtworksPage />} />
         <Route path="/artworks" element={<ArtworksPage />} />
         <Route path="/artworks/:id" element={<ArtworkDetailPage />} />
         <Route path="/nosotros" element={<NosotrosPage />} />

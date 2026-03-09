@@ -46,39 +46,60 @@ export interface WorkFromApi {
   depth_cm: number | null;
 }
 
-// --- Artworks table (artworks + artists with name, bio, photo) ---
+// --- Artworks / artists tables ---
 
-/** Artist row from DB (artists table: name, bio, photo). */
+/** Artist row from DB for artist pages/listing. */
 export interface ArtistRow {
   id: number;
   name: string;
+  slug: string;
   bio: string | null;
-  photo: string | null;
+  image_url: string | null;
   created_at?: string;
   updated_at?: string;
 }
 
-/** Relation when selecting artworks with artists (slug for routing). */
-export type ArtworkRowArtist = { name: string; bio: string | null; photo: string | null; slug?: string } | null;
+export interface ArtistFromApi {
+  id: number;
+  name: string;
+  slug: string;
+  bio: string | null;
+  imageUrl: string | null;
+}
 
-/** Row from artworks table (snake_case). Use with .select(..., artists(name,bio,photo,slug)). */
+/** Relation when selecting artworks with artists (slug for routing). */
+export type ArtworkRowArtist = { name: string; bio: string | null; image_url: string | null; slug?: string } | null;
+
+/** Row from artworks table (snake_case). Use with .select(..., artists(name,bio,image_url,slug)). */
 export interface ArtworkRow {
   id: number;
   title: string;
   image_url: string;
   status: ArtworkStatus;
   price_usd: number | null;
-  dimensions: string | null;
-  weight_kg: number | null;
+  dimensions?: string | null;
+  weight_kg?: number | null;
   width_cm?: number | null;
   height_cm?: number | null;
   depth_cm?: number | null;
   artist_id: number;
-  year: string | null;
-  medium: string | null;
+  year?: string | null;
+  medium?: string | null;
   created_at?: string;
   updated_at?: string;
   artists: ArtworkRowArtist;
+}
+
+type ArtworkOptionalFields = Pick<ArtworkRow, "id" | "dimensions" | "weight_kg" | "width_cm" | "height_cm" | "depth_cm">;
+
+function mapArtistRowToArtist(row: ArtistRow): ArtistFromApi {
+  return {
+    id: row.id,
+    name: row.name,
+    slug: row.slug,
+    bio: row.bio ?? null,
+    imageUrl: row.image_url?.trim() || null,
+  };
 }
 
 /** Normalized artwork for UI (from artworks table). */
@@ -114,7 +135,7 @@ function mapArtworkRowToArtwork(row: ArtworkRow): ArtworkFromApi {
     artistId: row.artist_id,
     artistName: getArtistDisplayName(row.artists),
     artistBio: row.artists?.bio ?? null,
-    artistPhoto: row.artists?.photo ?? null,
+    artistPhoto: row.artists?.image_url ?? null,
     year: row.year ?? null,
     medium: row.medium ?? null,
     available: isAvailableStatus(row.status),
@@ -145,34 +166,63 @@ function mapArtworkRowToWork(row: ArtworkRow): WorkFromApi {
   };
 }
 
+async function enrichArtworksWithOptionalFields(
+  sb: import("@supabase/supabase-js").SupabaseClient,
+  rows: ArtworkRow[]
+): Promise<ArtworkRow[]> {
+  const ids = rows.map((row) => row.id);
+  if (ids.length === 0) return rows;
+
+  try {
+    const { data, error } = await sb
+      .from("artworks")
+      .select("id,dimensions,weight_kg,width_cm,height_cm,depth_cm")
+      .in("id", ids);
+
+    if (error || !data) return rows;
+
+    const optionalById = new Map<number, ArtworkOptionalFields>(
+      (data as ArtworkOptionalFields[]).map((row) => [row.id, row])
+    );
+
+    return rows.map((row) => ({ ...row, ...optionalById.get(row.id) }));
+  } catch {
+    // Production may not have these optional logistics columns yet.
+    return rows;
+  }
+}
+
 /** Fetches works from artworks table. */
 async function fetchWorksFromArtworks(sb: import("@supabase/supabase-js").SupabaseClient, artistSlug?: string): Promise<WorkFromApi[]> {
   const select = artistSlug
-    ? "id,title,image_url,status,price_usd,dimensions,weight_kg,width_cm,height_cm,depth_cm,artist_id,year,medium,artists!inner(name,slug)"
-    : "id,title,image_url,status,price_usd,dimensions,weight_kg,width_cm,height_cm,depth_cm,artist_id,year,medium,artists(name,slug)";
+    ? "id,title,image_url,status,price_usd,artist_id,year,medium,artists!inner(name,slug)"
+    : "id,title,image_url,status,price_usd,artist_id,year,medium,artists(name,slug)";
   let query = sb.from("artworks").select(select).order("id", { ascending: true });
   if (artistSlug) query = query.eq("artists.slug", artistSlug);
   const { data, error } = await query;
   if (error) throw new Error(error.message ?? "Could not load works from artworks");
-  return (data ?? []).map((row) => mapArtworkRowToWork(row as ArtworkRow));
+  const rows = await enrichArtworksWithOptionalFields(sb, (data ?? []) as ArtworkRow[]);
+  return rows.map((row) => mapArtworkRowToWork(row));
 }
 
 /** Fetches a single work from artworks by id. */
 async function fetchWorkFromArtworks(sb: import("@supabase/supabase-js").SupabaseClient, id: number): Promise<WorkFromApi | null> {
-  const select = "id,title,image_url,status,price_usd,dimensions,weight_kg,width_cm,height_cm,depth_cm,artist_id,year,medium,artists(name,slug)";
+  const select = "id,title,image_url,status,price_usd,artist_id,year,medium,artists(name,slug)";
   const { data, error } = await sb.from("artworks").select(select).eq("id", id).single();
   if (error) {
     if (error.code === "PGRST116") return null;
     throw new Error(error.message ?? "Could not load work from artworks");
   }
-  return data ? mapArtworkRowToWork(data as ArtworkRow) : null;
+  if (!data) return null;
+  const [row] = await enrichArtworksWithOptionalFields(sb, [data as ArtworkRow]);
+  return row ? mapArtworkRowToWork(row) : null;
 }
 
 /** Fetch artworks from Supabase (table artworks). */
 export async function getArtworks(artistId?: number): Promise<ArtworkFromApi[]> {
   const { supabase, isSupabaseConfigured } = await import("@/lib/supabaseClient");
   if (!isSupabaseConfigured || !supabase) return [];
-  const select = "id,title,image_url,status,price_usd,dimensions,weight_kg,artist_id,year,medium,artists(name,bio,photo)";
+  const select = "id,title,image_url,status,price_usd,artist_id,year,medium,artists(name,bio,image_url)";
   let query = supabase.from("artworks").select(select).order("id", { ascending: true });
   if (artistId != null) query = query.eq("artist_id", artistId);
   const { data, error } = await query;
@@ -180,49 +230,65 @@ export async function getArtworks(artistId?: number): Promise<ArtworkFromApi[]> 
   return (data ?? []).map(mapArtworkRowToArtwork);
 }
 
-async function fetchWorksFromApi(artistSlug?: string): Promise<WorkFromApi[]> {
-  const url = artistSlug ? `${API_BASE}/api/works?artistSlug=${encodeURIComponent(artistSlug)}` : `${API_BASE}/api/works`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error("Could not load works");
-  return res.json();
+export async function getArtists(): Promise<ArtistFromApi[]> {
+  const { supabase, isSupabaseConfigured } = await import("@/lib/supabaseClient");
+  if (!isSupabaseConfigured || !supabase) return [];
+  const { data, error } = await supabase.from("artists").select("id,name,slug,bio,image_url").order("name", { ascending: true });
+  if (error) throw new Error(error.message ?? "Could not load artists");
+  return (data ?? []).map((row) => mapArtistRowToArtist(row as ArtistRow));
+}
+
+export async function getAvailableCount(): Promise<number> {
+  const { supabase, isSupabaseConfigured } = await import("@/lib/supabaseClient");
+  if (!isSupabaseConfigured || !supabase) return 0;
+
+  const { count, error } = await supabase
+    .from("artworks")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "available");
+
+  if (error) throw new Error(error.message ?? "Could not load available artworks count");
+  return count ?? 0;
+}
+
+export async function getArtistBySlug(slug: string): Promise<ArtistFromApi | null> {
+  const { supabase, isSupabaseConfigured } = await import("@/lib/supabaseClient");
+  if (!isSupabaseConfigured || !supabase) return null;
+  const { data, error } = await supabase.from("artists").select("id,name,slug,bio,image_url").eq("slug", slug).single();
+  if (error) {
+    if (error.code === "PGRST116") return null;
+    throw new Error(error.message ?? "Could not load artist");
+  }
+  return data ? mapArtistRowToArtist(data as ArtistRow) : null;
 }
 
 export async function getWorks(artistSlug?: string): Promise<WorkFromApi[]> {
   const { supabase, isSupabaseConfigured } = await import("@/lib/supabaseClient");
-
-  if (isSupabaseConfigured && supabase) {
-    try {
-      return await fetchWorksFromArtworks(supabase, artistSlug);
-    } catch (err) {
-      console.warn("Supabase artworks failed, falling back to API:", err);
-      return fetchWorksFromApi(artistSlug);
-    }
-  }
-
-  return fetchWorksFromApi(artistSlug);
+  if (!isSupabaseConfigured || !supabase) return [];
+  return fetchWorksFromArtworks(supabase, artistSlug);
 }
 
-async function fetchWorkFromApi(id: number): Promise<WorkFromApi | null> {
-  const res = await fetch(`${API_BASE}/api/works/${id}`);
-  if (res.status === 404) return null;
-  if (!res.ok) throw new Error("Could not load work");
-  return res.json();
+export async function getLatestWorks(limit = 20): Promise<WorkFromApi[]> {
+  const { supabase, isSupabaseConfigured } = await import("@/lib/supabaseClient");
+  if (!isSupabaseConfigured || !supabase) return [];
+
+  const { data, error } = await supabase
+    .from("artworks")
+    .select("id,title,image_url,status,price_usd,artist_id,year,medium,artists(name,slug)")
+    .order("id", { ascending: false })
+    .limit(limit);
+
+  if (error) throw new Error(error.message ?? "Could not load latest works");
+
+  const rows = await enrichArtworksWithOptionalFields(supabase, (data ?? []) as ArtworkRow[]);
+  return rows.map((row) => mapArtworkRowToWork(row));
 }
 
 /** Fetches a single work by id for the detail/sales page. */
 export async function getWork(id: number): Promise<WorkFromApi | null> {
   const { supabase, isSupabaseConfigured } = await import("@/lib/supabaseClient");
-
-  if (isSupabaseConfigured && supabase) {
-    try {
-      return await fetchWorkFromArtworks(supabase, id);
-    } catch (err) {
-      console.warn("Supabase artworks getWork failed, falling back to API:", err);
-      return fetchWorkFromApi(id);
-    }
-  }
-
-  return fetchWorkFromApi(id);
+  if (!isSupabaseConfigured || !supabase) return null;
+  return fetchWorkFromArtworks(supabase, id);
 }
 
 /** Creates a Checkout Session via the backend API (Express). */

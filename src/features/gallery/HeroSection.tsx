@@ -1,69 +1,50 @@
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { ArrowDown } from "lucide-react";
+import { useEffect, useState } from "react";
+import { getAvailableCount } from "@/lib/api";
+
+const heroImageUrl = "/assets/ui/new-hero-bg-2.png";
 
 export function HeroSection() {
+  const [availableCount, setAvailableCount] = useState<number>(0);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    getAvailableCount()
+      .then((count) => {
+        if (!cancelled) setAvailableCount(count);
+      })
+      .catch(() => {
+        if (!cancelled) setAvailableCount(0);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
-    <section className="relative min-h-[90vh] md:min-h-[90vh] flex items-center bg-background overflow-hidden">
-      {/* Mobile: Centered Logo */}
-      <div className="md:hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-        <div className="flex items-baseline gap-1 justify-center">
-          <span className="text-display text-6xl">bridge</span>
-          <span className="text-display text-6xl text-muted-foreground">arg</span>
-        </div>
-      </div>
-      {/* Grid Background Pattern */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-px h-full bg-border opacity-50" />
-        <div className="absolute top-0 left-2/4 w-px h-full bg-border opacity-50" />
-        <div className="absolute top-0 left-3/4 w-px h-full bg-border opacity-50" />
-        <div className="absolute top-1/3 left-0 w-full h-px bg-border opacity-50" />
-        <div className="absolute top-2/3 left-0 w-full h-px bg-border opacity-50" />
-      </div>
+    <section className="relative w-full overflow-hidden" style={{ minHeight: "calc(100vh - 100px)" }}>
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: `url("${heroImageUrl}")`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      />
+      <div className="absolute inset-0 z-10 bg-[#1e1517]/80" />
 
-      <div className="container mx-auto relative z-10">
-        <div className="max-w-5xl">
-          {/* Label */}
-          <div className="mb-8 animate-fade-up hidden md:block">
-            <span className="text-label">Contemporary Art Gallery</span>
-          </div>
-
-          {/* Main Title - Hidden on mobile, shown on desktop */}
-          <h1 className="hero-title mb-8 animate-fade-up animate-stagger-1 hidden md:block">
-            bridge
-            <span className="text-muted-foreground">arg</span>
-          </h1>
-
-          {/* Subtitle */}
-          <p className="text-lg md:text-xl text-muted-foreground max-w-xl mb-12 animate-fade-up animate-stagger-2 font-light leading-relaxed">
-            We connect Argentine art with the world.
-            A platform bridging emerging artists and international collectors.
+      <div className="relative z-20 mx-auto flex min-h-[calc(100vh-100px)] max-w-[1800px] items-center justify-center px-6 py-12 md:px-12 lg:px-24">
+        <div className="flex w-full max-w-3xl flex-col gap-y-3 text-center md:gap-y-4">
+          <p className="font-display text-sm font-medium uppercase tracking-[0.2em] text-white md:text-base 2xl:text-lg">
+            BATCH #1: LIMITED VAULT
           </p>
-
-          {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-4 animate-fade-up animate-stagger-3">
-            <Button variant="hero" asChild>
-              <Link to="/artistas">Explore Artists</Link>
-            </Button>
-            <Button variant="technical" asChild>
-              <Link to="/artworks">View Works</Link>
-            </Button>
-          </div>
-        </div>
-
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-fade-up animate-stagger-4">
-          <div className="flex flex-col items-center gap-2">
-            <span className="text-label">Scroll</span>
-            <ArrowDown className="w-4 h-4 animate-bounce" />
-          </div>
-        </div>
-      </div>
-
-      {/* Corner Decorations */}
-      <div className="absolute top-8 right-8 hidden md:block">
-        <div className="tech-box w-20 h-20 flex items-center justify-center">
-          <span className="text-technical text-[10px]">Est. 2026</span>
+          <p className="font-display text-7xl font-extralight leading-none tracking-tighter text-white sm:text-8xl md:text-9xl lg:text-[10rem] xl:text-[12rem] 2xl:text-[14rem]">
+            {availableCount}
+          </p>
+          <p className="font-display text-lg font-light uppercase tracking-[0.18em] text-white md:text-xl xl:text-2xl 2xl:text-3xl">
+            WORKS STILL AVAILABLE
+          </p>
         </div>
       </div>
     </section>
