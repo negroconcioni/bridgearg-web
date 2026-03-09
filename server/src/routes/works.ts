@@ -3,15 +3,13 @@ import { prisma } from "../lib/prisma.js";
 
 const router = Router();
 
-function mapObraToJson(o: {
+function mapArtworkToJson(artwork: {
   id: number;
-  titulo: string;
-  precio: number;
+  title: string;
   priceUsd: unknown;
-  imagenUrl: string;
+  imageUrl: string;
   status: string;
-  artistName: string | null;
-  artistSlug: string;
+  artist: { name: string; slug: string } | null;
   year: string | null;
   medium: string | null;
   dimensions: string | null;
@@ -20,25 +18,24 @@ function mapObraToJson(o: {
   heightCm: unknown;
   depthCm: unknown;
 }) {
-  const priceUsd = o.priceUsd != null ? Number(o.priceUsd) : o.precio / 100;
+  const priceUsd = artwork.priceUsd != null ? Number(artwork.priceUsd) : 0;
   return {
-    id: o.id,
-    titulo: o.titulo,
-    precio: o.precio,
+    id: artwork.id,
+    title: artwork.title,
     price_usd: priceUsd,
     priceDisplay: `USD ${Number(priceUsd).toLocaleString("en-US")}`,
-    imagenUrl: o.imagenUrl,
-    status: o.status,
-    available: o.status === "available" || o.status === "disponible",
-    artistName: o.artistName ?? "",
-    artistSlug: o.artistSlug,
-    year: o.year,
-    medium: o.medium,
-    dimensions: o.dimensions,
-    weight_kg: o.weightKg != null ? Number(o.weightKg) : null,
-    width_cm: o.widthCm != null ? Number(o.widthCm) : null,
-    height_cm: o.heightCm != null ? Number(o.heightCm) : null,
-    depth_cm: o.depthCm != null ? Number(o.depthCm) : null,
+    imagenUrl: artwork.imageUrl,
+    status: artwork.status,
+    available: artwork.status === "available",
+    artistName: artwork.artist?.name ?? "",
+    artistSlug: artwork.artist?.slug ?? "",
+    year: artwork.year,
+    medium: artwork.medium,
+    dimensions: artwork.dimensions,
+    weight_kg: artwork.weightKg != null ? Number(artwork.weightKg) : null,
+    width_cm: artwork.widthCm != null ? Number(artwork.widthCm) : null,
+    height_cm: artwork.heightCm != null ? Number(artwork.heightCm) : null,
+    depth_cm: artwork.depthCm != null ? Number(artwork.depthCm) : null,
   };
 }
 
@@ -46,30 +43,35 @@ router.get("/works", async (req: Request, res: Response): Promise<void> => {
   const artistSlug = typeof req.query.artistSlug === "string" ? req.query.artistSlug : undefined;
 
   try {
-    const obras = await prisma.obra.findMany({
-      where: artistSlug ? { artistSlug } : undefined,
+    const artworks = await prisma.artwork.findMany({
+      where: artistSlug ? { artist: { slug: artistSlug } } : undefined,
       orderBy: { id: "asc" },
+      include: { artist: { select: { name: true, slug: true } } },
     });
-    res.status(200).json(obras.map(mapObraToJson));
+    res.status(200).json(artworks.map(mapArtworkToJson));
   } catch (err) {
     console.error("GET /works error:", err);
-    res.status(500).json({ error: "Error al listar obras" });
+    res.status(500).json({ error: "Error listing artworks" });
   }
 });
 
 router.get("/works/:id", async (req: Request, res: Response): Promise<void> => {
-  const id = parseInt(req.params.id, 10);
+  const idParam = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+  const id = parseInt(idParam, 10);
   if (Number.isNaN(id) || id < 1) {
     res.status(400).json({ error: "Invalid work id" });
     return;
   }
   try {
-    const obra = await prisma.obra.findUnique({ where: { id } });
-    if (!obra) {
+    const artwork = await prisma.artwork.findUnique({
+      where: { id },
+      include: { artist: { select: { name: true, slug: true } } },
+    });
+    if (!artwork) {
       res.status(404).json({ error: "Work not found" });
       return;
     }
-    res.status(200).json(mapObraToJson(obra));
+    res.status(200).json(mapArtworkToJson(artwork));
   } catch (err) {
     console.error("GET /works/:id error:", err);
     res.status(500).json({ error: "Error loading work" });

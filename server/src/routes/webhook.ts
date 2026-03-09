@@ -3,7 +3,7 @@ import Stripe from "stripe";
 import { prisma } from "../lib/prisma.js";
 
 const router = Router();
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2024-06-20" });
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2025-02-24.acacia" });
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
 type RequestWithRawBody = Request & { rawBody?: Buffer };
@@ -35,19 +35,19 @@ router.post("/webhook", async (req: RequestWithRawBody, res: Response): Promise<
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
-    const obraId = session.metadata?.obra_id;
+    const artworkId = session.metadata?.artwork_id;
 
-    if (obraId) {
-      const id = parseInt(obraId, 10);
+    if (artworkId) {
+      const id = parseInt(artworkId, 10);
       if (!Number.isNaN(id)) {
         try {
-          await prisma.obra.update({
+          await prisma.artwork.update({
             where: { id },
             data: { status: "sold" },
           });
-          console.log(`Obra ${id} marcada como vendida.`);
+          console.log(`Artwork ${id} marked as sold.`);
         } catch (e) {
-          console.error("Error actualizando obra:", e);
+          console.error("Error updating artwork:", e);
         }
       }
     }

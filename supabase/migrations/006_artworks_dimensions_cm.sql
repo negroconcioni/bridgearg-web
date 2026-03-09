@@ -1,5 +1,5 @@
 -- Add width_cm, height_cm, depth_cm to artworks (logistics dimensions).
--- Matches obras table structure. Run after 005_create_artworks.sql.
+-- Adds logistics dimensions to artworks. Run after 005_create_artworks.sql.
 
 ALTER TABLE public.artworks ADD COLUMN IF NOT EXISTS width_cm  NUMERIC(8, 2);
 ALTER TABLE public.artworks ADD COLUMN IF NOT EXISTS height_cm NUMERIC(8, 2);

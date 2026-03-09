@@ -76,7 +76,7 @@
 Para que Stripe pida dirección de envío y calcule costo:
 
 1. En el dashboard: **Settings** → **Shipping and tax** (o **Shipping rates**).
-2. Activá “Collect shipping address” y creá **Shipping rates** (ej. por país o por precio).
+2. Activá “Collect shipping address” y creá **Shipping rates** (ej. por país o por importe).
 3. El endpoint `POST /api/create-checkout-session` ya usa `shipping_address_collection` con una lista de países permitidos; podés editarla en `server/src/routes/checkout.ts` si hace falta.
 
 ---

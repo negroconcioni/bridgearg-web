@@ -5,6 +5,13 @@ export function formatPriceUSD(amountUsd: number): string {
   return `USD ${Number(amountUsd).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
 }
 
+export const FALLBACK_ARTIST_NAME = "Unknown artist";
+
+function getArtistDisplayName(artist: { name?: string | null } | null | undefined): string {
+  const name = artist?.name?.trim();
+  return name || FALLBACK_ARTIST_NAME;
+}
+
 /** Status for artworks (DB enum artwork_status_enum). */
 export type WorkStatus = "available" | "reserved" | "sold";
 export type ArtworkStatus = WorkStatus;
@@ -19,10 +26,7 @@ export function isSoldStatus(status: string): boolean {
 
 export interface WorkFromApi {
   id: number;
-  titulo: string;
-  /** Precio en centavos (legacy). Preferir price_usd para mostrar. */
-  precio: number;
-  /** Precio en dólares USD (export/catálogo). */
+  title: string;
   price_usd: number;
   priceDisplay: string;
   imagenUrl: string;
@@ -41,29 +45,6 @@ export interface WorkFromApi {
   height_cm: number | null;
   depth_cm: number | null;
 }
-
-/** Relación artist en select de obras (artists.name, artists.slug). */
-export type ObraRowArtist = { name: string; slug: string } | null;
-
-/** Filas de obras con relación artists (snake_case). artist_slug se mantiene para routing. */
-export type ObraRow = {
-  id: number;
-  titulo: string;
-  precio: number;
-  price_usd: number;
-  imagen_url: string;
-  status: WorkStatus;
-  artist_id: number;
-  artist_slug: string;
-  year: string | null;
-  medium: string | null;
-  dimensions: string | null;
-  weight_kg: number | null;
-  width_cm: number | null;
-  height_cm: number | null;
-  depth_cm: number | null;
-  artists: ObraRowArtist;
-};
 
 // --- Artworks table (artworks + artists with name, bio, photo) ---
 
@@ -131,7 +112,7 @@ function mapArtworkRowToArtwork(row: ArtworkRow): ArtworkFromApi {
     dimensions: row.dimensions ?? null,
     weight_kg: row.weight_kg ?? null,
     artistId: row.artist_id,
-    artistName: row.artists?.name ?? "",
+    artistName: getArtistDisplayName(row.artists),
     artistBio: row.artists?.bio ?? null,
     artistPhoto: row.artists?.photo ?? null,
     year: row.year ?? null,
@@ -140,20 +121,19 @@ function mapArtworkRowToArtwork(row: ArtworkRow): ArtworkFromApi {
   };
 }
 
-/** Maps artwork row to WorkFromApi. Use artworks as single source so checkout (stripe-checkout) finds by id. */
+/** Maps artwork row to WorkFromApi. */
 function mapArtworkRowToWork(row: ArtworkRow): WorkFromApi {
   const priceUsd = row.price_usd ?? 0;
   const artistSlug = (row.artists as { slug?: string } | null)?.slug ?? "";
   return {
     id: row.id,
-    titulo: row.title,
-    precio: Math.round(priceUsd * 100),
+    title: row.title,
     price_usd: priceUsd,
     priceDisplay: formatPriceUSD(priceUsd),
     imagenUrl: row.image_url,
     status: row.status,
     available: isAvailableStatus(row.status),
-    artistName: row.artists?.name ?? "",
+    artistName: getArtistDisplayName(row.artists),
     artistSlug,
     year: row.year ?? null,
     medium: row.medium ?? null,
@@ -165,7 +145,7 @@ function mapArtworkRowToWork(row: ArtworkRow): WorkFromApi {
   };
 }
 
-/** Fetches works from artworks table (same source as stripe-checkout). */
+/** Fetches works from artworks table. */
 async function fetchWorksFromArtworks(sb: import("@supabase/supabase-js").SupabaseClient, artistSlug?: string): Promise<WorkFromApi[]> {
   const select = artistSlug
     ? "id,title,image_url,status,price_usd,dimensions,weight_kg,width_cm,height_cm,depth_cm,artist_id,year,medium,artists!inner(name,slug)"
@@ -188,7 +168,7 @@ async function fetchWorkFromArtworks(sb: import("@supabase/supabase-js").Supabas
   return data ? mapArtworkRowToWork(data as ArtworkRow) : null;
 }
 
-/** Fetch artworks from Supabase (table artworks). Use when you switch from obras to artworks. */
+/** Fetch artworks from Supabase (table artworks). */
 export async function getArtworks(artistId?: number): Promise<ArtworkFromApi[]> {
   const { supabase, isSupabaseConfigured } = await import("@/lib/supabaseClient");
   if (!isSupabaseConfigured || !supabase) return [];
@@ -198,31 +178,6 @@ export async function getArtworks(artistId?: number): Promise<ArtworkFromApi[]> 
   const { data, error } = await query;
   if (error) throw new Error(error.message ?? "Could not load artworks");
   return (data ?? []).map(mapArtworkRowToArtwork);
-}
-
-function mapObraRowToWork(row: ObraRow): WorkFromApi {
-  const artistName = row.artists?.name ?? "";
-  const artistSlug = row.artist_slug ?? row.artists?.slug ?? "";
-  const priceUsd = row.price_usd ?? row.precio / 100;
-  return {
-    id: row.id,
-    titulo: row.titulo,
-    precio: row.precio,
-    price_usd: priceUsd,
-    priceDisplay: formatPriceUSD(priceUsd),
-    imagenUrl: row.imagen_url,
-    status: row.status,
-    available: isAvailableStatus(row.status),
-    artistName,
-    artistSlug,
-    year: row.year,
-    medium: row.medium,
-    dimensions: row.dimensions,
-    weight_kg: row.weight_kg ?? null,
-    width_cm: row.width_cm ?? null,
-    height_cm: row.height_cm ?? null,
-    depth_cm: row.depth_cm ?? null,
-  };
 }
 
 async function fetchWorksFromApi(artistSlug?: string): Promise<WorkFromApi[]> {
@@ -271,11 +226,11 @@ export async function getWork(id: number): Promise<WorkFromApi | null> {
 }
 
 /** Creates a Checkout Session via the backend API (Express). */
-export async function createCheckoutSession(obraId: number): Promise<{ url: string | null }> {
+export async function createCheckoutSession(artworkId: number): Promise<{ url: string | null }> {
   const res = await fetch(`${API_BASE}/api/checkout`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ obraId }),
+    body: JSON.stringify({ artworkId }),
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.error ?? "Could not create checkout session");
@@ -299,31 +254,31 @@ export class CheckoutError extends Error {
  * falls back to Express POST /api/checkout when Supabase is not configured or Edge Function fails.
  * Use this for checkout to support both Supabase-only and Express-only deployments.
  */
-export async function createCheckout(obraId: number): Promise<{ url: string | null }> {
+export async function createCheckout(artworkId: number): Promise<{ url: string | null }> {
   const { isSupabaseConfigured } = await import("@/lib/supabaseClient");
 
   if (isSupabaseConfigured) {
     try {
-      return await createStripeCheckoutViaEdgeFunction(obraId);
+      return await createStripeCheckoutViaEdgeFunction(artworkId);
     } catch (err) {
       console.warn("Supabase Edge Function checkout failed, falling back to Express:", err);
-      return createCheckoutSession(obraId);
+      return createCheckoutSession(artworkId);
     }
   }
 
-  return createCheckoutSession(obraId);
+  return createCheckoutSession(artworkId);
 }
 
 /**
  * Creates a Stripe Checkout Session via Supabase Edge Function "stripe-checkout".
- * Invokes supabase.functions.invoke("stripe-checkout", { body: { obraId } }).
+ * Invokes supabase.functions.invoke("stripe-checkout", { body: { artworkId } }).
  * Returns the Stripe URL for redirect; throws CheckoutError with kind for friendly UI.
  */
-export async function createStripeCheckoutViaEdgeFunction(obraId: number): Promise<{ url: string | null }> {
+export async function createStripeCheckoutViaEdgeFunction(artworkId: number): Promise<{ url: string | null }> {
   const { getSupabase } = await import("@/lib/supabaseClient");
   const supabase = getSupabase();
   const { data, error } = await supabase.functions.invoke("stripe-checkout", {
-    body: { obraId },
+    body: { artworkId },
   });
   if (error) {
     const msg = error.message ?? "Could not create checkout session";

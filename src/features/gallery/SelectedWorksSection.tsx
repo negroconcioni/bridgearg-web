@@ -28,7 +28,7 @@ export function SelectedWorksSection() {
             </h2>
           </div>
           <Button variant="technical" asChild>
-            <Link to="/obras" className="flex items-center gap-2">
+            <Link to="/artworks" className="flex items-center gap-2">
               View All Works
               <ArrowUpRight className="w-4 h-4" />
             </Link>

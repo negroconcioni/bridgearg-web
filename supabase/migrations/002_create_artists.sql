@@ -1,4 +1,4 @@
--- Tabla artists. Ejecutar después de 001_create_obras.sql.
+-- Tabla artists. Ejecutar antes de 005_create_artworks.sql.
 -- https://supabase.com/dashboard → SQL Editor
 
 CREATE TABLE IF NOT EXISTS public.artists (
