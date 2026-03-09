@@ -1,8 +1,54 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=Dancing+Script:wght@400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: "Onest";
+  src: url("/fonts/ONEST/Onest-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Onest";
+  src: url("/fonts/ONEST/Onest-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Onest";
+  src: url("/fonts/ONEST/Onest-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Onest";
+  src: url("/fonts/ONEST/Onest-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Onest";
+  src: url("/fonts/ONEST/Onest-ExtraBold.ttf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "BestDB";
+  src: url("/fonts/BEST%20DB/best_nrm.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
 /* BridgeARG Design System - Technical Gallery Aesthetic */
 
@@ -47,9 +93,9 @@
     --bridge-border: 350 10% 80%;
     
     /* Typography */
-    --font-display: 'Inter', sans-serif;
-    --font-mono: 'Space Mono', monospace;
-    --font-handwriting: 'Dancing Script', cursive;
+    --font-display: "Onest", sans-serif;
+    --font-mono: "Onest", sans-serif;
+    --font-handwriting: "Onest", sans-serif;
     
     /* Spacing */
     --section-padding: clamp(3rem, 8vw, 8rem);
@@ -122,12 +168,27 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  button,
+  input,
+  textarea,
+  select,
+  nav,
+  a {
+    font-family: var(--font-display);
+  }
 }
 
 @layer components {
   /* Technical Blueprint Boxes */
   .tech-box {
-    @apply border border-border p-6;
+    @apply border border-border/70 p-6;
     position: relative;
   }
   
@@ -156,8 +217,8 @@
   /* Typography Classes */
   .text-display {
     font-family: var(--font-display);
-    @apply font-black tracking-tight;
-    line-height: 0.95;
+    @apply font-semibold tracking-[-0.03em];
+    line-height: 0.98;
   }
   
   .text-handwriting {
@@ -168,18 +229,18 @@
   
   .text-technical {
     font-family: var(--font-mono);
-    @apply text-xs uppercase tracking-[0.2em];
+    @apply text-xs uppercase tracking-[0.1em];
   }
   
   .text-label {
-    font-family: var(--font-mono);
-    @apply text-[11px] uppercase tracking-[0.25em] text-muted-foreground;
+    font-family: var(--font-display);
+    @apply text-[11px] uppercase tracking-[0.1em] text-muted-foreground;
   }
   
   /* Hero Typography */
   .hero-title {
     font-family: var(--font-display);
-    @apply text-[clamp(3rem,15vw,12rem)] font-black tracking-[-0.04em] leading-[0.85];
+    @apply text-[clamp(3rem,15vw,12rem)] font-semibold tracking-[-0.04em] leading-[0.88];
   }
   
   /* Grid System */
@@ -241,11 +302,12 @@
   
   /* Mobile Drawer Styles */
   .mobile-menu-overlay {
-    @apply fixed inset-0 bg-foreground/20 backdrop-blur-sm z-40;
+    @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-40;
   }
   
   .mobile-drawer {
-    @apply fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-background border-l border-border z-50;
+    @apply fixed top-0 right-0 h-full w-80 max-w-[85vw] border-l border-white/10 z-50;
+    background: #1e1517;
     @apply transform transition-transform duration-300 ease-out;
   }
   
@@ -285,6 +347,15 @@
 }
 
 @layer utilities {
+  .shadow-sm,
+  .shadow,
+  .shadow-md,
+  .shadow-lg,
+  .shadow-xl,
+  .shadow-2xl {
+    box-shadow: none !important;
+  }
+
   /* Animations */
   .animate-fade-up {
     animation: fadeUp 0.6s ease-out forwards;
@@ -319,7 +390,7 @@
     left: 0;
     width: 0;
     height: 1px;
-    background: hsl(var(--foreground));
+    background: currentColor;
     transition: width 0.3s ease;
   }
   

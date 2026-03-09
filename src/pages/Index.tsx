@@ -1,9 +1,12 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { BrandHeroSection } from "@/features/gallery/BrandHeroSection";
 import { HeroSection } from "@/features/gallery/HeroSection";
-import { SentidoSection } from "@/features/gallery/SentidoSection";
+import { CuratorialStatementSection } from "@/features/gallery/CuratorialStatementSection";
+import { ArtistsSection } from "@/features/gallery/ArtistsSection";
 import { SelectedWorksSection } from "@/features/gallery/SelectedWorksSection";
-import { ArtistsPreviewSection } from "@/features/gallery/ArtistsPreviewSection";
+import { BatchStatusSection } from "@/features/gallery/BatchStatusSection";
+import { InquiryBannerSection } from "@/features/gallery/InquiryBannerSection";
 import { PageTransition } from "@/components/PageTransition";
 
 const Index = () => {
@@ -12,10 +15,13 @@ const Index = () => {
       <div className="min-h-screen bg-background">
         <Header />
         <main>
+          <BrandHeroSection />
           <HeroSection />
-          <SentidoSection />
+          <CuratorialStatementSection />
+          <ArtistsSection />
           <SelectedWorksSection />
-          <ArtistsPreviewSection />
+          <BatchStatusSection />
+          <InquiryBannerSection />
         </main>
         <Footer />
       </div>

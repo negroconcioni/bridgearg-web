@@ -11,109 +11,125 @@ const navItems = [
   { label: "Contact", path: "/contacto" },
 ];
 
+const logoSrc = encodeURI("/assets/logos/BRIDGEARG - Exportacion logos-05.svg");
+const cream = "#fcf8ea";
+const headerBg = "#1e1517";
+const desktopLogoWidth = "370px"; // TAMAÑO LOGO
+const mobileLogoWidth = "200px"; // TAMAÑO LOGO
+
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 
+  const getNavClassName = (path: string) =>
+    `font-display text-xs font-medium uppercase tracking-[0.1em] transition-colors ${
+      location.pathname === path ? "text-[#fcf8ea]" : "text-[#fcf8ea] hover:text-[#fcf8ea]"
+    }`;
+
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="container mx-auto">
-          <div className="flex items-center justify-between h-16 md:h-20">
-            {/* Logo */}
-            <Link to="/" className="flex items-baseline gap-1 md:gap-1">
-              <span className="text-display text-3xl md:text-3xl">bridge</span>
-              <span className="text-display text-3xl md:text-3xl text-muted-foreground">arg</span>
-            </Link>
+      <header
+        className="fixed left-0 right-0 top-0 z-50 border-b border-white/10"
+        style={{ backgroundColor: headerBg, height: "100px" }}
+      >
+        <div
+          className="flex h-full items-center pl-4 pr-4"
+          style={{ justifyContent: "flex-start" }}
+        >
+          <Link to="/" className="mr-0 flex shrink-0 items-center" aria-label="BridgeArg home">
+            <div className="logo-container flex items-center">
+              <img
+                src={logoSrc}
+                alt="BridgeArg wordmark"
+                className="block h-auto"
+                style={{ width: desktopLogoWidth }}
+              />
+            </div>
+          </Link>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center gap-8">
+          <div className="ml-auto hidden min-w-0 items-center gap-5 md:flex lg:gap-7">
+            <nav className="flex items-center gap-5 lg:gap-7">
               {navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`text-technical hover-underline py-1 ${
-                    location.pathname === item.path
-                      ? "text-foreground"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
+                <Link key={item.path} to={item.path} className={getNavClassName(item.path)}>
                   {item.label}
                 </Link>
               ))}
-              {/* SOY ARTISTA Button */}
-              <Button 
-                variant="technical"
-                className="ml-4"
-                asChild
-              >
-                <Link to="/contacto">Artist Inquiries</Link>
-              </Button>
             </nav>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsOpen(true)}
-              className="md:hidden p-2 hover:bg-muted transition-colors"
-              aria-label="Open menu"
+            <Button
+              variant="technical"
+              className="h-11 rounded-full px-6 font-display font-medium uppercase tracking-[0.1em] hover:bg-white/10 hover:shadow-[0_0_0_1px_rgba(252,248,234,0.35)]"
+              style={{ borderColor: cream, color: cream }}
+              asChild
             >
-              <Menu className="w-6 h-6" />
-            </button>
+              <Link to="/contacto">Artist Inquiries</Link>
+            </Button>
           </div>
+
+          <button
+            onClick={() => setIsOpen(true)}
+            className="ml-auto p-2 transition-colors hover:bg-white/5 md:hidden"
+            style={{ color: cream }}
+            aria-label="Open menu"
+          >
+            <Menu className="h-6 w-6" />
+          </button>
         </div>
       </header>
 
-      {/* Mobile Drawer */}
       {isOpen && (
         <>
-          <div
-            className="mobile-menu-overlay"
-            onClick={() => setIsOpen(false)}
-          />
+          <div className="mobile-menu-overlay" onClick={() => setIsOpen(false)} />
           <div className="mobile-drawer open">
-            <div className="flex items-center justify-between p-6 border-b border-border">
-              <Link to="/" className="flex items-baseline gap-1" onClick={() => setIsOpen(false)}>
-                <span className="text-display text-2xl">bridge</span>
-                <span className="text-display text-2xl text-muted-foreground">arg</span>
+            <div className="flex items-center justify-between border-b border-white/10 p-6">
+              <Link to="/" className="mr-0 flex items-center" onClick={() => setIsOpen(false)}>
+                <div className="logo-container flex items-center">
+                  <img
+                    src={logoSrc}
+                    alt="BridgeArg wordmark"
+                    className="block h-auto"
+                    style={{ width: mobileLogoWidth }}
+                  />
+                </div>
               </Link>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-2 hover:bg-muted transition-colors"
+                className="p-2 transition-colors hover:bg-white/5"
+                style={{ color: cream }}
                 aria-label="Close menu"
               >
-                <X className="w-6 h-6" />
+                <X className="h-6 w-6" />
               </button>
             </div>
-            <nav className="p-6 space-y-6">
+
+            <nav className="space-y-6 p-6">
               {navItems.map((item, index) => (
                 <Link
                   key={item.path}
                   to={item.path}
                   onClick={() => setIsOpen(false)}
-                  className={`block text-technical text-base py-2 animate-fade-up animate-stagger-${index + 1} ${
-                    location.pathname === item.path
-                      ? "text-foreground"
-                      : "text-muted-foreground hover:text-foreground"
+                  className={`block py-2 font-display text-base font-medium uppercase tracking-[0.1em] animate-fade-up animate-stagger-${index + 1} ${
+                    location.pathname === item.path ? "text-[#fcf8ea] opacity-100" : "text-[#fcf8ea] opacity-80 hover:opacity-100"
                   }`}
                 >
                   {item.label}
                 </Link>
               ))}
-              {/* SOY ARTISTA Button for Mobile */}
-              <Button 
+              <Button
                 variant="technical"
-                className="mt-4 w-full"
+                className="mt-4 h-11 w-full rounded-full px-6 font-medium text-[#fcf8ea] hover:bg-white/10 hover:shadow-[0_0_0_1px_rgba(252,248,234,0.35)]"
+                style={{ borderColor: cream, color: cream }}
                 asChild
               >
-                <Link to="/contacto" onClick={() => setIsOpen(false)}>SOY ARTISTA</Link>
+                <Link to="/contacto" onClick={() => setIsOpen(false)}>
+                  Artist Inquiries
+                </Link>
               </Button>
             </nav>
           </div>
         </>
       )}
 
-      {/* Spacer */}
-      <div className="h-16 md:h-20" />
+      <div className="h-[100px]" />
     </>
   );
 }

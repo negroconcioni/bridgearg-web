@@ -1,78 +1,107 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { ArrowUpRight } from "lucide-react";
 import { OptimizedImage } from "@/components/OptimizedImage";
-import bridgeWork1 from "@/assets/bridgearg-work1.jpg";
-import bridgeWork2 from "@/assets/bridgearg-work2.jpg";
-import bridgeWork3 from "@/assets/bridgearg-work3.jpg";
-import bridgeWork4 from "@/assets/bridgearg-work4.jpg";
+import { getWorks, isSoldStatus, type WorkFromApi } from "@/lib/api";
 
-const selectedWorks = [
-  { id: 1, title: "Untitled I", artist: "Artist Example 1", year: "2024", image: bridgeWork1, slug: "artista-ejemplo-1" },
-  { id: 2, title: "Abstract Composition", artist: "Artist Example 2", year: "2024", image: bridgeWork2, slug: "artista-ejemplo-2" },
-  { id: 3, title: "Interior Landscape", artist: "Artist Example 3", year: "2023", image: bridgeWork3, slug: "artista-ejemplo-3" },
-  { id: 4, title: "Fragments", artist: "Artist Example 4", year: "2024", image: bridgeWork4, slug: "artista-ejemplo-4" },
-];
+function shuffleWorks(works: WorkFromApi[]): WorkFromApi[] {
+  const shuffled = [...works];
+
+  for (let i = shuffled.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+
+  return shuffled;
+}
 
 export function SelectedWorksSection() {
-  return (
-    <section className="section-padded border-t border-border relative">
+  const [works, setWorks] = useState<WorkFromApi[]>([]);
 
-      <div className="container mx-auto lg:pl-16">
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 md:mb-16">
-          <div>
-            <span className="text-label block mb-4">02 / Curated Collection</span>
-            <h2 className="text-display text-4xl md:text-6xl">
-              Selected<br />Works
-            </h2>
-          </div>
-          <Button variant="technical" asChild>
-            <Link to="/artworks" className="flex items-center gap-2">
-              View All Works
-              <ArrowUpRight className="w-4 h-4" />
-            </Link>
-          </Button>
+  useEffect(() => {
+    let cancelled = false;
+
+    getWorks()
+      .then((allWorks) => {
+        if (cancelled) return;
+        const randomSelection = shuffleWorks(allWorks).slice(0, 4);
+        setWorks(randomSelection);
+      })
+      .catch(() => {
+        if (!cancelled) setWorks([]);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (works.length === 0) return null;
+
+  return (
+    <section className="border-t border-[#1e1517]/10 bg-[#fcf8ea] px-6 py-24 md:px-12 md:py-28 lg:px-24 2xl:py-32">
+      <div className="mx-auto max-w-[1800px]">
+        <div className="mb-14 md:mb-16">
+          <p className="font-display text-[10px] font-normal uppercase tracking-[0.2em] text-[#1e1517]/68 md:text-xs 2xl:text-sm">
+            Selected Works
+          </p>
         </div>
 
-        {/* Works Grid */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
-          {selectedWorks.map((work, index) => (
-            <Link
-              key={work.id}
-              to={`/artistas/${work.slug}`}
-              className="group"
-            >
-              <div className="relative w-full overflow-hidden rounded-2xl bg-background shadow-sm transition-transform duration-300 ease-out group-hover:scale-[1.01] group-hover:shadow-lg">
-                <div className="relative aspect-[4/5] overflow-hidden rounded-2xl">
-                  <OptimizedImage
-                    src={work.image}
-                    title={work.title}
-                    artistName={work.artist}
-                    className="h-full w-full"
-                  />
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-8 xl:grid-cols-4 2xl:gap-10">
+          {works.map((work) => {
+            const sold = isSoldStatus(work.status);
 
-                  {/* Overlay Content - Simple fade on hover with rounded corners */}
-                  <div className="absolute bottom-0 left-0 right-0 rounded-b-2xl bg-gradient-to-t from-foreground/80 to-transparent p-6 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                    <div className="text-background">
-                      <p className="mb-1 text-sm font-semibold uppercase tracking-[0.16em] text-background/80">
-                        {work.artist}
+            return (
+              <Link key={work.id} to={`/artworks/${work.id}`} className="group block">
+                <article className="space-y-4">
+                  <div className="relative aspect-[3/4] overflow-hidden bg-[#efe6d5]">
+                    <OptimizedImage
+                      src={work.imagenUrl}
+                      title={work.title}
+                      artistName={work.artistName}
+                      variant="artwork"
+                      className="h-full w-full"
+                      imageClassName="object-cover grayscale transition-all duration-700 ease-out group-hover:scale-[1.03] group-hover:grayscale-0"
+                    />
+
+                    {sold ? (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/35 p-6">
+                        <p className="max-w-[22ch] text-center font-display text-[11px] italic leading-relaxed tracking-[0.02em] text-[#fcf8ea]/92 md:text-[10px] xl:text-[11px] 2xl:text-xs">
+                          This piece is now part of a private collection
+                        </p>
+                      </div>
+                    ) : null}
+                  </div>
+
+                  <div className="space-y-2">
+                    <h3 className="font-display text-xs font-medium uppercase tracking-[0.08em] text-[#1e1517] md:text-sm 2xl:text-base">
+                      {work.title}
+                    </h3>
+                    <p className="font-display text-xs uppercase tracking-[0.12em] text-[#1e1517]/68 2xl:text-sm">
+                      {work.artistName}
+                    </p>
+                    {!sold ? (
+                      <p className="font-display text-xs uppercase tracking-[0.08em] text-[#1e1517]/78 2xl:text-sm">
+                        {work.priceDisplay}
                       </p>
-                      <h3 className="font-display text-lg font-medium">{work.title}</h3>
-                      <p className="mt-2 text-technical text-background/50">{work.year}</p>
-                    </div>
+                    ) : (
+                      <p className="font-display text-xs italic text-[#1e1517]/58 2xl:text-sm">
+                        This piece is now part of a private collection
+                      </p>
+                    )}
                   </div>
+                </article>
+              </Link>
+            );
+          })}
+        </div>
 
-                  {/* Index Number */}
-                  <div className="absolute left-4 top-4">
-                    <span className="bg-background/90 px-2 py-1 text-label">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          ))}
+        <div className="mt-14 flex justify-start">
+          <Link
+            to="/works"
+            className="inline-flex items-center border-b border-[#1e1517]/30 pb-1 font-display text-xs uppercase tracking-[0.18em] text-[#1e1517] transition-colors hover:border-[#1e1517] hover:text-[#1e1517]/72 2xl:text-sm"
+          >
+            Explore the Full Collection
+          </Link>
         </div>
       </div>
     </section>
