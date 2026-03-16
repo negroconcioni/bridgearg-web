@@ -7,3 +7,5 @@ server/dist
 server/prisma/*.db
 server/prisma/*.db-journal
 supabase/functions/.env.local
+.DS_Store
+**/.DS_Store

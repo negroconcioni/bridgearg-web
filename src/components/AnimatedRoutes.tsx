@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import Index from "@/pages/Index";
 import ArtistasPage from "@/pages/ArtistasPage";
@@ -18,7 +18,7 @@ export const AnimatedRoutes = () => {
         <Route path="/" element={<Index />} />
         <Route path="/artistas" element={<ArtistasPage />} />
         <Route path="/artistas/:slug" element={<ArtistaDetailPage />} />
-        <Route path="/works" element={<ArtworksPage />} />
+        <Route path="/works" element={<Navigate to="/artworks" replace />} />
         <Route path="/artworks" element={<ArtworksPage />} />
         <Route path="/artworks/:id" element={<ArtworkDetailPage />} />
         <Route path="/nosotros" element={<NosotrosPage />} />

@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/PageTransition";
@@ -16,31 +17,31 @@ type ArtistCard = {
 const bridgeDividerSrc = encodeURI("/assets/BRIDGEARG - Exportacion logos - PNG-21.png");
 
 const ArtistasPage = () => {
-  const [artists, setArtists] = useState<ArtistFromApi[]>([]);
-  const [works, setWorks] = useState<WorkFromApi[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    data: artists = [],
+    isLoading: loadingArtists,
+    isError: artistsError,
+  } = useQuery({
+    queryKey: ["artists"],
+    queryFn: getArtists,
+  });
+
+  const {
+    data: works = [],
+    isLoading: loadingWorks,
+    isError: worksError,
+  } = useQuery({
+    queryKey: ["works"],
+    queryFn: () => getWorks(),
+  });
+
+  const loading = loadingArtists || loadingWorks;
 
   useEffect(() => {
-    let cancelled = false;
-    Promise.all([getArtists(), getWorks()])
-      .then(([artistsData, worksData]) => {
-        if (cancelled) return;
-        setArtists(artistsData);
-        setWorks(worksData);
-      })
-      .catch(() => {
-        if (!cancelled) {
-          toast({ title: "Error", description: "Could not load artists.", variant: "destructive" });
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+    if (artistsError || worksError) {
+      toast({ title: "Error", description: "Could not load artists.", variant: "destructive" });
+    }
+  }, [artistsError, worksError]);
 
   const artistCards = useMemo<ArtistCard[]>(() => {
     const featuredWorkByArtistSlug = new Map<string, WorkFromApi>();

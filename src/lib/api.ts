@@ -142,6 +142,27 @@ function mapArtworkRowToArtwork(row: ArtworkRow): ArtworkFromApi {
   };
 }
 
+async function enrichArtworksWithOptionalFields(
+  sb: import("@supabase/supabase-js").SupabaseClient,
+  rows: ArtworkRow[]
+): Promise<ArtworkRow[]> {
+  const ids = rows.map((row) => row.id);
+  if (ids.length === 0) return rows;
+  try {
+    const { data, error } = await sb
+      .from("artworks")
+      .select("id,dimensions,weight_kg,width_cm,height_cm,depth_cm")
+      .in("id", ids);
+    if (error || !data) return rows;
+    const optionalById = new Map<number, ArtworkOptionalFields>(
+      (data as ArtworkOptionalFields[]).map((row) => [row.id, row])
+    );
+    return rows.map((row) => ({ ...row, ...optionalById.get(row.id) }));
+  } catch {
+    return rows;
+  }
+}
+
 /** Maps artwork row to WorkFromApi. */
 function mapArtworkRowToWork(row: ArtworkRow): WorkFromApi {
   const priceUsd = row.price_usd ?? 0;
@@ -164,32 +185,6 @@ function mapArtworkRowToWork(row: ArtworkRow): WorkFromApi {
     height_cm: row.height_cm != null ? Number(row.height_cm) : null,
     depth_cm: row.depth_cm != null ? Number(row.depth_cm) : null,
   };
-}
-
-async function enrichArtworksWithOptionalFields(
-  sb: import("@supabase/supabase-js").SupabaseClient,
-  rows: ArtworkRow[]
-): Promise<ArtworkRow[]> {
-  const ids = rows.map((row) => row.id);
-  if (ids.length === 0) return rows;
-
-  try {
-    const { data, error } = await sb
-      .from("artworks")
-      .select("id,dimensions,weight_kg,width_cm,height_cm,depth_cm")
-      .in("id", ids);
-
-    if (error || !data) return rows;
-
-    const optionalById = new Map<number, ArtworkOptionalFields>(
-      (data as ArtworkOptionalFields[]).map((row) => [row.id, row])
-    );
-
-    return rows.map((row) => ({ ...row, ...optionalById.get(row.id) }));
-  } catch {
-    // Production may not have these optional logistics columns yet.
-    return rows;
-  }
 }
 
 /** Fetches works from artworks table. */
