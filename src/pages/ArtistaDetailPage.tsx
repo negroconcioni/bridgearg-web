@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { OptimizedImage } from "@/components/OptimizedImage";
@@ -136,55 +137,38 @@ async function fetchArtistWorks(artistId: number): Promise<ArtistWork[]> {
 
 const ArtistaDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
-  const [artist, setArtist] = useState<ArtistDetail | null>(null);
-  const [works, setWorks] = useState<ArtistWork[]>([]);
-  const [loadingArtist, setLoadingArtist] = useState(true);
-  const [loadingWorks, setLoadingWorks] = useState(true);
+
+  const {
+    data: artist = null,
+    isLoading: loadingArtist,
+    isError: artistError,
+  } = useQuery({
+    queryKey: ["artist", slug],
+    queryFn: () => fetchArtistDetail(slug!),
+    enabled: !!slug,
+  });
+
+  const {
+    data: works = [],
+    isLoading: loadingWorks,
+    isError: worksError,
+  } = useQuery({
+    queryKey: ["artistWorks", artist?.id],
+    queryFn: () => fetchArtistWorks(artist!.id),
+    enabled: !!artist?.id,
+  });
 
   useEffect(() => {
-    if (!slug) return;
+    if (artistError) {
+      toast({ title: "Error", description: "Could not load artist.", variant: "destructive" });
+    }
+  }, [artistError]);
 
-    let cancelled = false;
-    setLoadingArtist(true);
-    setLoadingWorks(true);
-    setArtist(null);
-    setWorks([]);
-
-    fetchArtistDetail(slug)
-      .then(async (artistData) => {
-        if (cancelled) return;
-        setArtist(artistData);
-
-        if (!artistData) {
-          setLoadingWorks(false);
-          return;
-        }
-
-        try {
-          const worksData = await fetchArtistWorks(artistData.id);
-          if (!cancelled) setWorks(worksData);
-        } catch {
-          if (!cancelled) {
-            toast({ title: "Error", description: "Could not load works.", variant: "destructive" });
-          }
-        } finally {
-          if (!cancelled) setLoadingWorks(false);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          toast({ title: "Error", description: "Could not load artist.", variant: "destructive" });
-          setLoadingWorks(false);
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setLoadingArtist(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [slug]);
+  useEffect(() => {
+    if (worksError) {
+      toast({ title: "Error", description: "Could not load works.", variant: "destructive" });
+    }
+  }, [worksError]);
 
   if (loadingArtist) {
     return (
