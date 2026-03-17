@@ -88,14 +88,15 @@ function mapArtistWorkRow(row: ArtistWorkRow): ArtistWork {
   };
 }
 
-function formatWorkPrice(price: number | null): string {
+function formatWorkPrice(price: number | null, currency: string): string {
   if (price == null) return "Price on request";
-  return `USD ${Number(price).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
-}
 
-function normalizeOrigin(origin: string | null): string | null {
-  if (!origin) return null;
-  return origin.replace(/\bCordoba\b/g, "Córdoba").replace(/\bcordoba\b/g, "córdoba");
+  const formatted = Number(price).toLocaleString("en-US", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
+
+  return `${formatted} ${currency}`;
 }
 
 function isSoldWork(status: string | null): boolean {
@@ -198,7 +199,7 @@ const ArtistaDetailPage = () => {
                 Artist not found
               </h1>
               <Link
-                to="/artists"
+                to="/artistas"
                 className="mt-8 inline-flex items-center rounded-full border border-[#1e1517]/20 px-6 py-3 font-display text-xs uppercase tracking-[0.12em] text-[#1e1517] transition-colors hover:bg-[#1e1517] hover:text-[#fcf8ea]"
               >
                 Back to Artists
@@ -218,7 +219,7 @@ const ArtistaDetailPage = () => {
           title={artist.name}
           description={artist.bio ?? `Works and biography of ${artist.name}, contemporary Argentine artist.`}
           image={artist.imageUrl ?? undefined}
-          url={`/artists/${artist.slug}`}
+          url={`/artistas/${artist.slug}`}
           type="article"
         />
         <Header />
@@ -229,7 +230,7 @@ const ArtistaDetailPage = () => {
                 <div className="md:col-span-8">
                   <div className="inline-flex items-center rounded-full border border-[#1e1517]/20 px-4 py-2">
                     <span className="font-display text-[11px] uppercase tracking-[0.16em] text-[#1e1517]">
-                      About the Artist
+                      Who Is
                     </span>
                   </div>
                   <h1 className="mt-8 pl-12 font-display text-6xl font-bold uppercase tracking-tight text-[#1e1517] md:text-7xl lg:text-[92px]">
@@ -248,7 +249,7 @@ const ArtistaDetailPage = () => {
                         Origin
                       </p>
                       <p className="mt-4 font-display text-sm leading-7 text-[#1e1517]">
-                        {normalizeOrigin(artist.origin) || "Available on request"}
+                        {artist.origin || "Available on request"}
                       </p>
                     </div>
                     <div>
@@ -388,14 +389,13 @@ const ArtistaDetailPage = () => {
                             }`}
                           />
 
-                          <div className="pointer-events-none absolute inset-0 flex items-end justify-start p-4">
+                          <div className="pointer-events-none absolute inset-0 flex items-center justify-center p-6">
                             {sold ? (
-                              <span className="inline-flex items-center gap-1.5 rounded-full bg-black/70 px-3 py-1.5 font-display text-[10px] font-medium uppercase tracking-[0.12em] text-white/90">
-                                <span className="h-1.5 w-1.5 rounded-full bg-white/70" />
-                                Private Collection
-                              </span>
+                              <p className="max-w-[22ch] text-center font-display text-base italic leading-relaxed text-[#fcf8ea] md:text-lg">
+                                This piece is now part of a private collection
+                              </p>
                             ) : (
-                              <p className="font-display text-center text-3xl tracking-tight text-white opacity-0 transition-all duration-500 ease-out group-hover:opacity-100 md:text-4xl w-full text-center">
+                              <p className="font-display text-center text-3xl tracking-tight text-white opacity-0 transition-all duration-500 ease-out group-hover:opacity-100 md:text-4xl">
                                 {artist.name}
                               </p>
                             )}
@@ -408,13 +408,12 @@ const ArtistaDetailPage = () => {
                           </h3>
 
                           {sold ? (
-                            <span className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-[#1e1517]/15 px-2.5 py-1 font-display text-[9px] font-medium uppercase tracking-[0.1em] text-[#1e1517]/55">
-                              <span className="h-1 w-1 rounded-full bg-[#1e1517]/40" />
-                              Private Collection
-                            </span>
+                            <p className="mt-2 font-display text-xs font-normal leading-relaxed text-[#1e1517]/52">
+                              This piece is now part of a private collection
+                            </p>
                           ) : (
                             <p className="mt-2 font-display text-xs font-normal tracking-[0.04em] text-[#1e1517]/78">
-                              {formatWorkPrice(work.price)}
+                              {formatWorkPrice(work.price, work.currency)}
                             </p>
                           )}
                         </div>

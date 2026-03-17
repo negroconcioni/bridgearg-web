@@ -114,7 +114,7 @@ const ArtworksPage = () => {
     <PageTransition>
       <div className="min-h-screen bg-background">
         <SEO
-          title="Collection"
+          title="Works"
           description="Explore our collection of works by contemporary Argentine artists."
           url="/artworks"
         />
@@ -124,7 +124,7 @@ const ArtworksPage = () => {
             <div className="container mx-auto">
               <span className="text-label block mb-4">Curated Collection</span>
               <h1 className="text-display text-5xl md:text-7xl lg:text-8xl">
-                Collection
+                Works
               </h1>
               <p className="text-muted-foreground text-lg mt-6 max-w-xl">
                 Explore our collection of works by contemporary Argentine artists.
@@ -266,11 +266,10 @@ const ArtworksPage = () => {
                                   className="h-full w-full"
                                 />
                                 {!work.available && (
-                                  <div className="absolute bottom-3 left-3">
-                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-foreground/80 px-2.5 py-1 font-display text-[9px] font-medium uppercase tracking-[0.1em] text-background/90">
-                                      <span className="h-1 w-1 rounded-full bg-background/70" />
-                                      Private Collection
-                                    </span>
+                                  <div className="absolute inset-0 flex items-center justify-center bg-foreground/50">
+                                    <p className="px-4 py-2 text-center text-background/95 text-sm font-light italic max-w-[80%]">
+                                      This piece is now part of a private collection
+                                    </p>
                                   </div>
                                 )}
                                 <div className="absolute left-4 top-4">
@@ -294,14 +293,13 @@ const ArtworksPage = () => {
                                   </div>
                                 </div>
                                 <div className="mt-6 flex items-center justify-between">
-                                  {work.available ? (
+                                  {!work.available ? (
+                                    <p className="text-muted-foreground text-sm font-light italic">
+                                      This piece is now part of a private collection
+                                    </p>
+                                  ) : (
                                     <span className="font-display text-base font-semibold text-foreground">
                                       {work.priceDisplay}
-                                    </span>
-                                  ) : (
-                                    <span className="inline-flex items-center gap-1.5 rounded-full border border-foreground/20 px-2.5 py-1 font-display text-[9px] font-medium uppercase tracking-[0.1em] text-muted-foreground">
-                                      <span className="h-1 w-1 rounded-full bg-muted-foreground" />
-                                      Private Collection
                                     </span>
                                   )}
                                 </div>

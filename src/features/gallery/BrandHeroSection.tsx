@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
 import { getAvailableCount } from "@/lib/api";
 
 const heroIsotypeSrc = encodeURI("/assets/logos/BRIDGEARG - Exportacion logos-08.svg");
@@ -64,21 +63,6 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
         <p className="mt-6 max-w-2xl font-display text-base font-light tracking-normal text-white sm:text-lg md:text-xl lg:text-2xl">
           Curating contemporary Argentine art to the world.
         </p>
-
-        <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
-          <Link
-            to="/artworks"
-            className="inline-flex h-12 items-center border border-white/80 px-8 font-display text-xs font-medium uppercase tracking-[0.16em] text-white transition-colors hover:bg-white hover:text-[#1e1517]"
-          >
-            View the Collection
-          </Link>
-          <Link
-            to="/artists"
-            className="inline-flex h-12 items-center border border-white/30 px-8 font-display text-xs font-medium uppercase tracking-[0.16em] text-white/80 transition-colors hover:border-white/80 hover:text-white"
-          >
-            Meet the Artists
-          </Link>
-        </div>
 
         <div className="mt-10 h-20 w-px bg-white/20 md:mt-12 md:h-32" />
       </motion.div>

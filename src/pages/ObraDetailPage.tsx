@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -21,7 +21,6 @@ import { SEO } from "@/components/SEO";
 
 const ArtworkDetailPage = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const workId = id ? parseInt(id, 10) : NaN;
   const [work, setWork] = useState<WorkFromApi | null>(null);
   const [loading, setLoading] = useState(true);
@@ -58,15 +57,6 @@ const ArtworkDetailPage = () => {
       cancelled = true;
     };
   }, [workId]);
-
-  const handleInquire = () => {
-    if (!work) return;
-    const name = work.artistName?.trim() || FALLBACK_ARTIST_NAME;
-    const params = new URLSearchParams();
-    params.set("artwork", work.title);
-    if (name !== FALLBACK_ARTIST_NAME) params.set("artist", name);
-    navigate(`/contact?${params.toString()}`);
-  };
 
   const handleAcquire = async () => {
     if (!work || work.status !== "available") return;
@@ -247,11 +237,10 @@ const ArtworkDetailPage = () => {
                       className="h-full w-full rounded-2xl"
                     />
                     {work.status === "sold" && (
-                      <div className="absolute bottom-4 left-4">
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-foreground/80 px-3 py-1.5 font-display text-[10px] font-medium uppercase tracking-[0.12em] text-background/90 backdrop-blur-sm">
-                          <span className="h-1.5 w-1.5 rounded-full bg-background/70" />
-                          Private Collection
-                        </span>
+                      <div className="absolute inset-0 flex items-center justify-center bg-foreground/50 rounded-2xl">
+                        <p className="px-4 py-2 text-center text-background/95 text-sm font-light italic max-w-[80%]">
+                          This piece is now part of a private collection
+                        </p>
                       </div>
                     )}
                   </div>
@@ -260,7 +249,7 @@ const ArtworkDetailPage = () => {
                 <div className="flex flex-col justify-center">
                   <p className="text-label mb-2">
                     {work.artistSlug ? (
-                      <Link to={`/artists/${work.artistSlug}`} className="hover:text-foreground transition-colors">
+                      <Link to={`/artistas/${work.artistSlug}`} className="hover:text-foreground transition-colors">
                         {artistName}
                       </Link>
                     ) : (
@@ -299,9 +288,7 @@ const ArtworkDetailPage = () => {
                           <dd className="font-medium text-foreground">{weightText}</dd>
                         </div>
                       )}
-                      {!dimensionsText && !weightText && (
-                        <p className="text-muted-foreground">Contact us for dimensions and technical details.</p>
-                      )}
+                      {!dimensionsText && !weightText && <p className="text-muted-foreground">Details on request.</p>}
                     </dl>
                   </div>
 
@@ -309,19 +296,11 @@ const ArtworkDetailPage = () => {
                     <span className="font-display text-2xl font-semibold text-foreground">{work.priceDisplay}</span>
                   </div>
 
-                  {/* Main CTA: Inquire About This Work */}
+                  {/* Main CTA: Acquire Piece | Inquire */}
                   <div className="flex flex-wrap gap-4">
-                    <Button
-                      variant="acquire"
-                      size="xl"
-                      onClick={handleInquire}
-                      className="gap-2"
-                    >
-                      Inquire About This Work
-                    </Button>
-                    {isAvailable && (
+                    {isAvailable ? (
                       <Button
-                        variant="technical"
+                        variant="acquire"
                         size="xl"
                         onClick={handleAcquire}
                         disabled={acquiring}
@@ -329,6 +308,10 @@ const ArtworkDetailPage = () => {
                       >
                         {acquiring ? <Loader2 className="h-5 w-5 animate-spin" /> : <ShoppingBag className="h-5 w-5" />}
                         {acquiring ? "Processing…" : "Acquire Piece"}
+                      </Button>
+                    ) : (
+                      <Button variant="technical" size="xl" asChild className="gap-2">
+                        <Link to="/contacto">Inquire</Link>
                       </Button>
                     )}
                   </div>
@@ -353,11 +336,10 @@ const ArtworkDetailPage = () => {
                             className="h-full w-full"
                           />
                           {!relatedWork.available && (
-                            <div className="absolute bottom-3 left-3">
-                              <span className="inline-flex items-center gap-1.5 rounded-full bg-foreground/80 px-2.5 py-1 font-display text-[9px] font-medium uppercase tracking-[0.1em] text-background/90">
-                                <span className="h-1 w-1 rounded-full bg-background/70" />
-                                Private Collection
-                              </span>
+                            <div className="absolute inset-0 flex items-center justify-center bg-foreground/50">
+                              <p className="px-4 py-2 text-center text-background/95 text-sm font-light italic max-w-[80%]">
+                                Private collection
+                              </p>
                             </div>
                           )}
                         </div>
@@ -365,11 +347,9 @@ const ArtworkDetailPage = () => {
                           <h3 className="font-display text-sm font-semibold text-foreground truncate">
                             {relatedWork.title}
                           </h3>
-                          {relatedWork.available && (
-                            <p className="mt-1 text-xs text-muted-foreground">
-                              {relatedWork.priceDisplay}
-                            </p>
-                          )}
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {relatedWork.available ? relatedWork.priceDisplay : "Private collection"}
+                          </p>
                         </div>
                       </div>
                     </Link>
