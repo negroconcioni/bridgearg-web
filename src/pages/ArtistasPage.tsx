@@ -111,7 +111,7 @@ const ArtistasPage = () => {
                             src={artist.imageUrl ?? ""}
                             alt={artist.name}
                             className="h-full w-full"
-                            imageClassName="object-cover transition-all duration-700 ease-out group-hover:scale-105 group-hover:opacity-0"
+                            imageClassName="h-full w-full object-cover grayscale transition-all duration-700 ease-out group-hover:grayscale-0 group-hover:scale-[1.03]"
                             logSrcOnError
                           />
 
@@ -130,8 +130,8 @@ const ArtistasPage = () => {
 
                       <div className="pt-6 text-center">
                         <p
-                          className="text-4xl text-[#1e1517]/90 md:text-5xl"
-                          style={{ fontFamily: "BestDB, serif" }}
+                          className="mt-3 text-xs font-medium uppercase tracking-[0.14em] text-[#1e1517] text-center"
+                          style={{ fontFamily: "'Onest', sans-serif", fontStyle: "normal" }}
                         >
                           {artist.name}
                         </p>
