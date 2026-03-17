@@ -12,7 +12,7 @@ const NosotrosPage = () => {
         <SEO
           title="About"
           description="Learn about BridgeArg, the gallery connecting Argentine contemporary art with global collectors."
-          url="/about"
+          url="/nosotros"
         />
         <Header />
         <main>
@@ -87,10 +87,12 @@ const NosotrosPage = () => {
                     <h2 className="text-technical text-foreground mb-4">Locations</h2>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-label mb-1">Buenos Aires, Argentina</p>
+                        <p className="text-label mb-1">Buenos Aires</p>
+                        <p className="text-muted-foreground text-xs">Argentina</p>
                       </div>
                       <div>
-                        <p className="text-label mb-1">New York, United States</p>
+                        <p className="text-label mb-1">New York</p>
+                        <p className="text-muted-foreground text-xs">United States</p>
                       </div>
                     </div>
                   </div>

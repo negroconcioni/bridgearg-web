@@ -18,21 +18,15 @@ export const AnimatedRoutes = () => {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Index />} />
-        {/* Current English routes */}
-        <Route path="/artists" element={<ArtistasPage />} />
-        <Route path="/artists/:slug" element={<ArtistaDetailPage />} />
+        <Route path="/artistas" element={<ArtistasPage />} />
+        <Route path="/artistas/:slug" element={<ArtistaDetailPage />} />
         <Route path="/works" element={<Navigate to="/artworks" replace />} />
         <Route path="/artworks" element={<ArtworksPage />} />
         <Route path="/artworks/:id" element={<ArtworkDetailPage />} />
         <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
         <Route path="/checkout/cancel" element={<CheckoutCancelPage />} />
-        <Route path="/about" element={<NosotrosPage />} />
-        <Route path="/contact" element={<ContactoPage />} />
-        {/* Legacy Spanish-route redirects */}
-        <Route path="/artistas" element={<Navigate to="/artists" replace />} />
-        <Route path="/artistas/:slug" element={<ArtistaDetailPage />} />
-        <Route path="/nosotros" element={<Navigate to="/about" replace />} />
-        <Route path="/contacto" element={<Navigate to="/contact" replace />} />
+        <Route path="/nosotros" element={<NosotrosPage />} />
+        <Route path="/contacto" element={<ContactoPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AnimatePresence>
