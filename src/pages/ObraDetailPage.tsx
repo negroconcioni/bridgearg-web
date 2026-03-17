@@ -238,9 +238,9 @@ const ArtworkDetailPage = () => {
                     />
                     {work.status === "sold" && (
                       <div className="absolute inset-0 flex items-center justify-center bg-foreground/50 rounded-2xl">
-                        <p className="px-4 py-2 text-center text-background/95 text-sm font-light italic max-w-[80%]">
-                          This piece is now part of a private collection
-                        </p>
+                        <span className="inline-flex items-center gap-1 rounded-full bg-[#1e1517]/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-[#1e1517]/60">
+                          ● Private Collection
+                        </span>
                       </div>
                     )}
                   </div>
@@ -296,7 +296,6 @@ const ArtworkDetailPage = () => {
                     <span className="font-display text-2xl font-semibold text-foreground">{work.priceDisplay}</span>
                   </div>
 
-                  {/* Main CTA: Acquire Piece | Inquire */}
                   <div className="flex flex-wrap gap-4">
                     {isAvailable ? (
                       <Button
@@ -306,12 +305,22 @@ const ArtworkDetailPage = () => {
                         disabled={acquiring}
                         className="gap-2"
                       >
-                        {acquiring ? <Loader2 className="h-5 w-5 animate-spin" /> : <ShoppingBag className="h-5 w-5" />}
+                        {acquiring ? (
+                          <Loader2 className="h-5 w-5 animate-spin" />
+                        ) : (
+                          <ShoppingBag className="h-5 w-5" />
+                        )}
                         {acquiring ? "Processing…" : "Acquire Piece"}
                       </Button>
                     ) : (
-                      <Button variant="technical" size="xl" asChild className="gap-2">
-                        <Link to="/contacto">Inquire</Link>
+                      <Button variant="acquire" size="xl" asChild className="gap-2">
+                        <Link
+                          to={`/contact?artwork=${encodeURIComponent(work.title)}&artist=${encodeURIComponent(
+                            artistName,
+                          )}`}
+                        >
+                          Inquire About This Work
+                        </Link>
                       </Button>
                     )}
                   </div>

@@ -230,7 +230,7 @@ const ArtistaDetailPage = () => {
                 <div className="md:col-span-8">
                   <div className="inline-flex items-center rounded-full border border-[#1e1517]/20 px-4 py-2">
                     <span className="font-display text-[11px] uppercase tracking-[0.16em] text-[#1e1517]">
-                      Who Is
+                      About the Artist
                     </span>
                   </div>
                   <h1 className="mt-8 pl-12 font-display text-6xl font-bold uppercase tracking-tight text-[#1e1517] md:text-7xl lg:text-[92px]">
@@ -391,9 +391,9 @@ const ArtistaDetailPage = () => {
 
                           <div className="pointer-events-none absolute inset-0 flex items-center justify-center p-6">
                             {sold ? (
-                              <p className="max-w-[22ch] text-center font-display text-base italic leading-relaxed text-[#fcf8ea] md:text-lg">
-                                This piece is now part of a private collection
-                              </p>
+                              <span className="inline-flex items-center gap-1 rounded-full bg-[#1e1517]/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-[#1e1517]/60">
+                                ● Private Collection
+                              </span>
                             ) : (
                               <p className="font-display text-center text-3xl tracking-tight text-white opacity-0 transition-all duration-500 ease-out group-hover:opacity-100 md:text-4xl">
                                 {artist.name}
@@ -408,9 +408,9 @@ const ArtistaDetailPage = () => {
                           </h3>
 
                           {sold ? (
-                            <p className="mt-2 font-display text-xs font-normal leading-relaxed text-[#1e1517]/52">
-                              This piece is now part of a private collection
-                            </p>
+                            <span className="inline-flex items-center gap-1 rounded-full bg-[#1e1517]/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-[#1e1517]/60">
+                              ● Private Collection
+                            </span>
                           ) : (
                             <p className="mt-2 font-display text-xs font-normal tracking-[0.04em] text-[#1e1517]/78">
                               {formatWorkPrice(work.price, work.currency)}

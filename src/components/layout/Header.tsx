@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 const navItems = [
   { label: "Home", path: "/" },
   { label: "Artists", path: "/artistas" },
-  { label: "Works", path: "/artworks" },
+  { label: "Collection", path: "/artworks" },
   { label: "About", path: "/nosotros" },
   { label: "Contact", path: "/contacto" },
 ];
@@ -22,8 +22,10 @@ export function Header() {
   const location = useLocation();
 
   const getNavClassName = (path: string) =>
-    `font-display text-xs font-medium uppercase tracking-[0.1em] transition-colors ${
-      location.pathname === path ? "text-[#fcf8ea]" : "text-[#fcf8ea] hover:text-[#fcf8ea]"
+    `font-display text-xs font-medium uppercase tracking-[0.1em] transition-colors relative ${
+      location.pathname === path
+        ? "text-[#fcf8ea] after:absolute after:bottom-[-4px] after:left-0 after:right-0 after:h-px after:bg-[#fcf8ea]"
+        : "text-[#fcf8ea]/60 hover:text-[#fcf8ea]"
     }`;
 
   return (
@@ -47,7 +49,7 @@ export function Header() {
             </div>
           </Link>
 
-          <div className="ml-auto hidden min-w-0 items-center gap-5 md:flex lg:gap-7">
+          <div className="ml-auto hidden min-w-0 items-center gap-5 lg:flex lg:gap-7">
             <nav className="flex items-center gap-5 lg:gap-7">
               {navItems.map((item) => (
                 <Link key={item.path} to={item.path} className={getNavClassName(item.path)}>
@@ -59,7 +61,7 @@ export function Header() {
 
           <button
             onClick={() => setIsOpen(true)}
-            className="ml-auto p-2 transition-colors hover:bg-white/5 md:hidden"
+            className="ml-auto p-2 transition-colors hover:bg-white/5 lg:hidden"
             style={{ color: cream }}
             aria-label="Open menu"
           >

@@ -1,21 +1,30 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/PageTransition";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import { submitContact } from "@/lib/api";
 import { Loader2 } from "lucide-react";
 import { SEO } from "@/components/SEO";
 
 const ContactoPage = () => {
+  const [searchParams] = useSearchParams();
+  const artworkParam = searchParams.get("artwork");
+  const artistParam = searchParams.get("artist");
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    subject: "",
-    message: "",
+    subject: artworkParam ? "Artwork inquiry" : "",
+    message:
+      artworkParam && artistParam
+        ? `I'm interested in "${artworkParam}" by ${artistParam}.`
+        : "",
   });
   const [sending, setSending] = useState(false);
 
@@ -55,7 +64,7 @@ const ContactoPage = () => {
             <div className="container mx-auto">
               <span className="text-label block mb-4">Get in Touch</span>
               <h1 className="text-display text-5xl md:text-7xl lg:text-8xl">
-                Inquire
+                Get in Touch
               </h1>
               <p className="text-muted-foreground text-lg mt-6 max-w-xl">
                 Interested in a work? Would you like to know more about our artists?
@@ -101,13 +110,20 @@ const ContactoPage = () => {
                     <label className="text-technical text-foreground block mb-3">
                       Subject
                     </label>
-                    <Input
+                    <Select
                       value={formData.subject}
-                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                      placeholder="Inquiry about..."
-                      required
-                      className="bg-transparent border-border focus:border-foreground"
-                    />
+                      onValueChange={(value) => setFormData({ ...formData, subject: value })}
+                    >
+                      <SelectTrigger className="bg-transparent border-border focus:border-foreground">
+                        <SelectValue placeholder="Select a subject" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Artwork inquiry">Artwork inquiry</SelectItem>
+                        <SelectItem value="Artist inquiry">Artist inquiry</SelectItem>
+                        <SelectItem value="General inquiry">General inquiry</SelectItem>
+                        <SelectItem value="Press">Press</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div className="tech-box">
