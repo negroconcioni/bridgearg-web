@@ -14,7 +14,7 @@ const navItems = [
 const logoSrc = encodeURI("/assets/logos/BRIDGEARG - Exportacion logos-05.svg");
 const cream = "#fcf8ea";
 const headerBg = "#1e1517";
-const desktopLogoWidth = "370px"; // TAMAÑO LOGO
+const desktopLogoWidth = "260px"; // TAMAÑO LOGO
 const mobileLogoWidth = "200px"; // TAMAÑO LOGO
 
 export function Header() {
@@ -30,7 +30,7 @@ export function Header() {
     <>
       <header
         className="fixed left-0 right-0 top-0 z-50 border-b border-white/10"
-        style={{ backgroundColor: headerBg, height: "100px" }}
+        style={{ backgroundColor: headerBg, height: "80px" }}
       >
         <div
           className="flex h-full items-center pl-4 pr-4"
@@ -111,7 +111,7 @@ export function Header() {
         </>
       )}
 
-      <div className="h-[100px]" />
+      <div className="h-[80px]" />
     </>
   );
 }

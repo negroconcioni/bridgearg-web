@@ -9,7 +9,7 @@ export interface BrandHeroProps {
   logoWidth?: string;
 }
 
-export function BrandHeroSection({ logoWidth = "700px" }: BrandHeroProps) {
+export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
   const [availableCount, setAvailableCount] = useState<number | null>(null);
 
   useEffect(() => {
@@ -60,7 +60,7 @@ export function BrandHeroSection({ logoWidth = "700px" }: BrandHeroProps) {
           }}
         />
 
-        <p className="mt-6 max-w-4xl font-display text-lg font-light tracking-normal text-white sm:text-xl md:text-2xl lg:text-3xl 2xl:text-4xl">
+        <p className="mt-6 max-w-2xl font-display text-base font-light tracking-normal text-white sm:text-lg md:text-xl lg:text-2xl">
           Curating contemporary Argentine art to the world.
         </p>
 

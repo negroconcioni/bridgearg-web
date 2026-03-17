@@ -53,7 +53,7 @@ export function ArtistsSection() {
   return (
     <section className="relative w-full overflow-hidden bg-[#fcf8ea] px-6 py-20 md:px-12 lg:px-24 md:py-24 2xl:py-28">
       <div className="mx-auto max-w-[1800px]">
-        <div className="flex items-center justify-center gap-5 sm:gap-8 md:gap-14 xl:gap-20 2xl:gap-28">
+        <div className="flex items-center justify-center gap-2 sm:gap-8 md:gap-14 xl:gap-20 2xl:gap-24">
         <AnimatePresence mode="popLayout" initial={false}>
           {getVisibleArtists().map((artist, i) => {
             const isCenter = i === 1 || i === 2;
@@ -76,8 +76,8 @@ export function ArtistsSection() {
                 <div
                   className={`overflow-hidden rounded-full border border-[#1e1517]/10 transition-all duration-500 ${
                     isCenter
-                      ? "aspect-square w-32 grayscale hover:scale-105 hover:grayscale-0 sm:w-40 md:w-52 lg:w-60 xl:w-64 2xl:w-72"
-                      : "aspect-square w-20 grayscale sm:w-24 md:w-32 lg:w-36 xl:w-40 2xl:w-44"
+                      ? "aspect-square w-24 grayscale hover:scale-105 hover:grayscale-0 sm:w-36 md:w-48 lg:w-56 xl:w-60 2xl:w-64"
+                      : "aspect-square w-12 grayscale sm:w-20 md:w-28 lg:w-32 xl:w-36 2xl:w-40"
                   }`}
                 >
                   <img
@@ -101,14 +101,14 @@ export function ArtistsSection() {
         <>
           <button
             onClick={() => setIndex((prev) => (prev - 1 + artists.length) % artists.length)}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-xl text-[#1e1517] md:left-6 md:text-2xl lg:left-10"
+            className="absolute left-1 top-1/2 -translate-y-1/2 text-base text-[#1e1517] md:left-6 md:text-2xl lg:left-10"
             aria-label="Previous artists"
           >
             ←
           </button>
           <button
             onClick={() => setIndex((prev) => (prev + 1) % artists.length)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-xl text-[#1e1517] md:right-6 md:text-2xl lg:right-10"
+            className="absolute right-1 top-1/2 -translate-y-1/2 text-base text-[#1e1517] md:right-6 md:text-2xl lg:right-10"
             aria-label="Next artists"
           >
             →

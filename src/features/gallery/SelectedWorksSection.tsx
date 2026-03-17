@@ -112,7 +112,7 @@ export function SelectedWorksSection() {
             Selected Works
           </p>
         </div>
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-8 xl:grid-cols-4 2xl:gap-10">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 xl:gap-8">
           {cards.map((work, index) => {
             const sold = isSoldStatus(work.status);
             return (
