@@ -3,10 +3,10 @@
 // Secrets: STRIPE_SECRET_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, CLIENT_URL (required in production)
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
-import Stripe from "https://esm.sh/stripe@14.21.0?target=denonext";
+import Stripe from "https://esm.sh/stripe@17.7.0?target=denonext";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
-  apiVersion: "2024-11-20",
+  apiVersion: "2025-02-24.acacia",
 });
 
 function normalizeOrigin(value: string): string | null {
