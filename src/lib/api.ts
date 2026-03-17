@@ -90,8 +90,6 @@ export interface ArtworkRow {
   artists: ArtworkRowArtist;
 }
 
-type ArtworkOptionalFields = Pick<ArtworkRow, "id" | "dimensions" | "weight_kg" | "width_cm" | "height_cm" | "depth_cm">;
-
 function mapArtistRowToArtist(row: ArtistRow): ArtistFromApi {
   return {
     id: row.id,
@@ -142,27 +140,6 @@ function mapArtworkRowToArtwork(row: ArtworkRow): ArtworkFromApi {
   };
 }
 
-async function enrichArtworksWithOptionalFields(
-  sb: import("@supabase/supabase-js").SupabaseClient,
-  rows: ArtworkRow[]
-): Promise<ArtworkRow[]> {
-  const ids = rows.map((row) => row.id);
-  if (ids.length === 0) return rows;
-  try {
-    const { data, error } = await sb
-      .from("artworks")
-      .select("id,dimensions,weight_kg,width_cm,height_cm,depth_cm")
-      .in("id", ids);
-    if (error || !data) return rows;
-    const optionalById = new Map<number, ArtworkOptionalFields>(
-      (data as ArtworkOptionalFields[]).map((row) => [row.id, row])
-    );
-    return rows.map((row) => ({ ...row, ...optionalById.get(row.id) }));
-  } catch {
-    return rows;
-  }
-}
-
 /** Maps artwork row to WorkFromApi. */
 function mapArtworkRowToWork(row: ArtworkRow): WorkFromApi {
   const priceUsd = row.price_usd ?? 0;
@@ -190,27 +167,26 @@ function mapArtworkRowToWork(row: ArtworkRow): WorkFromApi {
 /** Fetches works from artworks table. */
 async function fetchWorksFromArtworks(sb: import("@supabase/supabase-js").SupabaseClient, artistSlug?: string): Promise<WorkFromApi[]> {
   const select = artistSlug
-    ? "id,title,image_url,status,price_usd,artist_id,year,medium,artists!inner(name,slug)"
-    : "id,title,image_url,status,price_usd,artist_id,year,medium,artists(name,slug)";
+    ? "id,title,image_url,status,price_usd,artist_id,year,medium,dimensions,weight_kg,width_cm,height_cm,depth_cm,artists!inner(name,slug)"
+    : "id,title,image_url,status,price_usd,artist_id,year,medium,dimensions,weight_kg,width_cm,height_cm,depth_cm,artists(name,slug)";
   let query = sb.from("artworks").select(select).order("id", { ascending: true });
   if (artistSlug) query = query.eq("artists.slug", artistSlug);
   const { data, error } = await query;
   if (error) throw new Error(error.message ?? "Could not load works from artworks");
-  const rows = await enrichArtworksWithOptionalFields(sb, (data ?? []) as ArtworkRow[]);
-  return rows.map((row) => mapArtworkRowToWork(row));
+  return ((data ?? []) as ArtworkRow[]).map((row) => mapArtworkRowToWork(row));
 }
 
 /** Fetches a single work from artworks by id. */
 async function fetchWorkFromArtworks(sb: import("@supabase/supabase-js").SupabaseClient, id: number): Promise<WorkFromApi | null> {
-  const select = "id,title,image_url,status,price_usd,artist_id,year,medium,artists(name,slug)";
+  const select =
+    "id,title,image_url,status,price_usd,artist_id,year,medium,dimensions,weight_kg,width_cm,height_cm,depth_cm,artists(name,slug)";
   const { data, error } = await sb.from("artworks").select(select).eq("id", id).single();
   if (error) {
     if (error.code === "PGRST116") return null;
     throw new Error(error.message ?? "Could not load work from artworks");
   }
   if (!data) return null;
-  const [row] = await enrichArtworksWithOptionalFields(sb, [data as ArtworkRow]);
-  return row ? mapArtworkRowToWork(row) : null;
+  return mapArtworkRowToWork(data as ArtworkRow);
 }
 
 /** Fetch artworks from Supabase (table artworks). */
@@ -269,14 +245,15 @@ export async function getLatestWorks(limit = 20): Promise<WorkFromApi[]> {
 
   const { data, error } = await supabase
     .from("artworks")
-    .select("id,title,image_url,status,price_usd,artist_id,year,medium,artists(name,slug)")
+    .select(
+      "id,title,image_url,status,price_usd,artist_id,year,medium,dimensions,weight_kg,width_cm,height_cm,depth_cm,artists(name,slug)"
+    )
     .order("id", { ascending: false })
     .limit(limit);
 
   if (error) throw new Error(error.message ?? "Could not load latest works");
 
-  const rows = await enrichArtworksWithOptionalFields(supabase, (data ?? []) as ArtworkRow[]);
-  return rows.map((row) => mapArtworkRowToWork(row));
+  return ((data ?? []) as ArtworkRow[]).map((row) => mapArtworkRowToWork(row));
 }
 
 /** Fetches a single work by id for the detail/sales page. */
