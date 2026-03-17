@@ -148,7 +148,7 @@ const ArtworkDetailPage = () => {
       <div className="min-h-screen bg-background">
         <SEO
           title={work.title}
-          description={`${work.artistName} · ${[work.year, work.medium].filter(Boolean).join(" · ")} · ${work.priceDisplay}`}
+          description={`${artistName} · ${[work.year, work.medium].filter(Boolean).join(" · ")} · ${work.priceDisplay}`}
           image={work.imagenUrl?.startsWith("http") ? work.imagenUrl : undefined}
           url={`/artworks/${work.id}`}
           type="article"
