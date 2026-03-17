@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/PageTransition";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, ShoppingBag, Loader2, Package, FileCheck, Share2 } from "lucide-react";
 import {
   getWork,
@@ -145,8 +146,25 @@ const ArtworkDetailPage = () => {
       <PageTransition>
         <div className="min-h-screen bg-background">
           <Header />
-          <main className="section-padded flex items-center justify-center min-h-[60vh]">
-            <Loader2 className="h-10 w-10 animate-spin text-muted-foreground" />
+          <main>
+            <div className="container mx-auto pt-8">
+              <Skeleton className="h-4 w-24" />
+            </div>
+            <section className="section-padded border-b border-border">
+              <div className="container mx-auto">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+                  <Skeleton className="aspect-[4/5] w-full rounded-2xl" />
+                  <div className="flex flex-col justify-center gap-4">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-12 w-3/4" />
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-32 w-full" />
+                    <Skeleton className="h-8 w-28" />
+                    <Skeleton className="h-12 w-40" />
+                  </div>
+                </div>
+              </div>
+            </section>
           </main>
           <Footer />
         </div>
