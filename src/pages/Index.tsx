@@ -1,12 +1,10 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { BrandHeroSection } from "@/features/gallery/BrandHeroSection";
-import { HeroSection } from "@/features/gallery/HeroSection";
-import { CuratorialStatementSection } from "@/features/gallery/CuratorialStatementSection";
+import { BrandStorySection } from "@/features/gallery/BrandStorySection";
 import { ArtistsSection } from "@/features/gallery/ArtistsSection";
 import { SelectedWorksSection } from "@/features/gallery/SelectedWorksSection";
 import { BatchStatusSection } from "@/features/gallery/BatchStatusSection";
-import { InquiryBannerSection } from "@/features/gallery/InquiryBannerSection";
 import { PageTransition } from "@/components/PageTransition";
 import { SEO } from "@/components/SEO";
 
@@ -22,12 +20,10 @@ const Index = () => {
         <Header />
         <main>
           <BrandHeroSection />
-          <HeroSection />
-          <CuratorialStatementSection />
-          <ArtistsSection />
+          <BrandStorySection />
           <SelectedWorksSection />
+          <ArtistsSection />
           <BatchStatusSection />
-          <InquiryBannerSection />
         </main>
         <Footer />
       </div>

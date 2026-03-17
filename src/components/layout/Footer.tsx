@@ -7,14 +7,7 @@ export function Footer() {
   return (
     <footer className="bg-[#1e1517] text-[#fcf8ea]">
       <div className="mx-auto max-w-7xl px-6 pb-12 pt-6 md:px-10 md:pb-14">
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-3 md:gap-12">
-          <div>
-            <p className="max-w-xs font-display text-sm leading-7 text-[#fcf8ea]/70">
-              Connecting Argentine art with the international market.
-              A platform for artists, collectors, and art enthusiasts.
-            </p>
-          </div>
-
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-12">
           <div>
             <h4 className="mb-5 font-display text-xs font-medium uppercase tracking-[0.12em] text-[#fcf8ea]/72">
               Navigation
