@@ -4,11 +4,11 @@ import { useQuery } from "@tanstack/react-query";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/PageTransition";
-import { Loader2 } from "lucide-react";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import { getArtists, getWorks, type ArtistFromApi, type WorkFromApi } from "@/lib/api";
 import { toast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type ArtistCard = {
   artist: ArtistFromApi;
@@ -84,8 +84,18 @@ const ArtistasPage = () => {
           <section className="bg-[#fcf8ea] px-6 pb-32 md:px-10">
             <div className="mx-auto max-w-7xl">
               {loading ? (
-                <div className="flex items-center justify-center py-24">
-                  <Loader2 className="h-8 w-8 animate-spin text-[#1e1517]/50" />
+                <div className="grid grid-cols-1 gap-16 md:grid-cols-2 lg:grid-cols-3 lg:gap-20">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="flex flex-col items-center">
+                      <div className="w-full max-w-[260px]">
+                        <Skeleton className="aspect-[2/3] rounded-full bg-[#e8e0d0]" />
+                      </div>
+                      <div className="flex flex-col items-center gap-3 pt-6">
+                        <Skeleton className="h-8 w-40 bg-[#e8e0d0]" />
+                        <Skeleton className="h-2 w-16 bg-[#e8e0d0]" />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               ) : (
                 <div className="grid grid-cols-1 gap-16 md:grid-cols-2 lg:grid-cols-3 lg:gap-20">

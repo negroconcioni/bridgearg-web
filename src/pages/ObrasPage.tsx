@@ -4,12 +4,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/PageTransition";
-import { Loader2 } from "lucide-react";
 import { FALLBACK_ARTIST_NAME, getWorks, type WorkFromApi } from "@/lib/api";
 import { WorkImage } from "@/components/WorkImage";
 import { toast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { SEO } from "@/components/SEO";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const ArtworksPage = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -223,8 +223,20 @@ const ArtworksPage = () => {
               </div>
 
               {loading ? (
-                <div className="flex items-center justify-center py-24">
-                  <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 md:gap-8">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="flex flex-col border border-border bg-card">
+                      <div className="relative aspect-[4/5] overflow-hidden bg-muted">
+                        <Skeleton className="h-full w-full" />
+                      </div>
+                      <div className="border-t border-border/80 bg-card px-6 py-5">
+                        <Skeleton className="h-3 w-28" />
+                        <Skeleton className="mt-3 h-5 w-3/4" />
+                        <Skeleton className="mt-3 h-3 w-1/2" />
+                        <Skeleton className="mt-6 h-4 w-24" />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               ) : (
                 <>
