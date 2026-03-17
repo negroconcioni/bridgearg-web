@@ -155,8 +155,8 @@ Deno.serve(async (req) => {
           quantity: 1,
         },
       ],
-      success_url: `${clientUrl}/artworks?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${clientUrl}/artworks`,
+      success_url: `${clientUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${clientUrl}/checkout/cancel`,
       metadata: {
         artwork_id: String(artworkId),
       },
