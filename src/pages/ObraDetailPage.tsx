@@ -5,8 +5,15 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/PageTransition";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ShoppingBag, Loader2, Package, FileCheck } from "lucide-react";
-import { getWork, getWorks, createCheckout, type WorkFromApi, CheckoutError, FALLBACK_ARTIST_NAME } from "@/lib/api";
+import { ArrowLeft, ShoppingBag, Loader2, Package, FileCheck, Share2 } from "lucide-react";
+import {
+  getWork,
+  getWorks,
+  createCheckout,
+  type WorkFromApi,
+  CheckoutError,
+  FALLBACK_ARTIST_NAME,
+} from "@/lib/api";
 import { WorkImage } from "@/components/WorkImage";
 import { toast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
@@ -45,7 +52,9 @@ const ArtworkDetailPage = () => {
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [workId]);
 
   const handleAcquire = async () => {
@@ -73,7 +82,8 @@ const ArtworkDetailPage = () => {
         } else if (err.kind === "stock") {
           toast({
             title: "Obra no disponible",
-            description: "Esta obra ya no está disponible para la compra. Actualizamos la página para que veas el estado actual.",
+            description:
+              "Esta obra ya no está disponible para la compra. Actualizamos la página para que veas el estado actual.",
             variant: "destructive",
           });
           window.location.reload();
@@ -94,6 +104,37 @@ const ArtworkDetailPage = () => {
       }
     } finally {
       setAcquiring(false);
+    }
+  };
+
+  const artistName = work?.artistName?.trim() || FALLBACK_ARTIST_NAME;
+
+  const handleShare = async () => {
+    if (!work) return;
+    const url = window.location.href;
+    const shareData = {
+      title: work.title,
+      text: `${artistName} — ${work.title}`,
+      url,
+    };
+    try {
+      if (navigator.share && navigator.canShare?.(shareData)) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(url);
+        toast({
+          title: "Link copied",
+          description: "The link to this work has been copied to your clipboard.",
+        });
+      }
+    } catch (err) {
+      if (err instanceof Error && err.name !== "AbortError") {
+        await navigator.clipboard.writeText(url);
+        toast({
+          title: "Link copied",
+          description: "The link to this work has been copied to your clipboard.",
+        });
+      }
     }
   };
 
@@ -132,16 +173,16 @@ const ArtworkDetailPage = () => {
     );
   }
 
-  const dimensionsText = [
-    work.dimensions,
-    [work.width_cm, work.height_cm, work.depth_cm].filter(Boolean).length
-      ? [work.width_cm, work.height_cm, work.depth_cm].filter(Boolean).join(" × ") + " cm"
-      : null,
-  ]
-    .filter(Boolean)
-    .join(" · ") || null;
+  const dimensionsText =
+    [
+      work.dimensions,
+      [work.width_cm, work.height_cm, work.depth_cm].filter(Boolean).length
+        ? [work.width_cm, work.height_cm, work.depth_cm].filter(Boolean).join(" × ") + " cm"
+        : null,
+    ]
+      .filter(Boolean)
+      .join(" · ") || null;
   const weightText = work.weight_kg != null ? `${work.weight_kg} kg` : null;
-  const artistName = work.artistName?.trim() || FALLBACK_ARTIST_NAME;
 
   return (
     <PageTransition>
@@ -204,6 +245,15 @@ const ArtworkDetailPage = () => {
                     </p>
                   )}
 
+                  <button
+                    onClick={handleShare}
+                    style={{ color: '#1e1517' }}
+                    className="inline-flex items-center gap-2 mb-6 text-[10px] font-medium uppercase tracking-[0.18em] opacity-50 hover:opacity-100 transition-opacity"
+                  >
+                    <Share2 className="h-3 w-3" />
+                    Share
+                  </button>
+
                   {/* Dimensions & weight — clear block */}
                   <div className="tech-box mb-8">
                     <h3 className="text-technical text-foreground mb-3">Details</h3>
@@ -220,16 +270,12 @@ const ArtworkDetailPage = () => {
                           <dd className="font-medium text-foreground">{weightText}</dd>
                         </div>
                       )}
-                      {!dimensionsText && !weightText && (
-                        <p className="text-muted-foreground">Details on request.</p>
-                      )}
+                      {!dimensionsText && !weightText && <p className="text-muted-foreground">Details on request.</p>}
                     </dl>
                   </div>
 
                   <div className="flex flex-wrap items-baseline gap-4 mb-8">
-                    <span className="font-display text-2xl font-semibold text-foreground">
-                      {work.priceDisplay}
-                    </span>
+                    <span className="font-display text-2xl font-semibold text-foreground">{work.priceDisplay}</span>
                   </div>
 
                   {/* Main CTA: Acquire Piece | Inquire */}
@@ -242,11 +288,7 @@ const ArtworkDetailPage = () => {
                         disabled={acquiring}
                         className="gap-2"
                       >
-                        {acquiring ? (
-                          <Loader2 className="h-5 w-5 animate-spin" />
-                        ) : (
-                          <ShoppingBag className="h-5 w-5" />
-                        )}
+                        {acquiring ? <Loader2 className="h-5 w-5 animate-spin" /> : <ShoppingBag className="h-5 w-5" />}
                         {acquiring ? "Processing…" : "Acquire Piece"}
                       </Button>
                     ) : (
@@ -263,16 +305,10 @@ const ArtworkDetailPage = () => {
           {otherWorks.length > 0 && (
             <section className="section-padded border-t border-border">
               <div className="container mx-auto">
-                <h2 className="text-technical text-foreground font-semibold mb-8">
-                  More works by {artistName}
-                </h2>
+                <h2 className="text-technical text-foreground font-semibold mb-8">More works by {artistName}</h2>
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 md:gap-8">
                   {otherWorks.map((relatedWork) => (
-                    <Link
-                      key={relatedWork.id}
-                      to={`/artworks/${relatedWork.id}`}
-                      className="group block"
-                    >
+                    <Link key={relatedWork.id} to={`/artworks/${relatedWork.id}`} className="group block">
                       <div className="flex flex-col border border-border bg-card transition-shadow hover:shadow-md">
                         <div className="relative aspect-[4/5] overflow-hidden bg-muted">
                           <WorkImage
@@ -315,7 +351,8 @@ const ArtworkDetailPage = () => {
                 <div>
                   <h2 className="text-technical text-foreground font-semibold mb-2">Shipping & Logistics</h2>
                   <p className="text-muted-foreground text-sm leading-relaxed max-w-2xl">
-                    White-glove international shipping included. We handle all export documentation from Argentina to your doorstep.
+                    White-glove international shipping included. We handle all export documentation from Argentina to
+                    your doorstep.
                   </p>
                 </div>
               </div>
@@ -332,7 +369,8 @@ const ArtworkDetailPage = () => {
                 <div>
                   <h2 className="text-technical text-foreground font-semibold mb-2">Certificate of Authenticity</h2>
                   <p className="text-muted-foreground text-sm leading-relaxed max-w-2xl">
-                    Each work includes a Certificate of Authenticity—both physical and digital—signed by the artist, attesting to the piece’s provenance and authenticity.
+                    Each work includes a Certificate of Authenticity—both physical and digital—signed by the artist,
+                    attesting to the piece’s provenance and authenticity.
                   </p>
                 </div>
               </div>
