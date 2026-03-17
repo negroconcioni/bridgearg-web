@@ -114,7 +114,7 @@ const ArtworksPage = () => {
     <PageTransition>
       <div className="min-h-screen bg-background">
         <SEO
-          title="Works"
+          title="Collection"
           description="Explore our collection of works by contemporary Argentine artists."
           url="/artworks"
         />
@@ -124,7 +124,7 @@ const ArtworksPage = () => {
             <div className="container mx-auto">
               <span className="text-label block mb-4">Curated Collection</span>
               <h1 className="text-display text-5xl md:text-7xl lg:text-8xl">
-                Works
+                Collection
               </h1>
               <p className="text-muted-foreground text-lg mt-6 max-w-xl">
                 Explore our collection of works by contemporary Argentine artists.
@@ -267,9 +267,9 @@ const ArtworksPage = () => {
                                 />
                                 {!work.available && (
                                   <div className="absolute inset-0 flex items-center justify-center bg-foreground/50">
-                                    <p className="px-4 py-2 text-center text-background/95 text-sm font-light italic max-w-[80%]">
-                                      This piece is now part of a private collection
-                                    </p>
+                                    <span className="inline-flex items-center gap-1 rounded-full bg-[#1e1517]/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-[#1e1517]/60">
+                                      ● Private Collection
+                                    </span>
                                   </div>
                                 )}
                                 <div className="absolute left-4 top-4">
@@ -294,9 +294,9 @@ const ArtworksPage = () => {
                                 </div>
                                 <div className="mt-6 flex items-center justify-between">
                                   {!work.available ? (
-                                    <p className="text-muted-foreground text-sm font-light italic">
-                                      This piece is now part of a private collection
-                                    </p>
+                                    <span className="inline-flex items-center gap-1 rounded-full bg-[#1e1517]/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-[#1e1517]/60">
+                                      ● Private Collection
+                                    </span>
                                   ) : (
                                     <span className="font-display text-base font-semibold text-foreground">
                                       {work.priceDisplay}

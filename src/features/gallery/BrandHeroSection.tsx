@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { getAvailableCount } from "@/lib/api";
 
@@ -63,6 +64,21 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
         <p className="mt-6 max-w-2xl font-display text-base font-light tracking-normal text-white sm:text-lg md:text-xl lg:text-2xl">
           Curating contemporary Argentine art to the world.
         </p>
+
+        <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
+          <Link
+            to="/artworks"
+            className="font-display text-xs font-medium uppercase tracking-[0.18em] text-white border border-white/40 px-8 py-3 hover:bg-white/10 transition-colors"
+          >
+            View the Collection
+          </Link>
+          <Link
+            to="/artists"
+            className="font-display text-xs font-medium uppercase tracking-[0.18em] text-white/70 hover:text-white transition-colors"
+          >
+            Meet the Artists →
+          </Link>
+        </div>
 
         <div className="mt-10 h-20 w-px bg-white/20 md:mt-12 md:h-32" />
       </motion.div>

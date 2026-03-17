@@ -137,13 +137,15 @@ export function SelectedWorksSection() {
                       className="h-full w-full"
                       imageClassName="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                     />
-                    <div className={`absolute inset-0 flex items-center justify-center transition-all duration-500 ease-out ${
-                      sold ? "bg-black/35" : "bg-black/0 group-hover:bg-black/55"
-                    }`}>
+                    <div
+                      className={`absolute inset-0 flex items-center justify-center transition-all duration-500 ease-out ${
+                        sold ? "bg-black/35" : "bg-black/0 group-hover:bg-black/55"
+                      }`}
+                    >
                       {sold ? (
-                        <p className="max-w-[22ch] text-center font-display text-[11px] italic leading-relaxed tracking-[0.02em] text-[#fcf8ea]/92 md:text-[10px] xl:text-[11px] 2xl:text-xs">
-                          This piece is now part of a private collection
-                        </p>
+                        <span className="inline-flex items-center gap-1 rounded-full bg-[#1e1517]/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-[#1e1517]/60">
+                          ● Private Collection
+                        </span>
                       ) : (
                         <p className="font-display text-sm font-medium uppercase tracking-[0.3em] text-white opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100">
                           View
@@ -163,9 +165,9 @@ export function SelectedWorksSection() {
                         {work.priceDisplay}
                       </p>
                     ) : (
-                      <p className="font-display text-xs italic text-[#1e1517]/58 2xl:text-sm">
-                        This piece is now part of a private collection
-                      </p>
+                      <span className="inline-flex items-center gap-1 rounded-full bg-[#1e1517]/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-[#1e1517]/60">
+                        ● Private Collection
+                      </span>
                     )}
                   </div>
                 </article>

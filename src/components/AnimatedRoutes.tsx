@@ -20,13 +20,17 @@ export const AnimatedRoutes = () => {
         <Route path="/" element={<Index />} />
         <Route path="/artistas" element={<ArtistasPage />} />
         <Route path="/artistas/:slug" element={<ArtistaDetailPage />} />
+        <Route path="/artists" element={<ArtistasPage />} />
+        <Route path="/artists/:slug" element={<ArtistaDetailPage />} />
         <Route path="/works" element={<Navigate to="/artworks" replace />} />
         <Route path="/artworks" element={<ArtworksPage />} />
         <Route path="/artworks/:id" element={<ArtworkDetailPage />} />
         <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
         <Route path="/checkout/cancel" element={<CheckoutCancelPage />} />
         <Route path="/nosotros" element={<NosotrosPage />} />
+        <Route path="/about" element={<NosotrosPage />} />
         <Route path="/contacto" element={<ContactoPage />} />
+        <Route path="/contact" element={<ContactoPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AnimatePresence>
