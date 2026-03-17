@@ -36,7 +36,7 @@ export function BatchStatusSection() {
           <p className="font-display text-[11px] font-medium uppercase tracking-[0.12em] text-[#1e1517]/65 md:text-xs 2xl:text-sm">
             Collector Services
           </p>
-          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-[#1e1517] sm:text-4xl md:text-5xl 2xl:text-6xl">
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-[#1e1517] sm:text-4xl md:text-5xl">
             Confidence beyond the acquisition
           </h2>
         </div>
@@ -64,7 +64,7 @@ export function BatchStatusSection() {
                   alt=""
                   className="h-3 w-auto object-contain opacity-60"
                 />
-                <h3 className="mt-5 font-display text-2xl font-semibold tracking-tight text-[#1e1517] md:text-[30px] 2xl:text-4xl">
+                <h3 className="mt-5 font-display text-xl font-semibold tracking-tight text-[#1e1517] md:text-2xl">
                   {card.title}
                 </h3>
                 <p className="mt-4 max-w-[34ch] font-display text-base leading-7 text-[#1e1517]/78 2xl:text-lg 2xl:leading-8">
