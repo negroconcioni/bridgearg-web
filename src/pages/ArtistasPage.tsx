@@ -8,6 +8,7 @@ import { Loader2 } from "lucide-react";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import { getArtists, getWorks, type ArtistFromApi, type WorkFromApi } from "@/lib/api";
 import { toast } from "@/hooks/use-toast";
+import { SEO } from "@/components/SEO";
 
 type ArtistCard = {
   artist: ArtistFromApi;
@@ -61,6 +62,11 @@ const ArtistasPage = () => {
   return (
     <PageTransition>
       <div className="min-h-screen bg-[#fcf8ea]">
+        <SEO
+          title="Artists"
+          description="Discover our curated roster of contemporary Argentine artists."
+          url="/artistas"
+        />
         <Header />
         <main>
           <section className="bg-[#fcf8ea] px-6 py-32 md:px-10">

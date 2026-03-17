@@ -9,6 +9,7 @@ import { FALLBACK_ARTIST_NAME, getWorks, type WorkFromApi } from "@/lib/api";
 import { WorkImage } from "@/components/WorkImage";
 import { toast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
+import { SEO } from "@/components/SEO";
 
 const ArtworksPage = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -112,6 +113,11 @@ const ArtworksPage = () => {
   return (
     <PageTransition>
       <div className="min-h-screen bg-background">
+        <SEO
+          title="Works"
+          description="Explore our collection of works by contemporary Argentine artists."
+          url="/artworks"
+        />
         <Header />
         <main>
           <section className="section-padded border-b border-border">

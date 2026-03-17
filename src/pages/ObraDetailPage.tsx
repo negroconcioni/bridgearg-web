@@ -9,6 +9,7 @@ import { ArrowLeft, ShoppingBag, Loader2, Package, FileCheck } from "lucide-reac
 import { getWork, getWorks, createCheckout, type WorkFromApi, CheckoutError, FALLBACK_ARTIST_NAME } from "@/lib/api";
 import { WorkImage } from "@/components/WorkImage";
 import { toast } from "@/hooks/use-toast";
+import { SEO } from "@/components/SEO";
 
 const ArtworkDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -145,6 +146,13 @@ const ArtworkDetailPage = () => {
   return (
     <PageTransition>
       <div className="min-h-screen bg-background">
+        <SEO
+          title={work.title}
+          description={`${work.artistName} · ${[work.year, work.medium].filter(Boolean).join(" · ")} · ${work.priceDisplay}`}
+          image={work.imagenUrl?.startsWith("http") ? work.imagenUrl : undefined}
+          url={`/artworks/${work.id}`}
+          type="article"
+        />
         <Header />
         <main>
           <div className="container mx-auto pt-8">

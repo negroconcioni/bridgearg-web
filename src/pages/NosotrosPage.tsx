@@ -3,11 +3,17 @@ import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/PageTransition";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import bridgeHero from "@/assets/bridgearg-hero.jpg";
+import { SEO } from "@/components/SEO";
 
 const NosotrosPage = () => {
   return (
     <PageTransition>
       <div className="min-h-screen bg-background">
+        <SEO
+          title="About"
+          description="Learn about BridgeArg, the gallery connecting Argentine contemporary art with global collectors."
+          url="/nosotros"
+        />
         <Header />
         <main>
           {/* Page Header */}
