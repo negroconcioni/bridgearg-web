@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { submitContact } from "@/lib/api";
 import { Loader2 } from "lucide-react";
+import { SEO } from "@/components/SEO";
 
 const ContactoPage = () => {
   const [formData, setFormData] = useState({
@@ -42,6 +43,11 @@ const ContactoPage = () => {
   return (
     <PageTransition>
       <div className="min-h-screen bg-background">
+        <SEO
+          title="Contact"
+          description="Get in touch with BridgeArg for artist inquiries, acquisitions, and more."
+          url="/contacto"
+        />
         <Header />
         <main>
           {/* Page Header */}

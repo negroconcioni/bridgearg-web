@@ -8,6 +8,7 @@ import { OptimizedImage } from "@/components/OptimizedImage";
 import { PageTransition } from "@/components/PageTransition";
 import { toast } from "@/hooks/use-toast";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabaseClient";
+import { SEO } from "@/components/SEO";
 
 type ArtistDetail = {
   id: number;
@@ -214,6 +215,13 @@ const ArtistaDetailPage = () => {
   return (
     <PageTransition>
       <div className="min-h-screen bg-[#fcf8ea]">
+        <SEO
+          title={artist.name}
+          description={artist.bio ?? `Works and biography of ${artist.name}, contemporary Argentine artist.`}
+          image={artist.imageUrl ?? undefined}
+          url={`/artistas/${artist.slug}`}
+          type="article"
+        />
         <Header />
         <main>
           <section className="overflow-visible bg-[#fcf8ea] px-12 pb-24 pt-28 md:pb-28 md:pt-36">
