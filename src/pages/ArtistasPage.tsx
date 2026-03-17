@@ -65,7 +65,7 @@ const ArtistasPage = () => {
         <SEO
           title="Artists"
           description="Discover our curated roster of contemporary Argentine artists."
-          url="/artistas"
+          url="/artists"
         />
         <Header />
         <main>
@@ -102,7 +102,7 @@ const ArtistasPage = () => {
                   {artistCards.map(({ artist, featuredWork }) => (
                     <Link
                       key={artist.id}
-                      to={`/artistas/${artist.slug}`}
+                      to={`/artists/${artist.slug}`}
                       className="group flex flex-col items-center"
                     >
                       <div className="w-full max-w-[260px]">
