@@ -137,17 +137,22 @@ export function SelectedWorksSection() {
                       className="h-full w-full"
                       imageClassName="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                     />
-                    <div className={`absolute inset-0 flex items-center justify-center transition-all duration-500 ease-out ${
+                    <div className={`absolute inset-0 transition-all duration-500 ease-out ${
                       sold ? "bg-black/35" : "bg-black/0 group-hover:bg-black/55"
                     }`}>
                       {sold ? (
-                        <p className="max-w-[22ch] text-center font-display text-[11px] italic leading-relaxed tracking-[0.02em] text-[#fcf8ea]/92 md:text-[10px] xl:text-[11px] 2xl:text-xs">
-                          This piece is now part of a private collection
-                        </p>
+                        <div className="absolute bottom-3 left-3">
+                          <span className="inline-flex items-center gap-1.5 rounded-full bg-black/70 px-2.5 py-1 font-display text-[9px] font-medium uppercase tracking-[0.1em] text-white/90">
+                            <span className="h-1 w-1 rounded-full bg-white/70" />
+                            Private Collection
+                          </span>
+                        </div>
                       ) : (
-                        <p className="font-display text-sm font-medium uppercase tracking-[0.3em] text-white opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100">
-                          View
-                        </p>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <p className="font-display text-sm font-medium uppercase tracking-[0.3em] text-white opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100">
+                            View
+                          </p>
+                        </div>
                       )}
                     </div>
                   </div>
@@ -158,13 +163,14 @@ export function SelectedWorksSection() {
                     <p className="font-display text-xs uppercase tracking-[0.12em] text-[#1e1517]/68 2xl:text-sm">
                       {work.artistName}
                     </p>
-                    {!sold ? (
+                    {sold ? (
+                      <span className="inline-flex items-center gap-1.5 rounded-full border border-[#1e1517]/15 px-2.5 py-1 font-display text-[9px] font-medium uppercase tracking-[0.1em] text-[#1e1517]/55">
+                        <span className="h-1 w-1 rounded-full bg-[#1e1517]/40" />
+                        Private Collection
+                      </span>
+                    ) : (
                       <p className="font-display text-xs uppercase tracking-[0.08em] text-[#1e1517]/78 2xl:text-sm">
                         {work.priceDisplay}
-                      </p>
-                    ) : (
-                      <p className="font-display text-xs italic text-[#1e1517]/58 2xl:text-sm">
-                        This piece is now part of a private collection
                       </p>
                     )}
                   </div>

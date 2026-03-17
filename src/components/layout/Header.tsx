@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button";
 
 const navItems = [
   { label: "Home", path: "/" },
-  { label: "Artists", path: "/artistas" },
-  { label: "Works", path: "/artworks" },
-  { label: "About", path: "/nosotros" },
-  { label: "Contact", path: "/contacto" },
+  { label: "Artists", path: "/artists" },
+  { label: "Collection", path: "/artworks" },
+  { label: "About", path: "/about" },
+  { label: "Contact", path: "/contact" },
 ];
 
 const logoSrc = encodeURI("/assets/logos/BRIDGEARG - Exportacion logos-05.svg");
@@ -21,9 +21,14 @@ export function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 
+  const isActive = (path: string) =>
+    path === "/" ? location.pathname === "/" : location.pathname.startsWith(path);
+
   const getNavClassName = (path: string) =>
-    `font-display text-xs font-medium uppercase tracking-[0.1em] transition-colors ${
-      location.pathname === path ? "text-[#fcf8ea]" : "text-[#fcf8ea] hover:text-[#fcf8ea]"
+    `font-display text-xs font-medium uppercase tracking-[0.1em] transition-colors pb-0.5 ${
+      isActive(path)
+        ? "text-[#fcf8ea] border-b border-[#fcf8ea]"
+        : "text-[#fcf8ea]/70 hover:text-[#fcf8ea] border-b border-transparent"
     }`;
 
   return (

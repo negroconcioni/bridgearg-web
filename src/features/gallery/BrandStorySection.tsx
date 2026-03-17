@@ -50,13 +50,18 @@ export function BrandStorySection() {
             />
             <div style={{ paddingLeft: "56px" }} className="flex flex-col gap-4">
               <p className="font-display text-base leading-relaxed text-[#1e1517]/80 md:text-lg">
-                Texto texto texto texto texto texto texto texto texto texto texto.
+                BridgeArg was born from a simple conviction: Argentina harbors some of the most
+                vital contemporary artistic voices in the world, and the world deserves to encounter them.
               </p>
               <p className="font-display text-base leading-relaxed text-[#1e1517]/80 md:text-lg">
-                Texto texto texto texto texto texto texto texto texto texto texto.
+                We are a curatorial bridge—connecting painters, sculptors, and mixed-media artists
+                from Buenos Aires and beyond with collectors who seek works that carry cultural depth
+                and genuine human presence.
               </p>
               <p className="font-display text-base leading-relaxed text-[#1e1517]/80 md:text-lg">
-                Texto texto texto texto texto texto texto texto texto texto texto.
+                Every piece in our collection is acquired directly from the artist's studio,
+                accompanied by a Certificate of Authenticity, and delivered worldwide with
+                full export documentation.
               </p>
             </div>
           </motion.div>
@@ -81,13 +86,18 @@ export function BrandStorySection() {
             />
             <div style={{ paddingLeft: "56px" }} className="flex flex-col gap-4">
               <p className="font-display text-base leading-relaxed text-[#1e1517]/80 md:text-lg">
-                Texto texto texto texto texto texto texto texto texto texto texto.
+                Our process is deliberate and personal. We visit studios, attend open exhibitions,
+                and build long-term relationships with the artists we represent—because great art
+                is inseparable from the story behind it.
               </p>
               <p className="font-display text-base leading-relaxed text-[#1e1517]/80 md:text-lg">
-                Texto texto texto texto texto texto texto texto texto texto texto.
+                We handle every logistical detail: professional crating, international freight,
+                customs documentation, and insurance—so that collectors anywhere in the world
+                can focus entirely on the work itself.
               </p>
               <p className="font-display text-base leading-relaxed text-[#1e1517]/80 md:text-lg">
-                Texto texto texto texto texto texto texto texto texto texto texto.
+                BridgeArg is not just a platform. It is an act of trust—between artist and collector,
+                between cultures, and between the handmade and the world.
               </p>
             </div>
           </motion.div>
