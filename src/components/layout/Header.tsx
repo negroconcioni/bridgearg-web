@@ -55,14 +55,6 @@ export function Header() {
                 </Link>
               ))}
             </nav>
-            <Button
-              variant="technical"
-              className="h-11 rounded-full px-6 font-display font-medium uppercase tracking-[0.1em] hover:bg-white/10 hover:shadow-[0_0_0_1px_rgba(252,248,234,0.35)]"
-              style={{ borderColor: cream, color: cream }}
-              asChild
-            >
-              <Link to="/contacto">Artist Inquiries</Link>
-            </Button>
           </div>
 
           <button
@@ -114,16 +106,6 @@ export function Header() {
                   {item.label}
                 </Link>
               ))}
-              <Button
-                variant="technical"
-                className="mt-4 h-11 w-full rounded-full px-6 font-medium text-[#fcf8ea] hover:bg-white/10 hover:shadow-[0_0_0_1px_rgba(252,248,234,0.35)]"
-                style={{ borderColor: cream, color: cream }}
-                asChild
-              >
-                <Link to="/contacto" onClick={() => setIsOpen(false)}>
-                  Artist Inquiries
-                </Link>
-              </Button>
             </nav>
           </div>
         </>

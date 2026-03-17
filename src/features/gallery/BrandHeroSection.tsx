@@ -1,13 +1,23 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { getAvailableCount } from "@/lib/api";
 
-const heroIsotypeSrc = encodeURI("/assets/logos/BRIDGEARG - Exportacion logos-11.svg");
-const heroBackgroundUrl = "/assets/ui/new-hero-bg.jpg";
+const heroIsotypeSrc = encodeURI("/assets/logos/BRIDGEARG - Exportacion logos-08.svg");
+const heroBackgroundUrl = "/assets/ui/fondo_fabio.jpg";
 
 export interface BrandHeroProps {
   logoWidth?: string;
 }
 
 export function BrandHeroSection({ logoWidth = "700px" }: BrandHeroProps) {
+  const [availableCount, setAvailableCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    getAvailableCount()
+      .then(setAvailableCount)
+      .catch(() => {});
+  }, []);
+
   return (
     <section
       className="relative overflow-visible px-6 pb-0 pt-12 md:px-12 md:pt-16 lg:px-24"
@@ -21,7 +31,18 @@ export function BrandHeroSection({ logoWidth = "700px" }: BrandHeroProps) {
           backgroundPosition: "center",
         }}
       />
-      <div className="absolute inset-0 z-10 bg-[#1e1517]/80" />
+      <div className="absolute inset-0 z-10 bg-[#1e1517]/30" />
+
+      {availableCount !== null && (
+        <div className="absolute right-6 top-6 z-20 text-right md:right-12 md:top-8 lg:right-24">
+          <p className="font-display text-[15px] font-semibold uppercase tracking-[0.18em] text-white/80">
+            Available works
+          </p>
+          <p className="font-display text-2xl font-bold text-white md:text-3xl">
+            {availableCount}
+          </p>
+        </div>
+      )}
 
       <motion.div
         className="relative z-20 mx-auto flex min-h-[calc(100vh-160px)] max-w-[1800px] flex-col items-center justify-start pt-16 text-center md:pt-20"
@@ -39,22 +60,19 @@ export function BrandHeroSection({ logoWidth = "700px" }: BrandHeroProps) {
           }}
         />
 
-        <p className="-mt-12 max-w-4xl font-display text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl 2xl:text-8xl">
-          Art travels when it finds a bridge.
-        </p>
-        <p className="mt-8 max-w-4xl font-display text-lg font-light tracking-normal text-white sm:text-xl md:text-2xl lg:text-3xl 2xl:text-4xl">
-          Curating contemporary Argentine art from Córdoba to the world.
+        <p className="mt-6 max-w-4xl font-display text-lg font-light tracking-normal text-white sm:text-xl md:text-2xl lg:text-3xl 2xl:text-4xl">
+          Curating contemporary Argentine art to the world.
         </p>
 
         <div className="mt-10 h-20 w-px bg-white/20 md:mt-12 md:h-32" />
       </motion.div>
 
       <div className="pointer-events-none absolute bottom-8 left-6 right-6 z-20 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end md:bottom-10 md:left-12 md:right-12 lg:left-24 lg:right-24">
-        <p className="font-display text-[10px] uppercase tracking-[0.18em] text-white/60 2xl:text-xs">
-          EST. 2026 / CÓRDOBA, ARG
+        <p className="font-display text-[10px] font-semibold uppercase tracking-[0.18em] text-white/80 2xl:text-xs">
+          ARGENTINA
         </p>
-        <p className="font-display text-[10px] uppercase tracking-[0.18em] text-white/60 2xl:text-xs sm:text-right">
-          USA / PLANTATION, FL
+        <p className="font-display text-[10px] font-semibold uppercase tracking-[0.18em] text-white/80 2xl:text-xs sm:text-right">
+          UNITED STATES
         </p>
       </div>
     </section>
