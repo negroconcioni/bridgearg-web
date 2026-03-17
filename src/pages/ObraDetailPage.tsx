@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/PageTransition";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ShoppingBag, Loader2, Package, FileCheck } from "lucide-react";
-import { getWork, createCheckout, type WorkFromApi, CheckoutError, FALLBACK_ARTIST_NAME } from "@/lib/api";
+import { getWork, getWorks, createCheckout, type WorkFromApi, CheckoutError, FALLBACK_ARTIST_NAME } from "@/lib/api";
 import { WorkImage } from "@/components/WorkImage";
 import { toast } from "@/hooks/use-toast";
 
@@ -15,6 +16,16 @@ const ArtworkDetailPage = () => {
   const [work, setWork] = useState<WorkFromApi | null>(null);
   const [loading, setLoading] = useState(true);
   const [acquiring, setAcquiring] = useState(false);
+
+  const { data: relatedWorks = [] } = useQuery({
+    queryKey: ["works", work?.artistSlug],
+    queryFn: () => getWorks(work!.artistSlug),
+    enabled: !!work?.artistSlug,
+  });
+
+  const otherWorks = useMemo(() => {
+    return relatedWorks.filter((w) => w.id !== workId).slice(0, 4);
+  }, [relatedWorks, workId]);
 
   useEffect(() => {
     if (Number.isNaN(workId) || workId < 1) {
@@ -240,6 +251,51 @@ const ArtworkDetailPage = () => {
               </div>
             </div>
           </section>
+
+          {otherWorks.length > 0 && (
+            <section className="section-padded border-t border-border">
+              <div className="container mx-auto">
+                <h2 className="text-technical text-foreground font-semibold mb-8">
+                  More works by {artistName}
+                </h2>
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 md:gap-8">
+                  {otherWorks.map((relatedWork) => (
+                    <Link
+                      key={relatedWork.id}
+                      to={`/artworks/${relatedWork.id}`}
+                      className="group block"
+                    >
+                      <div className="flex flex-col border border-border bg-card transition-shadow hover:shadow-md">
+                        <div className="relative aspect-[4/5] overflow-hidden bg-muted">
+                          <WorkImage
+                            imagenUrl={relatedWork.imagenUrl}
+                            title={relatedWork.title}
+                            artistName={artistName}
+                            className="h-full w-full"
+                          />
+                          {!relatedWork.available && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-foreground/50">
+                              <p className="px-4 py-2 text-center text-background/95 text-sm font-light italic max-w-[80%]">
+                                Private collection
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                        <div className="border-t border-border/80 bg-card px-4 py-4">
+                          <h3 className="font-display text-sm font-semibold text-foreground truncate">
+                            {relatedWork.title}
+                          </h3>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {relatedWork.available ? relatedWork.priceDisplay : "Private collection"}
+                          </p>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
 
           {/* Shipping & Logistics */}
           <section className="section-padded border-b border-border bg-muted/30">
