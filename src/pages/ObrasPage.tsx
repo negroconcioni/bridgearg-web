@@ -7,7 +7,6 @@ import { PageTransition } from "@/components/PageTransition";
 import { FALLBACK_ARTIST_NAME, getWorks, type WorkFromApi } from "@/lib/api";
 import { WorkImage } from "@/components/WorkImage";
 import { toast } from "@/hooks/use-toast";
-import { Input } from "@/components/ui/input";
 import { SEO } from "@/components/SEO";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -23,23 +22,40 @@ const ArtworksPage = () => {
   });
 
   const [artistFilter, setArtistFilter] = useState<string>("");
+  const [mediumFilter, setMediumFilter] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<"all" | "available" | "sold">("all");
-  const [minPrice, setMinPrice] = useState<string>("");
-  const [maxPrice, setMaxPrice] = useState<string>("");
+  const [sortBy, setSortBy] = useState<
+    "default" | "price-asc" | "price-desc" | "newest" | "oldest"
+  >("default");
 
-  const [debouncedMin, setDebouncedMin] = useState<string>("");
-  const [debouncedMax, setDebouncedMax] = useState<string>("");
+  const priceBounds = useMemo(() => {
+    let min = Number.POSITIVE_INFINITY;
+    let max = 0;
+    works.forEach((work) => {
+      if (!work.available) return;
+      const p = work.price_usd;
+      if (typeof p === "number" && !Number.isNaN(p)) {
+        if (p < min) min = p;
+        if (p > max) max = p;
+      }
+    });
+    if (!Number.isFinite(min)) {
+      min = 0;
+    }
+    if (max < min) {
+      max = min;
+    }
+    // Clamp to sensible gallery defaults
+    const clampedMin = 0;
+    const clampedMax = Math.max(max, 8000);
+    return { min: clampedMin, max: clampedMax };
+  }, [works]);
+
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 8000]);
 
   useEffect(() => {
-    const handle = window.setTimeout(() => {
-      setDebouncedMin(minPrice);
-      setDebouncedMax(maxPrice);
-    }, 400);
-
-    return () => {
-      window.clearTimeout(handle);
-    };
-  }, [minPrice, maxPrice]);
+    setPriceRange([priceBounds.min, priceBounds.max]);
+  }, [priceBounds.min, priceBounds.max]);
 
   const artistOptions = useMemo(() => {
     const names = Array.from(
@@ -51,20 +67,27 @@ const ArtworksPage = () => {
     return names;
   }, [works]);
 
+  const mediumOptions = useMemo(() => {
+    const mediums = Array.from(
+      new Set(
+        works
+          .map((work) => work.medium?.trim())
+          .filter((m): m is string => !!m && m.length > 0)
+      )
+    );
+    mediums.sort((a, b) => a.localeCompare(b));
+    return mediums;
+  }, [works]);
+
   const filteredWorks = useMemo(() => {
-    const min =
-      debouncedMin.trim() === "" || Number.isNaN(Number(debouncedMin))
-        ? null
-        : Number(debouncedMin);
-    const max =
-      debouncedMax.trim() === "" || Number.isNaN(Number(debouncedMax))
-        ? null
-        : Number(debouncedMax);
+    const [rangeMin, rangeMax] = priceRange;
 
     return works.filter((work) => {
       const artistName = work.artistName?.trim() || FALLBACK_ARTIST_NAME;
+      const medium = work.medium?.trim() || "";
 
       const matchesArtist = !artistFilter || artistName === artistFilter;
+      const matchesMedium = !mediumFilter || medium === mediumFilter;
 
       const matchesStatus =
         statusFilter === "all"
@@ -73,18 +96,77 @@ const ArtworksPage = () => {
           ? work.available
           : !work.available;
 
-      const matchesMin = min == null || !work.available || work.price_usd >= min;
-      const matchesMax = max == null || !work.available || work.price_usd <= max;
+      const price = work.price_usd;
+      const matchesPrice =
+        !work.available ||
+        typeof price !== "number" ||
+        Number.isNaN(price) ||
+        (price >= rangeMin && price <= rangeMax);
 
-      return matchesArtist && matchesStatus && matchesMin && matchesMax;
+      return matchesArtist && matchesMedium && matchesStatus && matchesPrice;
     });
-  }, [works, artistFilter, statusFilter, debouncedMin, debouncedMax]);
+  }, [works, artistFilter, mediumFilter, statusFilter, priceRange]);
+
+  const sortedWorks = useMemo(() => {
+    const list = [...filteredWorks];
+
+    switch (sortBy) {
+      case "price-asc":
+        return list.sort((a, b) => {
+          const paRaw = a.price_usd;
+          const pbRaw = b.price_usd;
+          const pa =
+            typeof paRaw !== "number" || Number.isNaN(paRaw)
+              ? Number.POSITIVE_INFINITY
+              : paRaw;
+          const pb =
+            typeof pbRaw !== "number" || Number.isNaN(pbRaw)
+              ? Number.POSITIVE_INFINITY
+              : pbRaw;
+          return pa - pb;
+        });
+      case "price-desc":
+        return list.sort((a, b) => {
+          const paRaw = a.price_usd;
+          const pbRaw = b.price_usd;
+          const pa =
+            typeof paRaw !== "number" || Number.isNaN(paRaw)
+              ? Number.NEGATIVE_INFINITY
+              : paRaw;
+          const pb =
+            typeof pbRaw !== "number" || Number.isNaN(pbRaw)
+              ? Number.NEGATIVE_INFINITY
+              : pbRaw;
+          return pb - pa;
+        });
+      case "newest":
+        return list.sort((a, b) => {
+          const yaRaw = a.year;
+          const ybRaw = b.year;
+          const ya = typeof yaRaw !== "number" || Number.isNaN(yaRaw) ? 0 : yaRaw;
+          const yb = typeof ybRaw !== "number" || Number.isNaN(ybRaw) ? 0 : ybRaw;
+          return yb - ya;
+        });
+      case "oldest":
+        return list.sort((a, b) => {
+          const yaRaw = a.year;
+          const ybRaw = b.year;
+          const ya = typeof yaRaw !== "number" || Number.isNaN(yaRaw) ? 0 : yaRaw;
+          const yb = typeof ybRaw !== "number" || Number.isNaN(ybRaw) ? 0 : ybRaw;
+          return ya - yb;
+        });
+      case "default":
+      default:
+        return list;
+    }
+  }, [filteredWorks, sortBy]);
 
   const hasActiveFilters =
     !!artistFilter ||
+    !!mediumFilter ||
     statusFilter !== "all" ||
-    minPrice.trim() !== "" ||
-    maxPrice.trim() !== "";
+    priceRange[0] > priceBounds.min ||
+    priceRange[1] < priceBounds.max;
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -138,7 +220,7 @@ const ArtworksPage = () => {
               <div className="mb-8 rounded-lg border border-border bg-card/40 p-4 backdrop-blur-sm md:mb-10">
                 <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                   <div className="flex flex-1 flex-col gap-4 md:flex-row md:items-end md:gap-4">
-                    <div className="w-full md:w-1/3">
+                    <div className="w-full md:w-1/4">
                       <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                         Artist
                       </label>
@@ -156,7 +238,25 @@ const ArtworksPage = () => {
                       </select>
                     </div>
 
-                    <div className="w-full md:w-1/3">
+                    <div className="w-full md:w-1/4">
+                      <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                        Medium
+                      </label>
+                      <select
+                        value={mediumFilter}
+                        onChange={(e) => setMediumFilter(e.target.value)}
+                        className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground shadow-sm outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                      >
+                        <option value="">All mediums</option>
+                        {mediumOptions.map((medium) => (
+                          <option key={medium} value={medium}>
+                            {medium}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="w-full md:w-1/4">
                       <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                         Availability
                       </label>
@@ -178,54 +278,121 @@ const ArtworksPage = () => {
                       </div>
                     </div>
 
-                    <div className="w-full md:w-1/3">
+                    <div className="w-full md:w-1/4">
                       <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                         Price range (USD)
                       </label>
-                      <div className="flex flex-col gap-2 md:flex-row">
-                        <Input
-                          type="number"
-                          inputMode="decimal"
-                          placeholder="Min"
-                          value={minPrice}
-                          onChange={(e) => setMinPrice(e.target.value)}
-                          className="h-10 flex-1"
-                        />
-                        <Input
-                          type="number"
-                          inputMode="decimal"
-                          placeholder="Max"
-                          value={maxPrice}
-                          onChange={(e) => setMaxPrice(e.target.value)}
-                          className="h-10 flex-1"
-                        />
+                      <div className="space-y-3">
+                        <div className="relative h-8">
+                          {/* Track */}
+                          <div className="absolute left-0 right-0 top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-border" />
+                          {/* Range highlight */}
+                          <div
+                            className="absolute top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-foreground"
+                            style={{
+                              left: `${((priceRange[0] - priceBounds.min) /
+                                (priceBounds.max - priceBounds.min || 1)) *
+                                100}%`,
+                              right: `${100 -
+                                ((priceRange[1] - priceBounds.min) /
+                                  (priceBounds.max - priceBounds.min || 1)) *
+                                  100}%`,
+                            }}
+                          />
+                          {/* Min handle */}
+                          <input
+                            type="range"
+                            min={priceBounds.min}
+                            max={priceBounds.max}
+                            value={priceRange[0]}
+                            onChange={(e) => {
+                              const newMin = Math.min(
+                                Number(e.target.value),
+                                priceRange[1]
+                              );
+                              setPriceRange([newMin, priceRange[1]]);
+                            }}
+                            className="pointer-events-auto absolute left-0 right-0 top-0 h-8 w-full appearance-none bg-transparent [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-foreground [&::-moz-range-thumb]:h-3 [&::-moz-range-thumb]:w-3 [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-foreground"
+                          />
+                          {/* Max handle */}
+                          <input
+                            type="range"
+                            min={priceBounds.min}
+                            max={priceBounds.max}
+                            value={priceRange[1]}
+                            onChange={(e) => {
+                              const newMax = Math.max(
+                                Number(e.target.value),
+                                priceRange[0]
+                              );
+                              setPriceRange([priceRange[0], newMax]);
+                            }}
+                            className="pointer-events-auto absolute left-0 right-0 top-0 h-8 w-full appearance-none bg-transparent [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-foreground [&::-moz-range-thumb]:h-3 [&::-moz-range-thumb]:w-3 [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-foreground"
+                          />
+                        </div>
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                          USD{" "}
+                          {Math.round(priceRange[0] / 100) * 100} – USD{" "}
+                          {Math.round(priceRange[1] / 100) * 100}
+                        </p>
                       </div>
                     </div>
                   </div>
 
-                  {hasActiveFilters && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setArtistFilter("");
-                        setStatusFilter("all");
-                        setMinPrice("");
-                        setMaxPrice("");
-                        setDebouncedMin("");
-                        setDebouncedMax("");
-                      }}
-                      className="self-start text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground underline-offset-4 hover:underline md:self-auto"
-                    >
-                      Clear filters
-                    </button>
-                  )}
+                  <div className="flex flex-col gap-3 md:w-60">
+                    <div>
+                      <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                        Sort by
+                      </label>
+                      <select
+                        value={sortBy}
+                        onChange={(e) =>
+                          setSortBy(
+                            e.target.value as
+                              | "default"
+                              | "price-asc"
+                              | "price-desc"
+                              | "newest"
+                              | "oldest"
+                          )
+                        }
+                        className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground shadow-sm outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                      >
+                        <option value="default">Default</option>
+                        <option value="price-asc">Price: Low to High</option>
+                        <option value="price-desc">Price: High to Low</option>
+                        <option value="newest">Newest first</option>
+                        <option value="oldest">Oldest first</option>
+                      </select>
+                    </div>
+
+                    {hasActiveFilters && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setArtistFilter("");
+                          setStatusFilter("all");
+                          setPriceRange([priceBounds.min, priceBounds.max]);
+                          setSortBy("default");
+                        }}
+                        className="self-start text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground underline-offset-4 hover:underline md:self-auto"
+                      >
+                        Clear filters
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
 
               {loading ? (
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 md:gap-8">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
                   {Array.from({ length: 6 }).map((_, i) => (
-                    <div key={i} className="flex flex-col border border-border bg-card">
+                    <div
+                      key={i}
+                      className={`flex flex-col border border-border bg-card ${
+                        i % 6 === 0 ? "md:col-span-2" : "md:col-span-1"
+                      }`}
+                    >
                       <div className="relative aspect-[4/5] overflow-hidden bg-muted">
                         <Skeleton className="h-full w-full" />
                       </div>
@@ -240,44 +407,79 @@ const ArtworksPage = () => {
                 </div>
               ) : (
                 <>
-                  {filteredWorks.length === 0 ? (
-                    <div className="py-16 text-center">
-                      <p className="text-sm font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                        No works match your filters
+                  <div className="mb-4 text-left">
+                    <p className="font-display text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                      {hasActiveFilters
+                        ? `Showing ${sortedWorks.length} of ${works.length} works`
+                        : `${works.length} works`}
+                    </p>
+                  </div>
+
+                  {sortedWorks.length === 0 ? (
+                    <div className="py-24 text-center">
+                      <p className="text-sm text-muted-foreground">
+                        No works match your current filters.
                       </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setArtistFilter("");
+                          setStatusFilter("all");
+                          setPriceRange([priceBounds.min, priceBounds.max]);
+                          setSortBy("default");
+                        }}
+                        className="mt-4 inline-flex items-center border border-border bg-card px-4 py-2 text-xs font-medium uppercase tracking-[0.18em] text-foreground hover:bg-foreground hover:text-background transition-colors"
+                      >
+                        Clear filters
+                      </button>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 md:gap-8">
-                      {filteredWorks.map((work, index) => {
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
+                      {sortedWorks.map((work, index) => {
                         const artistName = work.artistName?.trim() || FALLBACK_ARTIST_NAME;
+                        const isFeatured = index % 6 === 0;
 
                         return (
-                          <Link
+                          <div
                             key={work.id}
-                            to={`/artworks/${work.id}`}
-                            className="group block h-full"
+                            className={`block h-full ${
+                              isFeatured ? "md:col-span-2" : "md:col-span-1"
+                            }`}
                           >
                             <div className="flex h-full flex-col border border-border bg-card transition-shadow hover:shadow-md">
-                              <div className="relative aspect-[4/5] overflow-hidden bg-muted">
-                                <WorkImage
-                                  imagenUrl={work.imagenUrl}
-                                  title={work.title}
-                                  artistName={artistName}
-                                  className="h-full w-full"
-                                />
-                                {!work.available && (
-                                  <div className="absolute inset-0 flex items-center justify-center bg-foreground/50">
-                                    <span className="inline-flex items-center gap-1 rounded-full bg-[#1e1517]/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-[#1e1517]/60">
-                                      ● Private Collection
+                              <Link to={`/artworks/${work.id}`} className="block">
+                                <div className="group relative aspect-[4/5] overflow-hidden bg-muted">
+                                  <WorkImage
+                                    imagenUrl={work.imagenUrl}
+                                    title={work.title}
+                                    artistName={artistName}
+                                    className="h-full w-full"
+                                  />
+                                  {!work.available && (
+                                    <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-foreground/50 group-hover:opacity-0 transition-opacity duration-300">
+                                      <span className="inline-flex items-center gap-1 rounded-full bg-[#1e1517]/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-[#1e1517]/60">
+                                        ● Private Collection
+                                      </span>
+                                    </div>
+                                  )}
+                                  <div className="absolute left-4 top-4 z-10">
+                                    <span className="bg-background/90 px-2 py-1 text-label">
+                                      {String(index + 1).padStart(2, "0")}
                                     </span>
                                   </div>
-                                )}
-                                <div className="absolute left-4 top-4">
-                                  <span className="bg-background/90 px-2 py-1 text-label">
-                                    {String(index + 1).padStart(2, "0")}
-                                  </span>
+                                  <div className="pointer-events-none absolute inset-0 flex flex-col justify-between bg-[#1e1517]/65 p-4 opacity-0 backdrop-blur-[2px] transition-opacity duration-300 group-hover:opacity-100">
+                                    <div>
+                                      <p className="font-display text-sm font-medium text-white">
+                                        {work.title}
+                                      </p>
+                                      <p className="mt-1 text-xs text-white/70">{artistName}</p>
+                                    </div>
+                                    <p className="text-[10px] uppercase tracking-widest text-white/60">
+                                      View work →
+                                    </p>
+                                  </div>
                                 </div>
-                              </div>
+                              </Link>
 
                               <div className="flex flex-1 flex-col justify-between border-t border-border/80 bg-card px-6 py-5">
                                 <div>
@@ -292,20 +494,41 @@ const ArtworksPage = () => {
                                     {work.medium && <p>{work.medium}</p>}
                                   </div>
                                 </div>
-                                <div className="mt-6 flex items-center justify-between">
-                                  {!work.available ? (
-                                    <span className="inline-flex items-center gap-1 rounded-full bg-[#1e1517]/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-[#1e1517]/60">
-                                      ● Private Collection
-                                    </span>
+                                <div className="mt-6 flex flex-col gap-3">
+                                  <div className="flex items-center justify-between">
+                                    {!work.available ? (
+                                      <span className="inline-flex items-center gap-1 rounded-full bg-[#1e1517]/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-[#1e1517]/60">
+                                        ● Private Collection
+                                      </span>
+                                    ) : (
+                                      <span className="font-display text-base font-semibold text-foreground">
+                                        {work.priceDisplay}
+                                      </span>
+                                    )}
+                                  </div>
+                                  {work.available ? (
+                                    <Link
+                                      to={`/contacto?obra=${encodeURIComponent(
+                                        work.title
+                                      )}&artista=${encodeURIComponent(artistName)}`}
+                                      className="border border-[#1e1517]/30 px-4 py-1.5 text-[10px] font-display uppercase tracking-[0.18em] text-[#1e1517]"
+                                    >
+                                      Inquire
+                                    </Link>
                                   ) : (
-                                    <span className="font-display text-base font-semibold text-foreground">
-                                      {work.priceDisplay}
-                                    </span>
+                                    <Link
+                                      to={`/contacto?obra=${encodeURIComponent(
+                                        work.title
+                                      )}&tipo=private-collection`}
+                                      className="text-[10px] font-display uppercase tracking-[0.18em] text-[#1e1517]/50 underline underline-offset-2"
+                                    >
+                                      Inquire about availability
+                                    </Link>
                                   )}
                                 </div>
                               </div>
                             </div>
-                          </Link>
+                          </div>
                         );
                       })}
                     </div>

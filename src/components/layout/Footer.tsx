@@ -90,9 +90,46 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom: copyright + social */}
-        <div className="mt-12 border-t border-[#fcf8ea]/12 pt-6">
-          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+        {/* Bottom: payments + copyright + social */}
+        <div className="mt-12 border-t border-[#fcf8ea]/12 pt-6 space-y-6">
+          {/* Payment security */}
+          <div className="flex flex-col items-start gap-3 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center gap-2 opacity-50 hover:opacity-70 transition-opacity">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#fcf8ea"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+              <span className="font-display text-[10px] uppercase tracking-[0.14em] text-[#fcf8ea]">
+                Secure checkout powered by Stripe
+              </span>
+            </div>
+            <div className="flex items-center gap-2 opacity-40">
+              <span className="font-display text-[10px] uppercase tracking-[0.1em] text-[#fcf8ea]">
+                Visa
+              </span>
+              <span className="text-[#fcf8ea]/30">·</span>
+              <span className="font-display text-[10px] uppercase tracking-[0.1em] text-[#fcf8ea]">
+                Mastercard
+              </span>
+              <span className="text-[#fcf8ea]/30">·</span>
+              <span className="font-display text-[10px] uppercase tracking-[0.1em] text-[#fcf8ea]">
+                Amex
+              </span>
+            </div>
+          </div>
+
+          {/* Copyright + social */}
+          <div className="flex flex-col items-center justify-between gap-4 border-t border-[#fcf8ea]/10 pt-4 md:flex-row">
             <p className="font-display text-xs uppercase tracking-[0.1em] text-[#fcf8ea]/72">
               © 2026 BridgeArg
             </p>
