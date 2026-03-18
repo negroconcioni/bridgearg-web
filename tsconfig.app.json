@@ -27,5 +27,6 @@
       "@/*": ["./src/*"]
     }
   },
+  "exclude": ["supabase"],
   "include": ["src"]
 }

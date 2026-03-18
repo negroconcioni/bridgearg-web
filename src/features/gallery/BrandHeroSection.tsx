@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { getAvailableCount } from "@/lib/api";
 
-const heroIsotypeSrc = encodeURI("/assets/logos/BRIDGEARG - Exportacion logos-08.svg");
+const heroIsotypeSrc = "/assets/logos/bridgearg-logo-light.svg";
 const heroBackgroundUrl = "/assets/ui/fondo_fabio.jpg";
 
 export interface BrandHeroProps {

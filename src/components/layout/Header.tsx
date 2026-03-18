@@ -57,7 +57,7 @@ export function Header() {
             <div className="logo-container flex items-center">
               <img
                 src={logoSrc}
-                alt="BridgeArg wordmark"
+                alt="BridgeArg"
                 className="block h-auto"
                 style={{ width: desktopLogoWidth }}
               />
@@ -94,7 +94,7 @@ export function Header() {
                 <div className="logo-container flex items-center">
                   <img
                     src={logoSrc}
-                    alt="BridgeArg wordmark"
+                    alt="BridgeArg"
                     className="block h-auto"
                     style={{ width: mobileLogoWidth }}
                   />

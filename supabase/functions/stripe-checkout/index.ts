@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Supabase Edge Function: creates a Stripe Checkout Session from artwork in `artworks` table.
 // Runs on Deno (Supabase Cloud). Imports from https://esm.sh/
 // Secrets: STRIPE_SECRET_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, CLIENT_URL (required in production)
@@ -8,6 +9,7 @@ import Stripe from "https://esm.sh/stripe@17.7.0?target=denonext";
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
   apiVersion: "2025-02-24.acacia",
 });
+// ⚠️ Asegurate de que STRIPE_SECRET_KEY sea la clave live antes de producción.
 
 function normalizeOrigin(value: string): string | null {
   try {

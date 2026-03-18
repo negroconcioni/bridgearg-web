@@ -10,6 +10,17 @@ import { toast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
 import { Skeleton } from "@/components/ui/skeleton";
 
+/**
+ * TODO - Base de datos:
+ * Los artistas actuales son datos demo ("Artista Ejemplo 1-10").
+ * Antes del lanzamiento, cargar artistas reales con:
+ * - Nombres reales
+ * - Slugs únicos (usados para routing en /artistas/:slug)
+ * - Fotos de perfil individuales (image_url)
+ * - Bio, origin, specialty, birthYear
+ * - Foto del estudio (studio_image_url) y descripción (studio_description)
+ */
+
 type ArtistCard = {
   artist: ArtistFromApi;
   featuredWork: WorkFromApi | null;
@@ -71,10 +82,12 @@ const ArtistasPage = () => {
     }
 
     return [...list].sort((a, b) => {
-      const nameA = a.artist.name.toLowerCase();
-      const nameB = b.artist.name.toLowerCase();
-      if (nameA === nameB) return 0;
-      const cmp = nameA < nameB ? -1 : 1;
+      const nameA = a.artist.name.trim();
+      const nameB = b.artist.name.trim();
+      const cmp = nameA.localeCompare(nameB, undefined, {
+        numeric: true,
+        sensitivity: "base",
+      });
       return sortOrder === "asc" ? cmp : -cmp;
     });
   }, [artistCards, searchTerm, sortOrder]);
@@ -84,8 +97,8 @@ const ArtistasPage = () => {
       <div className="min-h-screen bg-[#fcf8ea]">
         <SEO
           title="Artists"
-          description="Discover our curated roster of contemporary Argentine artists."
-          url="/artistas"
+          description="Discover contemporary Argentine artists represented by BridgeArg."
+          url="/artists"
         />
         <Header />
         <main>

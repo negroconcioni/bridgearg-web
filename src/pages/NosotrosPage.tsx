@@ -11,16 +11,6 @@ import { SEO } from "@/components/SEO";
 /** Wide editorial strip; swap for `getArtworkImagePublicUrl("…")` from `@/lib/supabaseStorage` when uploaded. */
 const aboutWideImageSrc = "/assets/ui/new-hero-bg.jpg";
 
-const brandPalette = [
-  { hex: "#FAF9EF", label: "Cream" },
-  { hex: "#201819", label: "Charcoal" },
-  { hex: "#625053", label: "Mauve" },
-] as const;
-
-const logoOnDarkSrc = "/assets/logos/logo-bridge-light.svg";
-const logoOnLightSrc =
-  "/assets/logos/BRIDGEARG%20-%20Exportacion%20logos-08.svg";
-
 const teamMembers = [
   {
     name: "Sofía Martínez",
@@ -119,7 +109,8 @@ const NosotrosPage = () => {
       value: countsLoading ? "—" : artistCount > 0 ? String(artistCount) : "0",
       label: "Artists",
     },
-    { value: "2026", label: "Since" },
+    // TODO: Descomentar cuando el sitio tenga más de 1 año activo
+    // { value: "2026", label: "Since" },
   ];
 
   return (
@@ -148,7 +139,7 @@ const NosotrosPage = () => {
 
           <section className="border-y border-border py-10">
             <div className="container mx-auto px-6 md:px-10">
-              <div className="grid grid-cols-3 gap-8 md:grid-cols-3">
+              <div className="grid grid-cols-2 gap-8 md:grid-cols-2">
                 {impactStats.map((stat) => (
                   <div key={stat.label} className="text-center">
                     <p className="font-display text-4xl font-semibold text-foreground">
@@ -198,60 +189,17 @@ const NosotrosPage = () => {
 
                   <div className="tech-box">
                     <h2 className="text-technical text-foreground mb-4">Identity</h2>
-                    <div className="grid gap-10 lg:grid-cols-[1fr_minmax(0,17rem)] lg:gap-12">
-                      <div>
-                        <p className="text-muted-foreground text-sm leading-relaxed">
-                          Our visual language stays restrained and warm: generous space, understated
-                          type, and a palette that reads like paper and studio light—always in
-                          service of the work, never competing with it. The name carries the bridge
-                          as metaphor: structure that connects two shores, the same way we link
-                          Argentine practice with international collectors who may never share a
-                          zip code. In contracts and logistics we are precise and professional; in
-                          how we write and speak we remain unmistakably human—clear, patient, and
-                          close to the story behind each piece.
-                        </p>
-                      </div>
-                      <div className="space-y-8 border-border lg:border-l lg:pl-10 pt-2 lg:pt-0">
-                        <div>
-                          <p className="text-label mb-4">Palette</p>
-                          <div className="flex flex-wrap gap-6">
-                            {brandPalette.map(({ hex, label }) => (
-                              <div key={hex} className="flex flex-col items-center gap-2">
-                                <span
-                                  className="h-10 w-10 shrink-0 rounded-full border border-border shadow-sm"
-                                  style={{ backgroundColor: hex }}
-                                  aria-hidden
-                                />
-                                <span className="text-center text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
-                                  {label}
-                                </span>
-                                <span className="font-mono text-[10px] text-muted-foreground/80">
-                                  {hex}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                        <div>
-                          <p className="text-label mb-4">WORDMARK</p>
-                          <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
-                            <div className="flex min-h-[5.5rem] flex-1 items-center justify-center rounded-lg border border-[#fcf8ea]/15 bg-[#1e1517] px-4 py-6">
-                              <img
-                                src={logoOnDarkSrc}
-                                alt="BridgeArg wordmark — light on dark"
-                                className="h-8 w-auto max-w-[160px] object-contain object-center opacity-95"
-                              />
-                            </div>
-                            <div className="flex min-h-[5.5rem] flex-1 items-center justify-center rounded-lg border border-[#fcf8ea]/15 bg-[#1e1517] px-4 py-6">
-                              <img
-                                src={logoOnLightSrc}
-                                alt="BridgeArg wordmark — as on footer (light on dark)"
-                                className="h-8 w-auto max-w-[160px] object-contain object-center"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                    <div>
+                      <p className="text-muted-foreground text-sm leading-relaxed">
+                        Our visual language stays restrained and warm: generous space, understated
+                        type, and a palette that reads like paper and studio light—always in
+                        service of the work, never competing with it. The name carries the bridge
+                        as metaphor: structure that connects two shores, the same way we link
+                        Argentine practice with international collectors who may never share a
+                        zip code. In contracts and logistics we are precise and professional; in
+                        how we write and speak we remain unmistakably human—clear, patient, and
+                        close to the story behind each piece.
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -292,30 +240,33 @@ const NosotrosPage = () => {
                     </ul>
                   </div>
 
-                  <div>
-                    <span className="text-label mb-6 block">VOICES</span>
-                    <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-                      {testimonials.map((t) => (
-                        <div
-                          key={t.attribution}
-                          className="border border-border bg-card/30 p-6 md:p-8"
-                        >
-                          <p
-                            className="font-serif text-4xl leading-none text-muted-foreground/30"
-                            aria-hidden
+                  {false && (
+                    <div>
+                      {/* TODO: Reemplazar con testimonios reales antes del lanzamiento */}
+                      <span className="text-label mb-6 block">VOICES</span>
+                      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+                        {testimonials.map((t) => (
+                          <div
+                            key={t.attribution}
+                            className="border border-border bg-card/30 p-6 md:p-8"
                           >
-                            &ldquo;
-                          </p>
-                          <p className="mt-2 text-sm italic leading-relaxed text-muted-foreground">
-                            {t.quote}
-                          </p>
-                          <p className="mt-6 font-display text-xs uppercase tracking-widest text-foreground">
-                            {t.attribution}
-                          </p>
-                        </div>
-                      ))}
+                            <p
+                              className="font-serif text-4xl leading-none text-muted-foreground/30"
+                              aria-hidden
+                            >
+                              &ldquo;
+                            </p>
+                            <p className="mt-2 text-sm italic leading-relaxed text-muted-foreground">
+                              {t.quote}
+                            </p>
+                            <p className="mt-6 font-display text-xs uppercase tracking-widest text-foreground">
+                              {t.attribution}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   <div className="tech-box">
                     <h2 className="text-technical text-foreground mb-4">Locations</h2>
@@ -356,39 +307,42 @@ const NosotrosPage = () => {
           </section>
 
           {/* Team */}
-          <section className="section-padded border-t border-border">
-            <div className="container mx-auto">
-              <span className="text-label mb-8 block">THE TEAM</span>
-              <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-12 lg:grid-cols-3 lg:gap-10">
-                {teamMembers.map((member) => (
-                  <article
-                    key={member.name}
-                    className="overflow-hidden border border-border bg-card"
-                  >
-                    <div className="aspect-square overflow-hidden bg-muted">
-                      <OptimizedImage
-                        src={member.imageSrc}
-                        alt={member.name}
-                        className="h-full w-full"
-                        imageClassName="h-full w-full object-cover"
-                      />
-                    </div>
-                    <div className="p-6">
-                      <h3 className="font-display text-base font-medium text-foreground">
-                        {member.name}
-                      </h3>
-                      <p className="mt-1 text-xs uppercase tracking-widest text-muted-foreground">
-                        {member.role}
-                      </p>
-                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                        {member.bio}
-                      </p>
-                    </div>
-                  </article>
-                ))}
+          {false && (
+            <section className="section-padded border-t border-border">
+              <div className="container mx-auto">
+                {/* TODO: Descomentar y actualizar con datos reales del equipo antes del lanzamiento */}
+                <span className="text-label mb-8 block">THE TEAM</span>
+                <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-12 lg:grid-cols-3 lg:gap-10">
+                  {teamMembers.map((member) => (
+                    <article
+                      key={member.name}
+                      className="overflow-hidden border border-border bg-card"
+                    >
+                      <div className="aspect-square overflow-hidden bg-muted">
+                        <OptimizedImage
+                          src={member.imageSrc}
+                          alt={member.name}
+                          className="h-full w-full"
+                          imageClassName="h-full w-full object-cover"
+                        />
+                      </div>
+                      <div className="p-6">
+                        <h3 className="font-display text-base font-medium text-foreground">
+                          {member.name}
+                        </h3>
+                        <p className="mt-1 text-xs uppercase tracking-widest text-muted-foreground">
+                          {member.role}
+                        </p>
+                        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                          {member.bio}
+                        </p>
+                      </div>
+                    </article>
+                  ))}
+                </div>
               </div>
-            </div>
-          </section>
+            </section>
+          )}
 
           <section className="bg-[#fcf8ea] py-24">
             <div className="container mx-auto px-6 text-center md:px-10">

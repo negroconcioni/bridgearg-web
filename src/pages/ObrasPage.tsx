@@ -10,6 +10,17 @@ import { toast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
 import { Skeleton } from "@/components/ui/skeleton";
 
+/**
+ * TODO - Base de datos:
+ * Las obras actuales tienen títulos duplicados (datos demo).
+ * Antes del lanzamiento, cargar obras reales con:
+ * - Títulos únicos y descriptivos
+ * - Campo 'medium' completado (para el filtro de Medium)
+ * - Campo 'year' completado (para el filtro de Newest/Oldest)
+ * - Campo 'dimensions' completado o precio (para Details en ObraDetailPage)
+ * - Imágenes reales (no las mismas fotos repetidas)
+ */
+
 const ArtworksPage = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const {
@@ -113,6 +124,11 @@ const ArtworksPage = () => {
     switch (sortBy) {
       case "price-asc":
         return list.sort((a, b) => {
+          // Private collection works always go to the end
+          if (!a.available && !b.available) return 0;
+          if (!a.available) return 1;
+          if (!b.available) return -1;
+
           const paRaw = a.price_usd;
           const pbRaw = b.price_usd;
           const pa =
@@ -127,6 +143,11 @@ const ArtworksPage = () => {
         });
       case "price-desc":
         return list.sort((a, b) => {
+          // Private collection works always go to the end
+          if (!a.available && !b.available) return 0;
+          if (!a.available) return 1;
+          if (!b.available) return -1;
+
           const paRaw = a.price_usd;
           const pbRaw = b.price_usd;
           const pa =
@@ -227,7 +248,7 @@ const ArtworksPage = () => {
                       <select
                         value={artistFilter}
                         onChange={(e) => setArtistFilter(e.target.value)}
-                        className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground shadow-sm outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                        className="h-11 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground shadow-sm outline-none focus-visible:ring-1 focus-visible:ring-ring"
                       >
                         <option value="">All artists</option>
                         {artistOptions.map((name) => (
@@ -239,13 +260,14 @@ const ArtworksPage = () => {
                     </div>
 
                     <div className="w-full md:w-1/4">
+                      {/* Medium options populate automatically from Supabase. Add 'medium' field to artworks records. */}
                       <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                         Medium
                       </label>
                       <select
                         value={mediumFilter}
                         onChange={(e) => setMediumFilter(e.target.value)}
-                        className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground shadow-sm outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                        className="h-11 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground shadow-sm outline-none focus-visible:ring-1 focus-visible:ring-ring"
                       >
                         <option value="">All mediums</option>
                         {mediumOptions.map((medium) => (
@@ -266,7 +288,7 @@ const ArtworksPage = () => {
                             key={option}
                             type="button"
                             onClick={() => setStatusFilter(option)}
-                            className={`rounded-full px-3 py-1 text-xs font-medium capitalize transition-colors ${
+                            className={`rounded-full px-4 py-2 min-h-[44px] flex items-center text-xs font-medium capitalize transition-colors ${
                               statusFilter === option
                                 ? "bg-foreground text-background"
                                 : "text-muted-foreground hover:text-foreground"
@@ -356,7 +378,7 @@ const ArtworksPage = () => {
                               | "oldest"
                           )
                         }
-                        className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground shadow-sm outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                        className="h-11 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground shadow-sm outline-none focus-visible:ring-1 focus-visible:ring-ring"
                       >
                         <option value="default">Default</option>
                         <option value="price-asc">Price: Low to High</option>
@@ -389,9 +411,7 @@ const ArtworksPage = () => {
                   {Array.from({ length: 6 }).map((_, i) => (
                     <div
                       key={i}
-                      className={`flex flex-col border border-border bg-card ${
-                        i % 6 === 0 ? "md:col-span-2" : "md:col-span-1"
-                      }`}
+                      className="flex flex-col border border-border bg-card md:col-span-1"
                     >
                       <div className="relative aspect-[4/5] overflow-hidden bg-muted">
                         <Skeleton className="h-full w-full" />
@@ -437,14 +457,11 @@ const ArtworksPage = () => {
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
                       {sortedWorks.map((work, index) => {
                         const artistName = work.artistName?.trim() || FALLBACK_ARTIST_NAME;
-                        const isFeatured = index % 6 === 0;
 
                         return (
                           <div
                             key={work.id}
-                            className={`block h-full ${
-                              isFeatured ? "md:col-span-2" : "md:col-span-1"
-                            }`}
+                        className="block h-full md:col-span-1"
                           >
                             <div className="flex h-full flex-col border border-border bg-card transition-shadow hover:shadow-md">
                               <Link to={`/artworks/${work.id}`} className="block">
@@ -462,11 +479,6 @@ const ArtworksPage = () => {
                                       </span>
                                     </div>
                                   )}
-                                  <div className="absolute left-4 top-4 z-10">
-                                    <span className="bg-background/90 px-2 py-1 text-label">
-                                      {String(index + 1).padStart(2, "0")}
-                                    </span>
-                                  </div>
                                   <div className="pointer-events-none absolute inset-0 flex flex-col justify-between bg-[#1e1517]/65 p-4 opacity-0 backdrop-blur-[2px] transition-opacity duration-300 group-hover:opacity-100">
                                     <div>
                                       <p className="font-display text-sm font-medium text-white">
