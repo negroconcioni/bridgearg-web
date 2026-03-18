@@ -9,6 +9,7 @@ import { PageTransition } from "@/components/PageTransition";
 import { toast } from "@/hooks/use-toast";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabaseClient";
 import { SEO } from "@/components/SEO";
+import { getArtists, type ArtistFromApi } from "@/lib/api";
 
 type ArtistDetail = {
   id: number;
@@ -43,6 +44,7 @@ type ArtistWork = {
   status: string | null;
   price: number | null;
   currency: string;
+  available: boolean;
 };
 
 type ArtistWorkRow = {
@@ -54,12 +56,12 @@ type ArtistWorkRow = {
 };
 
 const masonryPatterns = [
-  { span: "md:col-span-3", aspect: "aspect-[4/5]" },
-  { span: "md:col-span-3", aspect: "aspect-[5/4]" },
-  { span: "md:col-span-2", aspect: "aspect-[4/5]" },
-  { span: "md:col-span-4", aspect: "aspect-[16/10]" },
-  { span: "md:col-span-2", aspect: "aspect-square" },
-  { span: "md:col-span-3", aspect: "aspect-[4/5]" },
+  { span: "md:col-span-3", aspect: "aspect-[3/4]" },
+  { span: "md:col-span-3", aspect: "aspect-[3/4]" },
+  { span: "md:col-span-2", aspect: "aspect-[3/4]" },
+  { span: "md:col-span-4", aspect: "aspect-[3/4]" },
+  { span: "md:col-span-2", aspect: "aspect-[3/4]" },
+  { span: "md:col-span-3", aspect: "aspect-[3/4]" },
 ];
 
 function mapArtistDetailRow(row: ArtistDetailRow): ArtistDetail {
@@ -78,13 +80,16 @@ function mapArtistDetailRow(row: ArtistDetailRow): ArtistDetail {
 }
 
 function mapArtistWorkRow(row: ArtistWorkRow): ArtistWork {
+  const status = row.status ?? null;
+  const sold = isSoldWork(status);
   return {
     id: row.id,
     title: row.title,
     imageUrl: row.image_url?.trim() || null,
-    status: row.status ?? null,
+    status,
     price: row.price_usd ?? null,
     currency: "USD",
+    available: !sold,
   };
 }
 
@@ -159,6 +164,11 @@ const ArtistaDetailPage = () => {
     enabled: !!artist?.id,
   });
 
+  const { data: allArtists = [] } = useQuery<ArtistFromApi[]>({
+    queryKey: ["artists"],
+    queryFn: getArtists,
+  });
+
   useEffect(() => {
     if (artistError) {
       toast({ title: "Error", description: "Could not load artist.", variant: "destructive" });
@@ -224,16 +234,24 @@ const ArtistaDetailPage = () => {
         />
         <Header />
         <main>
-          <section className="overflow-visible bg-[#fcf8ea] px-12 pb-24 pt-28 md:pb-28 md:pt-36">
+          <section className="overflow-visible bg-[#fcf8ea] px-6 pb-24 pt-28 md:px-12 md:pb-28 md:pt-36">
             <div className="mx-auto max-w-7xl">
               <div className="grid grid-cols-1 gap-y-8 md:grid-cols-12 md:gap-x-8 lg:gap-x-10">
                 <div className="md:col-span-8">
+                  <div className="mb-4 pl-12">
+                    <Link
+                      to="/artistas"
+                      className="font-display text-xs uppercase tracking-[0.18em] text-[#1e1517]/50 hover:text-[#1e1517]"
+                    >
+                      ← Artists
+                    </Link>
+                  </div>
                   <div className="inline-flex items-center rounded-full border border-[#1e1517]/20 px-4 py-2">
                     <span className="font-display text-[11px] uppercase tracking-[0.16em] text-[#1e1517]">
                       About the Artist
                     </span>
                   </div>
-                  <h1 className="mt-8 pl-12 font-display text-6xl font-bold uppercase tracking-tight text-[#1e1517] md:text-7xl lg:text-[92px]">
+                  <h1 className="mt-8 pl-12 font-display text-4xl font-bold uppercase tracking-tight text-[#1e1517] md:text-6xl lg:text-[92px]">
                     {artist.name}
                   </h1>
                 </div>
@@ -245,7 +263,7 @@ const ArtistaDetailPage = () => {
                 <div className="order-2 md:order-none md:col-span-2 md:pt-12">
                   <div className="space-y-12">
                     <div>
-                      <p className="font-display text-[10px] font-light uppercase tracking-[0.45em] text-[#1e1517]/58">
+                      <p className="font-display text-[11px] font-normal uppercase tracking-[0.45em] text-[#1e1517]/58">
                         Origin
                       </p>
                       <p className="mt-4 font-display text-sm leading-7 text-[#1e1517]">
@@ -253,7 +271,7 @@ const ArtistaDetailPage = () => {
                       </p>
                     </div>
                     <div>
-                      <p className="font-display text-[10px] font-light uppercase tracking-[0.45em] text-[#1e1517]/58">
+                      <p className="font-display text-[11px] font-normal uppercase tracking-[0.45em] text-[#1e1517]/58">
                         Specialty
                       </p>
                       <p className="mt-4 font-display text-sm leading-7 text-[#1e1517]">
@@ -261,7 +279,7 @@ const ArtistaDetailPage = () => {
                       </p>
                     </div>
                     <div>
-                      <p className="font-display text-[10px] font-light uppercase tracking-[0.45em] text-[#1e1517]/58">
+                      <p className="font-display text-[11px] font-normal uppercase tracking-[0.45em] text-[#1e1517]/58">
                         Born
                       </p>
                       <p className="mt-4 font-display text-sm leading-7 text-[#1e1517]">
@@ -276,30 +294,37 @@ const ArtistaDetailPage = () => {
                     <p className="font-display text-base font-light leading-relaxed text-[#1e1517] [text-align:justify]">
                       {artist.bio || "Biography available on request."}
                     </p>
-                    <p className="mt-10 text-5xl text-[#1e1517]/90 md:text-6xl" style={{ fontFamily: "BestDB, serif" }}>
-                      {artist.name}
-                    </p>
                   </div>
                 </div>
 
                 <div className="order-1 md:order-none md:col-start-9 md:col-span-4 md:-mt-24">
-                  {artist.imageUrl ? (
-                    <div className="aspect-[2/3] overflow-hidden rounded-full bg-[#efe6d5]">
-                      <OptimizedImage
-                        src={artist.imageUrl}
-                        alt={artist.name}
-                        className="h-full w-full"
-                        imageClassName="object-cover"
-                        logSrcOnError
-                      />
+                  <div className="relative">
+                    <p
+                      className="pointer-events-none select-none font-display text-4xl md:text-5xl lg:text-[60px] uppercase tracking-tight text-[#1e1517] opacity-[0.07]"
+                      style={{ fontFamily: "BestDB, serif" }}
+                    >
+                      {artist.name}
+                    </p>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      {artist.imageUrl ? (
+                        <div className="aspect-[2/3] w-full max-w-xs overflow-hidden rounded-full bg-[#efe6d5] md:max-w-sm">
+                          <OptimizedImage
+                            src={artist.imageUrl}
+                            alt={artist.name}
+                            className="h-full w-full"
+                            imageClassName="object-cover"
+                            logSrcOnError
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex aspect-[2/3] items-center justify-center rounded-full border border-[#1e1517]/10 bg-[#efe6d5] px-8 text-center">
+                          <p className="font-display text-sm uppercase tracking-[0.16em] text-[#1e1517]/48">
+                            Portrait coming soon
+                          </p>
+                        </div>
+                      )}
                     </div>
-                  ) : (
-                    <div className="flex aspect-[2/3] items-center justify-center rounded-full border border-[#1e1517]/10 bg-[#efe6d5] px-8 text-center">
-                      <p className="font-display text-sm uppercase tracking-[0.16em] text-[#1e1517]/48">
-                        Portrait coming soon
-                      </p>
-                    </div>
-                  )}
+                  </div>
                 </div>
 
                 <div className="md:col-span-12">
@@ -369,61 +394,164 @@ const ArtistaDetailPage = () => {
                   {works.map((work, index) => {
                     const pattern = masonryPatterns[index % masonryPatterns.length];
                     const sold = isSoldWork(work.status);
+                    const available = work.available;
 
                     return (
-                      <Link key={work.id} to={`/artworks/${work.id}`} className={`group block ${pattern.span}`}>
-                        <div className={`relative overflow-hidden bg-[#efe6d5] ${pattern.aspect}`}>
-                          <OptimizedImage
-                            src={work.imageUrl ?? ""}
-                            title={work.title}
-                            artistName={artist.name}
-                            variant="artwork"
-                            className="h-full w-full"
-                            imageClassName="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                            logSrcOnError
-                          />
+                      <div key={work.id} className={`group block ${pattern.span}`}>
+                        <Link to={`/artworks/${work.id}`}>
+                          <div className={`relative overflow-hidden bg-[#efe6d5] ${pattern.aspect}`}>
+                            <OptimizedImage
+                              src={work.imageUrl ?? ""}
+                              title={work.title}
+                              artistName={artist.name}
+                              variant="artwork"
+                              className="h-full w-full"
+                              imageClassName="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                              logSrcOnError
+                            />
 
-                          <div
-                            className={`absolute inset-0 transition-all duration-500 ease-out ${
-                              sold ? "bg-black/35" : "bg-black/0 group-hover:bg-black/60"
-                            }`}
-                          />
+                            <div
+                              className={`absolute inset-0 transition-all duration-500 ease-out ${
+                                sold ? "bg-black/35" : "bg-black/0 group-hover:bg-black/60"
+                              }`}
+                            />
 
-                          <div className="pointer-events-none absolute inset-0 flex items-center justify-center p-6">
+                          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-[#1e1517]/0 p-6 opacity-0 backdrop-blur-none transition-all duration-500 ease-out group-hover:bg-[#1e1517]/60 group-hover:opacity-100 group-hover:backdrop-blur-sm">
                             {sold ? (
                               <span className="inline-flex items-center gap-1 rounded-full bg-[#1e1517]/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-[#1e1517]/60">
                                 ● Private Collection
                               </span>
                             ) : (
-                              <p className="font-display text-center text-3xl tracking-tight text-white opacity-0 transition-all duration-500 ease-out group-hover:opacity-100 md:text-4xl">
-                                {artist.name}
-                              </p>
+                              <div className="text-center text-white">
+                                <p className="font-display text-lg tracking-tight md:text-xl">
+                                  {work.title}
+                                </p>
+                                <p className="mt-2 font-display text-[10px] uppercase tracking-[0.22em] text-white/80">
+                                  View work →
+                                </p>
+                              </div>
                             )}
                           </div>
-                        </div>
+                          </div>
+                        </Link>
 
-                        <div className="pt-4">
+                        <div className="pt-4 space-y-2">
                           <h3 className="font-display text-sm font-medium uppercase tracking-[0.08em] text-[#1e1517]">
                             {work.title}
                           </h3>
 
-                          {sold ? (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-[#1e1517]/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-[#1e1517]/60">
-                              ● Private Collection
-                            </span>
-                          ) : (
-                            <p className="mt-2 font-display text-xs font-normal tracking-[0.04em] text-[#1e1517]/78">
+                          <div className="flex items-center gap-2">
+                            <p
+                              className={`font-display text-xs font-normal tracking-[0.04em] text-[#1e1517]/78 ${
+                                sold ? "line-through opacity-40" : ""
+                              }`}
+                            >
                               {formatWorkPrice(work.price, work.currency)}
                             </p>
-                          )}
+                            <span className="inline-flex items-center gap-1 rounded-full bg-[#1e1517]/5 px-2 py-0.5 font-display text-[10px] uppercase tracking-[0.18em] text-[#1e1517]/70">
+                              <span
+                                className={`inline-block h-1.5 w-1.5 rounded-full ${
+                                  available ? "bg-emerald-500" : "bg-[#1e1517]/40"
+                                }`}
+                              />
+                              {available ? "Available" : "Sold"}
+                            </span>
+                          </div>
+
+                          <Link
+                            to={`/contacto?obra=${encodeURIComponent(work.title)}`}
+                            className="inline-flex border border-[#1e1517]/30 px-4 py-1.5 font-display text-xs font-medium uppercase tracking-[0.18em] text-[#1e1517] transition-colors hover:bg-[#1e1517] hover:text-[#fcf8ea]"
+                          >
+                            Inquire
+                          </Link>
                         </div>
-                      </Link>
+                      </div>
                     );
                   })}
                 </div>
               )}
             </div>
           </section>
+
+          {allArtists.length > 1 && (
+            <>
+              <section className="bg-[#fcf8ea] px-12 pb-16 md:pb-20 border-t border-[#1e1517]/10">
+                <div className="mx-auto flex max-w-7xl items-start justify-between gap-8">
+                  {(() => {
+                    const index = allArtists.findIndex((a) => a.slug === artist.slug);
+                    const prevArtist =
+                      index > 0 && index < allArtists.length ? allArtists[index - 1] : null;
+                    const nextArtist =
+                      index >= 0 && index < allArtists.length - 1 ? allArtists[index + 1] : null;
+
+                    return (
+                      <>
+                        <div className="flex-1">
+                          {prevArtist && (
+                            <Link to={`/artistas/${prevArtist.slug}`} className="block">
+                              <span className="font-display text-xs uppercase tracking-[0.18em] text-[#1e1517]/60">
+                                ← Previous artist
+                              </span>
+                              <p className="mt-1 font-display text-sm text-[#1e1517]">
+                                {prevArtist.name}
+                              </p>
+                            </Link>
+                          )}
+                        </div>
+                        <div className="flex-1 text-right">
+                          {nextArtist && (
+                            <Link to={`/artistas/${nextArtist.slug}`} className="block">
+                              <span className="font-display text-xs uppercase tracking-[0.18em] text-[#1e1517]/60">
+                                Next artist →
+                              </span>
+                              <p className="mt-1 font-display text-sm text-[#1e1517]">
+                                {nextArtist.name}
+                              </p>
+                            </Link>
+                          )}
+                        </div>
+                      </>
+                    );
+                  })()}
+                </div>
+              </section>
+
+              <section className="bg-[#fcf8ea] px-12 pb-24 md:pb-32 border-t border-[#1e1517]/10">
+                <div className="mx-auto max-w-7xl">
+                  <p className="mb-6 font-display text-sm uppercase tracking-[0.28em] text-[#1e1517]/50">
+                    More Artists
+                  </p>
+                  <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+                    {allArtists
+                      .filter((a) => a.slug !== artist.slug)
+                      .slice(0, 3)
+                      .map((other) => (
+                        <Link
+                          key={other.id}
+                          to={`/artistas/${other.slug}`}
+                          className="group flex flex-col items-center text-center"
+                        >
+                          <div className="w-full max-w-[220px]">
+                            <div className="relative aspect-[2/3] overflow-hidden rounded-full bg-[#efe6d5] transition-transform duration-300 ease-out group-hover:scale-[1.03]">
+                              <OptimizedImage
+                                src={other.imageUrl ?? ""}
+                                alt={other.name}
+                                className="h-full w-full"
+                                imageClassName="h-full w-full object-cover object-[50%_0%] grayscale transition-all duration-300 ease-out group-hover:grayscale-0 group-hover:scale-[1.03]"
+                                logSrcOnError
+                              />
+                            </div>
+                          </div>
+                          <p className="mt-4 font-display text-xs font-medium uppercase tracking-[0.14em] text-[#1e1517]">
+                            {other.name}
+                          </p>
+                        </Link>
+                      ))}
+                  </div>
+                </div>
+              </section>
+            </>
+          )}
         </main>
         <Footer />
       </div>

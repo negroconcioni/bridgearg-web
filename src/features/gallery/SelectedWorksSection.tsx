@@ -100,7 +100,8 @@ export function SelectedWorksSection() {
     });
 
     return () => timers.forEach(clearTimeout);
-  }, [cards.length, allWorks.length, rotateCard]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allWorks.length, rotateCard]);
 
   if (cards.length === 0) return null;
 

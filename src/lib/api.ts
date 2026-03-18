@@ -233,6 +233,17 @@ export async function getArtistBySlug(slug: string): Promise<ArtistFromApi | nul
   return data ? mapArtistRowToArtist(data as ArtistRow) : null;
 }
 
+/** Total rows in `artworks` (no filters, no join). Prefer for stats; avoids empty client arrays from RLS/join issues. */
+export async function getWorksTotalCount(): Promise<number | null> {
+  const { supabase, isSupabaseConfigured } = await import("@/lib/supabaseClient");
+  if (!isSupabaseConfigured || !supabase) return null;
+  const { count, error } = await supabase
+    .from("artworks")
+    .select("*", { count: "exact", head: true });
+  if (error) return null;
+  return count ?? null;
+}
+
 export async function getWorks(artistSlug?: string): Promise<WorkFromApi[]> {
   const { supabase, isSupabaseConfigured } = await import("@/lib/supabaseClient");
   if (!isSupabaseConfigured || !supabase) return [];

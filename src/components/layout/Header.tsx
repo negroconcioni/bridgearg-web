@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
   { label: "Home", path: "/" },
-  { label: "Artists", path: "/artistas" },
+  { label: "Artists", path: "/artists" },
   { label: "Collection", path: "/artworks" },
   { label: "About", path: "/nosotros" },
   { label: "Contact", path: "/contacto" },
@@ -20,6 +20,17 @@ const mobileLogoWidth = "200px"; // TAMAÑO LOGO
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 60);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const getNavClassName = (path: string) =>
     `font-display text-xs font-medium uppercase tracking-[0.1em] transition-colors relative ${
@@ -31,8 +42,12 @@ export function Header() {
   return (
     <>
       <header
-        className="fixed left-0 right-0 top-0 z-50 border-b border-white/10"
-        style={{ backgroundColor: headerBg, height: "80px" }}
+        className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 transition-colors duration-300"
+        style={{
+          backgroundColor: scrolled ? "rgba(250, 249, 239, 0.85)" : headerBg,
+          backdropFilter: scrolled ? "blur(12px)" : "none",
+          height: "80px",
+        }}
       >
         <div
           className="flex h-full items-center pl-4 pr-4"

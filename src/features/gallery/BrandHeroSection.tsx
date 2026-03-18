@@ -74,9 +74,9 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
           </Link>
           <Link
             to="/artists"
-            className="font-display text-xs font-medium uppercase tracking-[0.18em] text-white/70 hover:text-white transition-colors"
+            className="font-display text-xs font-medium uppercase tracking-[0.18em] text-white border border-white/40 px-8 py-3 hover:bg-white/10 transition-colors"
           >
-            Meet the Artists →
+            Meet the Artists
           </Link>
         </div>
 

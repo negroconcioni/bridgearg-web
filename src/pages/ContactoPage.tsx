@@ -14,30 +14,97 @@ import { SEO } from "@/components/SEO";
 
 const ContactoPage = () => {
   const [searchParams] = useSearchParams();
-  const artworkParam = searchParams.get("artwork");
-  const artistParam = searchParams.get("artist");
 
-  const [formData, setFormData] = useState({
+  const obraParam = searchParams.get("obra");
+  const artistaParam = searchParams.get("artista");
+  const subjectParam = searchParams.get("subject");
+
+  const normalizedSubjectParam =
+    subjectParam &&
+    ["Artwork inquiry", "Artist inquiry", "General inquiry", "Press"].includes(
+      subjectParam,
+    )
+      ? subjectParam
+      : "";
+
+  const initialSubject = normalizedSubjectParam
+    ? normalizedSubjectParam
+    : obraParam
+      ? "Artwork inquiry"
+      : artistaParam
+        ? "Artist inquiry"
+        : "";
+
+  const initialMessage = obraParam
+    ? `I'm interested in the work: ${obraParam}`
+    : artistaParam
+      ? `I'd like to know more about: ${artistaParam}`
+      : "";
+
+  const [formData, setFormData] = useState<{
+    name: string;
+    email: string;
+    subject?: string;
+    message: string;
+  }>({
     name: "",
     email: "",
-    subject: artworkParam ? "Artwork inquiry" : "",
-    message:
-      artworkParam && artistParam
-        ? `I'm interested in "${artworkParam}" by ${artistParam}.`
-        : "",
+    subject: initialSubject || undefined,
+    message: initialMessage,
   });
   const [sending, setSending] = useState(false);
+  const [formSent, setFormSent] = useState(false);
+  const [errors, setErrors] = useState<{ name: string; email: string; message: string }>({
+    name: "",
+    email: "",
+    message: "",
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const nextErrors: { name: string; email: string; message: string } = {
+      name: "",
+      email: "",
+      message: "",
+    };
+
+    if (!formData.name.trim()) {
+      nextErrors.name = "This field is required";
+    }
+
+    if (!formData.email.trim()) {
+      nextErrors.email = "This field is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+      nextErrors.email = "Please enter a valid email";
+    }
+
+    if (!formData.message.trim()) {
+      nextErrors.message = "This field is required";
+    }
+
+    const hasErrors = Object.values(nextErrors).some(Boolean);
+    if (hasErrors) {
+      setErrors(nextErrors);
+      return;
+    }
+
+    if (!formData.subject) {
+      toast({
+        title: "Please select a subject",
+        description: "Choose a category so we can route your message correctly.",
+        variant: "destructive",
+      });
+      return;
+    }
     setSending(true);
     try {
-      await submitContact(formData);
+      await submitContact({ ...formData, subject: formData.subject! });
       toast({
         title: "Message sent",
         description: "Thank you for your inquiry. We will respond shortly.",
       });
-      setFormData({ name: "", email: "", subject: "", message: "" });
+      setFormSent(true);
     } catch (err) {
       toast({
         title: "Error",
@@ -77,80 +144,168 @@ const ContactoPage = () => {
           <section className="section-padded">
             <div className="container mx-auto">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="tech-box">
-                    <label className="text-technical text-foreground block mb-3">
-                      Name
-                    </label>
-                    <Input
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="Your name"
-                      required
-                      className="bg-transparent border-border focus:border-foreground"
-                    />
-                  </div>
-
-                  <div className="tech-box">
-                    <label className="text-technical text-foreground block mb-3">
-                      Email
-                    </label>
-                    <Input
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      placeholder="tu@email.com"
-                      required
-                      className="bg-transparent border-border focus:border-foreground"
-                    />
-                  </div>
-
-                  <div className="tech-box">
-                    <label className="text-technical text-foreground block mb-3">
-                      Subject
-                    </label>
-                    <Select
-                      value={formData.subject}
-                      onValueChange={(value) => setFormData({ ...formData, subject: value })}
+                {/* Form / Success state */}
+                {formSent ? (
+                  <div className="space-y-6 rounded-lg border border-border bg-card/40 p-8">
+                    <div className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background text-xl">
+                      ✓
+                    </div>
+                    <div>
+                      <h2 className="font-display text-2xl text-foreground">Message sent</h2>
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        We'll get back to you within 24 hours. Thank you for reaching out to BridgeArg.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFormData({
+                          name: "",
+                          email: "",
+                          subject: initialSubject || undefined,
+                          message: initialMessage,
+                        });
+                        setFormSent(false);
+                      }}
+                      className="text-label mt-4 underline underline-offset-4 hover:text-foreground"
                     >
-                      <SelectTrigger className="bg-transparent border-border focus:border-foreground">
-                        <SelectValue placeholder="Select a subject" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Artwork inquiry">Artwork inquiry</SelectItem>
-                        <SelectItem value="Artist inquiry">Artist inquiry</SelectItem>
-                        <SelectItem value="General inquiry">General inquiry</SelectItem>
-                        <SelectItem value="Press">Press</SelectItem>
-                      </SelectContent>
-                    </Select>
+                      Send another message
+                    </button>
                   </div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="tech-box">
+                      <label
+                        htmlFor="name"
+                        className="text-technical text-foreground mb-3 block"
+                      >
+                        NAME
+                      </label>
+                      <Input
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={(e) => {
+                          setFormData({ ...formData, name: e.target.value });
+                          if (errors.name) {
+                            setErrors({ ...errors, name: "" });
+                          }
+                        }}
+                        placeholder="Your name"
+                        required
+                        className="border-border bg-transparent focus:border-foreground"
+                      />
+                      {errors.name && (
+                        <p className="mt-1 text-xs text-destructive">{errors.name}</p>
+                      )}
+                    </div>
 
-                  <div className="tech-box">
-                    <label className="text-technical text-foreground block mb-3">
-                      Message
-                    </label>
-                    <Textarea
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      placeholder="Your message..."
-                      required
-                      rows={5}
-                      className="bg-transparent border-border focus:border-foreground resize-none"
-                    />
-                  </div>
+                    <div className="tech-box">
+                      <label
+                        htmlFor="email"
+                        className="text-technical text-foreground mb-3 block"
+                      >
+                        EMAIL
+                      </label>
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => {
+                          setFormData({ ...formData, email: e.target.value });
+                          if (errors.email) {
+                            setErrors({ ...errors, email: "" });
+                          }
+                        }}
+                        placeholder="your@email.com"
+                        required
+                        className="border-border bg-transparent focus:border-foreground"
+                      />
+                      {errors.email && (
+                        <p className="mt-1 text-xs text-destructive">{errors.email}</p>
+                      )}
+                    </div>
 
-                  <Button type="submit" variant="hero" size="lg" className="w-full md:w-auto" disabled={sending}>
-                    {sending ? (
-                      <>
-                        <Loader2 className="h-5 w-5 animate-spin" />
-                        Sending…
-                      </>
-                    ) : (
-                      "Send Message"
-                    )}
-                  </Button>
-                </form>
+                    <div className="tech-box">
+                      <label
+                        htmlFor="subject"
+                        className="text-technical text-foreground mb-3 block"
+                      >
+                        SUBJECT
+                      </label>
+                      <input
+                        type="hidden"
+                        name="subject"
+                        value={formData.subject ?? ""}
+                        readOnly
+                        aria-hidden
+                      />
+                      <Select
+                        value={formData.subject}
+                        onValueChange={(value) => setFormData({ ...formData, subject: value })}
+                      >
+                        <SelectTrigger
+                          id="subject"
+                          aria-required="true"
+                          className="border-border bg-transparent focus:border-foreground"
+                        >
+                          <SelectValue placeholder="Select a subject" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Artwork inquiry">Artwork inquiry</SelectItem>
+                          <SelectItem value="Artist inquiry">Artist inquiry</SelectItem>
+                          <SelectItem value="General inquiry">General inquiry</SelectItem>
+                          <SelectItem value="Press">Press</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="tech-box">
+                      <label
+                        htmlFor="message"
+                        className="text-technical text-foreground mb-3 block"
+                      >
+                        MESSAGE
+                      </label>
+                      <Textarea
+                        id="message"
+                        name="message"
+                        value={formData.message}
+                        onChange={(e) => {
+                          setFormData({ ...formData, message: e.target.value });
+                          if (errors.message) {
+                            setErrors({ ...errors, message: "" });
+                          }
+                        }}
+                        placeholder="Your message..."
+                        required
+                        rows={5}
+                        className="min-h-[160px] resize-y border-border bg-transparent focus:border-foreground"
+                      />
+                      {errors.message && (
+                        <p className="mt-1 text-xs text-destructive">{errors.message}</p>
+                      )}
+                    </div>
+
+                    <Button
+                      type="submit"
+                      variant="hero"
+                      size="lg"
+                      className={`w-full md:w-auto ${sending ? "cursor-not-allowed opacity-70" : ""}`}
+                      disabled={sending}
+                    >
+                      {sending ? (
+                        <>
+                          <Loader2 className="h-5 w-5 animate-spin" />
+                          Sending…
+                        </>
+                      ) : (
+                        "Send Message"
+                      )}
+                    </Button>
+                  </form>
+                )}
 
                 {/* Contact Info */}
                 <div className="space-y-8">
@@ -158,6 +313,17 @@ const ContactoPage = () => {
                     <h3 className="text-technical text-foreground mb-4">Email</h3>
                     <a href="mailto:info@bridgearg.com" className="text-muted-foreground hover:text-foreground transition-colors">
                       info@bridgearg.com
+                    </a>
+                  </div>
+
+                  <div className="tech-box">
+                    <h3 className="text-technical text-foreground mb-4">WHATSAPP</h3>
+                    {/* TODO: Replace with real business WhatsApp number */}
+                    <a
+                      href="https://wa.me/5491100000000"
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      +54 9 11 0000 0000
                     </a>
                   </div>
 
