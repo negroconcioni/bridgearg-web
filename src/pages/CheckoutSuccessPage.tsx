@@ -4,6 +4,7 @@ import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/PageTransition";
 import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 
 const CheckoutSuccessPage = () => {
   const [searchParams] = useSearchParams();
@@ -12,6 +13,11 @@ const CheckoutSuccessPage = () => {
   return (
     <PageTransition>
       <div className="min-h-screen bg-background">
+        <SEO
+          title="Purchase Confirmed"
+          description="Your artwork purchase has been confirmed."
+          url="/checkout/success"
+        />
         <Header />
         <main className="section-padded flex items-center justify-center min-h-[70vh]">
           <div className="container mx-auto max-w-lg text-center">

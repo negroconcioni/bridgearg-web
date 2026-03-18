@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-const bridgeSealSrc = encodeURI("/assets/logos/BRIDGEARG - Exportacion logos-08.svg");
+const bridgeSealSrc = "/assets/logos/bridgearg-logo-light.svg";
 
 export function InquiryBannerSection() {
   return (

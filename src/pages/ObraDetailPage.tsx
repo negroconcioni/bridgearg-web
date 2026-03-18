@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -21,6 +21,7 @@ import { SEO } from "@/components/SEO";
 
 const ArtworkDetailPage = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const workId = id ? parseInt(id, 10) : NaN;
   const [work, setWork] = useState<WorkFromApi | null>(null);
   const [loading, setLoading] = useState(true);
@@ -57,6 +58,16 @@ const ArtworkDetailPage = () => {
       cancelled = true;
     };
   }, [workId]);
+
+  useEffect(() => {
+    if (!loading && !work) {
+      const timer = setTimeout(
+        () => navigate("/artworks", { replace: true }),
+        2000,
+      );
+      return () => clearTimeout(timer);
+    }
+  }, [loading, work, navigate]);
 
   const handleAcquire = async () => {
     if (!work || work.status !== "available") return;
@@ -180,9 +191,15 @@ const ArtworkDetailPage = () => {
           <main className="section-padded">
             <div className="container mx-auto text-center">
               <h1 className="text-display text-4xl mb-4">Work not found</h1>
+              <p className="text-muted-foreground mb-8">
+                This work is no longer available or doesn't exist.
+              </p>
               <Button variant="technical" asChild>
                 <Link to="/artworks">Back to Works</Link>
               </Button>
+              <p className="mt-4 text-sm text-muted-foreground">
+                Redirecting to collection...
+              </p>
             </div>
           </main>
           <Footer />
@@ -257,6 +274,7 @@ const ArtworkDetailPage = () => {
                     )}
                   </p>
                   <h1 className="text-display text-4xl md:text-5xl lg:text-6xl mb-6">{work.title}</h1>
+                  {/* year comes from Supabase artworks.year field — populate it per artwork */}
                   {(work.year || work.medium) && (
                     <p className="text-muted-foreground text-sm mb-6">
                       {[work.year, work.medium].filter(Boolean).join(" · ")}
@@ -288,7 +306,12 @@ const ArtworkDetailPage = () => {
                           <dd className="font-medium text-foreground">{weightText}</dd>
                         </div>
                       )}
-                      {!dimensionsText && !weightText && <p className="text-muted-foreground">Details on request.</p>}
+                      {!dimensionsText && !weightText && (
+                        <>
+                          {/* TODO: Si 'Details on request' aparece, es porque dimensions/weight no están cargados en Supabase */}
+                          <p className="text-muted-foreground">Details on request.</p>
+                        </>
+                      )}
                     </dl>
                   </div>
 
@@ -315,7 +338,7 @@ const ArtworkDetailPage = () => {
                     ) : (
                       <Button variant="acquire" size="xl" asChild className="gap-2">
                         <Link
-                          to={`/contact?artwork=${encodeURIComponent(work.title)}&artist=${encodeURIComponent(
+                          to={`/contacto?obra=${encodeURIComponent(work.title)}&artista=${encodeURIComponent(
                             artistName,
                           )}`}
                         >

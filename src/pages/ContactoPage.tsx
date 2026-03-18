@@ -54,18 +54,30 @@ const ContactoPage = () => {
   });
   const [sending, setSending] = useState(false);
   const [formSent, setFormSent] = useState(false);
-  const [errors, setErrors] = useState<{ name: string; email: string; message: string }>({
+  const [errors, setErrors] = useState<{
+    name: string;
+    email: string;
+    subject: string;
+    message: string;
+  }>({
     name: "",
     email: "",
+    subject: "",
     message: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const nextErrors: { name: string; email: string; message: string } = {
+    const nextErrors: {
+      name: string;
+      email: string;
+      subject: string;
+      message: string;
+    } = {
       name: "",
       email: "",
+      subject: "",
       message: "",
     };
 
@@ -83,18 +95,13 @@ const ContactoPage = () => {
       nextErrors.message = "This field is required";
     }
 
-    const hasErrors = Object.values(nextErrors).some(Boolean);
-    if (hasErrors) {
-      setErrors(nextErrors);
-      return;
+    if (!formData.subject) {
+      nextErrors.subject = "Please select a subject";
     }
 
-    if (!formData.subject) {
-      toast({
-        title: "Please select a subject",
-        description: "Choose a category so we can route your message correctly.",
-        variant: "destructive",
-      });
+    const hasErrorsAfterSubject = Object.values(nextErrors).some(Boolean);
+    if (hasErrorsAfterSubject) {
+      setErrors(nextErrors);
       return;
     }
     setSending(true);
@@ -243,7 +250,12 @@ const ContactoPage = () => {
                       />
                       <Select
                         value={formData.subject}
-                        onValueChange={(value) => setFormData({ ...formData, subject: value })}
+                      onValueChange={(value) => {
+                        setFormData({ ...formData, subject: value });
+                        if (errors.subject) {
+                          setErrors({ ...errors, subject: "" });
+                        }
+                      }}
                       >
                         <SelectTrigger
                           id="subject"
@@ -259,6 +271,9 @@ const ContactoPage = () => {
                           <SelectItem value="Press">Press</SelectItem>
                         </SelectContent>
                       </Select>
+                      {errors.subject && (
+                        <p className="mt-1 text-xs text-destructive">{errors.subject}</p>
+                      )}
                     </div>
 
                     <div className="tech-box">
@@ -316,9 +331,9 @@ const ContactoPage = () => {
                     </a>
                   </div>
 
+                  {/* ⚠️ TODO: Reemplazar href y texto con el número de WhatsApp real del negocio */}
                   <div className="tech-box">
                     <h3 className="text-technical text-foreground mb-4">WHATSAPP</h3>
-                    {/* TODO: Replace with real business WhatsApp number */}
                     <a
                       href="https://wa.me/5491100000000"
                       className="text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -346,6 +361,7 @@ const ContactoPage = () => {
                   <div className="tech-box">
                     <h3 className="text-technical text-foreground mb-4">Follow Us</h3>
                     <div className="flex gap-4">
+                      {/* TODO: Reemplazar con URLs reales de Instagram y LinkedIn */}
                       <a href="#" className="text-label hover:text-foreground transition-colors">
                         Instagram
                       </a>

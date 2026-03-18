@@ -308,13 +308,16 @@ export async function createCheckout(artworkId: number): Promise<{ url: string |
 
   if (isSupabaseConfigured) {
     try {
+      // ⚠️ Asegurate de que STRIPE_SECRET_KEY sea la clave live antes de producción.
       return await createStripeCheckoutViaEdgeFunction(artworkId);
     } catch (err) {
       console.warn("Supabase Edge Function checkout failed, falling back to Express:", err);
+      // ⚠️ Asegurate de que STRIPE_SECRET_KEY sea la clave live antes de producción.
       return createCheckoutSession(artworkId);
     }
   }
 
+  // ⚠️ Asegurate de que STRIPE_SECRET_KEY sea la clave live antes de producción.
   return createCheckoutSession(artworkId);
 }
 
@@ -326,6 +329,7 @@ export async function createCheckout(artworkId: number): Promise<{ url: string |
 export async function createStripeCheckoutViaEdgeFunction(artworkId: number): Promise<{ url: string | null }> {
   const { getSupabase } = await import("@/lib/supabaseClient");
   const supabase = getSupabase();
+  // ⚠️ Asegurate de que STRIPE_SECRET_KEY sea la clave live antes de producción.
   const { data, error } = await supabase.functions.invoke("stripe-checkout", {
     body: { artworkId },
   });

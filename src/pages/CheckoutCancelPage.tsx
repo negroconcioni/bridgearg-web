@@ -4,11 +4,17 @@ import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/PageTransition";
 import { XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 
 const CheckoutCancelPage = () => {
   return (
     <PageTransition>
       <div className="min-h-screen bg-background">
+        <SEO
+          title="Payment Cancelled"
+          description="Your payment was cancelled. Return to the collection."
+          url="/checkout/cancel"
+        />
         <Header />
         <main className="section-padded flex items-center justify-center min-h-[70vh]">
           <div className="container mx-auto max-w-lg text-center">

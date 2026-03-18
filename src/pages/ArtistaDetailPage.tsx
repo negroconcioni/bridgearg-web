@@ -11,6 +11,17 @@ import { getSupabase, isSupabaseConfigured } from "@/lib/supabaseClient";
 import { SEO } from "@/components/SEO";
 import { getArtists, type ArtistFromApi } from "@/lib/api";
 
+/**
+ * TODO - Base de datos:
+ * Los artistas actuales son datos demo ("Artista Ejemplo 1-10").
+ * Antes del lanzamiento, cargar artistas reales con:
+ * - Nombres reales
+ * - Slugs únicos (usados para routing en /artistas/:slug)
+ * - Fotos de perfil individuales (image_url)
+ * - Bio, origin, specialty, birthYear
+ * - Foto del estudio (studio_image_url) y descripción (studio_description)
+ */
+
 type ArtistDetail = {
   id: number;
   slug: string;
@@ -54,15 +65,6 @@ type ArtistWorkRow = {
   status?: string | null;
   price_usd?: number | null;
 };
-
-const masonryPatterns = [
-  { span: "md:col-span-3", aspect: "aspect-[3/4]" },
-  { span: "md:col-span-3", aspect: "aspect-[3/4]" },
-  { span: "md:col-span-2", aspect: "aspect-[3/4]" },
-  { span: "md:col-span-4", aspect: "aspect-[3/4]" },
-  { span: "md:col-span-2", aspect: "aspect-[3/4]" },
-  { span: "md:col-span-3", aspect: "aspect-[3/4]" },
-];
 
 function mapArtistDetailRow(row: ArtistDetailRow): ArtistDetail {
   return {
@@ -390,16 +392,15 @@ const ArtistaDetailPage = () => {
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                   {works.map((work, index) => {
-                    const pattern = masonryPatterns[index % masonryPatterns.length];
                     const sold = isSoldWork(work.status);
                     const available = work.available;
 
                     return (
-                      <div key={work.id} className={`group block ${pattern.span}`}>
+                      <div key={work.id} className="group block">
                         <Link to={`/artworks/${work.id}`}>
-                          <div className={`relative overflow-hidden bg-[#efe6d5] ${pattern.aspect}`}>
+                          <div className="relative overflow-hidden bg-[#efe6d5] aspect-[3/4]">
                             <OptimizedImage
                               src={work.imageUrl ?? ""}
                               title={work.title}

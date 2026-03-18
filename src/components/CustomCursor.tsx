@@ -5,6 +5,18 @@ export const CustomCursor = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    // Disable custom cursor on touch devices.
+    // This runs only on the client (useEffect), so window/navigator are safe to reference.
+    setIsTouchDevice(
+      "ontouchstart" in window || (navigator?.maxTouchPoints ?? 0) > 0
+    );
+
+    // Ensure we don't keep the cursor visible on touch devices.
+    setIsVisible(false);
+  }, []);
 
   useEffect(() => {
     const updateMousePosition = (e: MouseEvent) => {
@@ -43,8 +55,7 @@ export const CustomCursor = () => {
     };
   }, []);
 
-  // Hide on touch devices
-  if (typeof window !== "undefined" && "ontouchstart" in window) {
+  if (isTouchDevice) {
     return null;
   }
 
@@ -57,6 +68,7 @@ export const CustomCursor = () => {
           x: mousePosition.x - (isHovering ? 20 : 6),
           y: mousePosition.y - (isHovering ? 20 : 6),
           scale: isVisible ? 1 : 0,
+          opacity: isVisible ? 1 : 0,
         }}
         transition={{
           type: "spring",
@@ -87,6 +99,7 @@ export const CustomCursor = () => {
           x: mousePosition.x - 20,
           y: mousePosition.y - 20,
           scale: isVisible ? 1 : 0,
+          opacity: isVisible ? 1 : 0,
         }}
         transition={{
           type: "spring",
