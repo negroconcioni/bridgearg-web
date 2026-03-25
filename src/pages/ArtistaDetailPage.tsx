@@ -300,16 +300,18 @@ const ArtistaDetailPage = () => {
                 </div>
 
                 <div className="order-1 md:order-none md:col-start-9 md:col-span-4 md:-mt-24">
-                  <div className="relative">
+                  <div className="relative flex items-center justify-center md:block">
+                    {/* Nombre decorativo — solo visible en desktop */}
                     <p
-                      className="pointer-events-none select-none font-display text-4xl md:text-5xl lg:text-[60px] uppercase tracking-tight text-[#1e1517] opacity-[0.07]"
+                      className="pointer-events-none select-none font-display text-4xl md:text-5xl lg:text-[60px] uppercase tracking-tight text-[#1e1517] opacity-[0.07] hidden md:block"
                       style={{ fontFamily: "BestDB, serif" }}
                     >
                       {artist.name}
                     </p>
-                    <div className="absolute inset-0 flex items-center justify-center">
+                    {/* Imagen circular — en mobile fluye normalmente, en desktop va absolute sobre el nombre */}
+                    <div className="md:absolute md:inset-0 flex items-center justify-center">
                       {artist.imageUrl ? (
-                        <div className="aspect-[2/3] w-full max-w-xs overflow-hidden rounded-full bg-[#efe6d5] md:max-w-sm">
+                        <div className="aspect-[2/3] w-full max-w-[200px] md:max-w-xs overflow-hidden rounded-full bg-[#efe6d5] md:max-w-sm">
                           <OptimizedImage
                             src={artist.imageUrl}
                             alt={artist.name}
@@ -319,7 +321,7 @@ const ArtistaDetailPage = () => {
                           />
                         </div>
                       ) : (
-                        <div className="flex aspect-[2/3] items-center justify-center rounded-full border border-[#1e1517]/10 bg-[#efe6d5] px-8 text-center">
+                        <div className="flex aspect-[2/3] w-full max-w-[200px] md:max-w-xs items-center justify-center rounded-full border border-[#1e1517]/10 bg-[#efe6d5] px-8 text-center">
                           <p className="font-display text-sm uppercase tracking-[0.16em] text-[#1e1517]/48">
                             Portrait coming soon
                           </p>
