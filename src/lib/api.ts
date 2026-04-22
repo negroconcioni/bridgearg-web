@@ -70,6 +70,21 @@ export interface ArtistFromApi {
 /** Relation when selecting artworks with artists (slug for routing). */
 export type ArtworkRowArtist = { name: string; bio: string | null; image_url: string | null; slug?: string } | null;
 
+export interface PiezaConjunto {
+  nombre: string;
+  largo: string | null;
+  ancho: string | null;
+  profundidad: string | null;
+  peso: string | null;
+}
+
+export interface LoteRow {
+  id: number;
+  nombre: string;
+  fecha: string | null;
+  created_at?: string;
+}
+
 /** Row from artworks table (snake_case). Use with .select(..., artists(name,bio,image_url,slug)). */
 export interface ArtworkRow {
   id: number;
@@ -77,6 +92,16 @@ export interface ArtworkRow {
   image_url: string;
   status: ArtworkStatus;
   price_usd: number | null;
+  price_ref_usd: number | null;
+  ubicacion: string | null;
+  estado_pago: string | null;
+  comprador: string | null;
+  fecha_venta: string | null;
+  certificado: boolean | null;
+  notas: string | null;
+  es_conjunto: boolean;
+  piezas: PiezaConjunto[];
+  lote_id: number | null;
   dimensions?: string | null;
   weight_kg?: number | null;
   width_cm?: number | null;
@@ -108,6 +133,16 @@ export interface ArtworkFromApi {
   status: ArtworkStatus;
   price_usd: number | null;
   priceDisplay: string;
+  priceRefUsd: number | null;
+  ubicacion: string | null;
+  estadoPago: string | null;
+  comprador: string | null;
+  fechaVenta: string | null;
+  certificado: boolean | null;
+  notas: string | null;
+  esConjunto: boolean;
+  piezas: PiezaConjunto[];
+  loteId: number | null;
   dimensions: string | null;
   weight_kg: number | null;
   artistId: number;
@@ -119,8 +154,30 @@ export interface ArtworkFromApi {
   available: boolean;
 }
 
+function mapPiezasConjunto(raw: unknown): PiezaConjunto[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.map((item) => {
+    if (!item || typeof item !== "object") {
+      return { nombre: "", largo: null, ancho: null, profundidad: null, peso: null };
+    }
+    const o = item as Record<string, unknown>;
+    return {
+      nombre: typeof o.nombre === "string" ? o.nombre : String(o.nombre ?? ""),
+      largo: o.largo != null ? String(o.largo) : null,
+      ancho: o.ancho != null ? String(o.ancho) : null,
+      profundidad: o.profundidad != null ? String(o.profundidad) : null,
+      peso: o.peso != null ? String(o.peso) : null,
+    };
+  });
+}
+
 function mapArtworkRowToArtwork(row: ArtworkRow): ArtworkFromApi {
   const priceUsd = row.price_usd ?? 0;
+  const priceRefRaw = row.price_ref_usd;
+  const priceRefNum =
+    priceRefRaw != null && priceRefRaw !== ""
+      ? Number(priceRefRaw)
+      : null;
   return {
     id: row.id,
     title: row.title,
@@ -128,6 +185,16 @@ function mapArtworkRowToArtwork(row: ArtworkRow): ArtworkFromApi {
     status: row.status,
     price_usd: row.price_usd ?? null,
     priceDisplay: formatPriceUSD(priceUsd),
+    priceRefUsd: priceRefNum != null && Number.isFinite(priceRefNum) ? priceRefNum : null,
+    ubicacion: row.ubicacion ?? null,
+    estadoPago: row.estado_pago ?? null,
+    comprador: row.comprador ?? null,
+    fechaVenta: row.fecha_venta ?? null,
+    certificado: row.certificado ?? null,
+    notas: row.notas ?? null,
+    esConjunto: row.es_conjunto ?? false,
+    piezas: mapPiezasConjunto(row.piezas),
+    loteId: row.lote_id ?? null,
     dimensions: row.dimensions ?? null,
     weight_kg: row.weight_kg ?? null,
     artistId: row.artist_id,
@@ -193,7 +260,8 @@ async function fetchWorkFromArtworks(sb: import("@supabase/supabase-js").Supabas
 export async function getArtworks(artistId?: number): Promise<ArtworkFromApi[]> {
   const { supabase, isSupabaseConfigured } = await import("@/lib/supabaseClient");
   if (!isSupabaseConfigured || !supabase) return [];
-  const select = "id,title,image_url,status,price_usd,artist_id,year,medium,artists(name,bio,image_url)";
+  const select =
+    "id,title,image_url,status,price_usd,price_ref_usd,ubicacion,estado_pago,comprador,fecha_venta,certificado,notas,es_conjunto,piezas,lote_id,artist_id,year,medium,artists(name,bio,image_url)";
   let query = supabase.from("artworks").select(select).order("id", { ascending: true });
   if (artistId != null) query = query.eq("artist_id", artistId);
   const { data, error } = await query;
@@ -207,6 +275,14 @@ export async function getArtists(): Promise<ArtistFromApi[]> {
   const { data, error } = await supabase.from("artists").select("id,name,slug,bio,image_url").order("name", { ascending: true });
   if (error) throw new Error(error.message ?? "Could not load artists");
   return (data ?? []).map((row) => mapArtistRowToArtist(row as ArtistRow));
+}
+
+export async function getLotes(): Promise<LoteRow[]> {
+  const { supabase, isSupabaseConfigured } = await import("@/lib/supabaseClient");
+  if (!isSupabaseConfigured || !supabase) return [];
+  const { data, error } = await supabase.from("lotes").select("id,nombre,fecha,created_at").order("id", { ascending: true });
+  if (error) throw new Error(error.message ?? "Could not load lotes");
+  return (data ?? []) as LoteRow[];
 }
 
 export async function getAvailableCount(): Promise<number> {
