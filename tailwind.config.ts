@@ -16,7 +16,7 @@ export default {
       fontFamily: {
         display: ["Onest", "sans-serif"],
         mono: ["Onest", "sans-serif"],
-        handwriting: ["Onest", "sans-serif"],
+        handwriting: ["BestDB", "cursive"],
       },
       colors: {
         border: "hsl(var(--border))",

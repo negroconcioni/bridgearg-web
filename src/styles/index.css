@@ -95,7 +95,7 @@
     /* Typography */
     --font-display: "Onest", sans-serif;
     --font-mono: "Onest", sans-serif;
-    --font-handwriting: "Onest", sans-serif;
+    --font-handwriting: "BestDB", cursive;
     
     /* Spacing */
     --section-padding: clamp(3rem, 8vw, 8rem);
@@ -343,6 +343,13 @@
       overflow: hidden;
       margin: 0 auto;
     }
+  }
+
+  .text-handwriting {
+    font-family: "BestDB", cursive;
+    transform: rotate(-7deg);
+    display: inline-block;
+    transform-origin: left center;
   }
 }
 
