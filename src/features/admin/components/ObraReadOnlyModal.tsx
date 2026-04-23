@@ -23,11 +23,11 @@ export function ObraReadOnlyModal({ row, open, onOpenChange }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] max-w-2xl rounded-none border-bridge-black/20 p-0 font-display">
+      <DialogContent className="max-h-[90svh] max-w-2xl rounded-none border-bridge-black/20 p-0 font-display">
         <DialogHeader className="border-b border-bridge-black/10 px-6 py-4 text-left">
           <DialogTitle className="pr-8 text-lg font-semibold">{row.title}</DialogTitle>
         </DialogHeader>
-        <ScrollArea className="max-h-[calc(90vh-5rem)] px-6 py-4">
+        <ScrollArea className="max-h-[calc(90svh-5rem)] px-6 py-4">
           <div className="space-y-4 text-sm">
             <div className="aspect-[4/3] w-full max-w-md border border-bridge-black/10 bg-muted/20">
               <img src={img} alt="" className="h-full w-full object-contain" />

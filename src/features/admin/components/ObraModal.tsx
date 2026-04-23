@@ -298,7 +298,7 @@ export function ObraModal({ open, onOpenChange, artworkId, onSaved, initialLoteI
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex max-h-[92vh] max-w-3xl flex-col rounded-none border-bridge-black/20 p-0 font-display">
+      <DialogContent className="flex max-h-[92svh] max-w-3xl flex-col rounded-none border-bridge-black/20 p-0 font-display">
         <DialogHeader className="shrink-0 border-b border-bridge-black/10 px-6 py-4">
           <DialogTitle>{artworkId ? "Editar obra" : "Nueva obra"}</DialogTitle>
         </DialogHeader>

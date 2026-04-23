@@ -10,7 +10,7 @@ export function InquiryBannerSection() {
           src={bridgeSealSrc}
           alt=""
           className="mx-auto block object-contain opacity-80"
-          style={{ width: "100px", height: "auto" }} // TAMAÑO DEL SELLO (Ajustar aqui, ej: 40px, 60px, 100px)
+          style={{ width: "clamp(48px, 8vw, 100px)", height: "auto" }} // TAMAÑO DEL SELLO (fluid: 48px en mobile → 100px en desktop)
         />
 
         <h2 className="mt-8 font-display text-3xl font-medium tracking-tight text-[#fcf8ea] sm:text-4xl lg:text-5xl 2xl:text-6xl">

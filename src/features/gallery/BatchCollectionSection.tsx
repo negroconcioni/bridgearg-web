@@ -51,7 +51,7 @@ export function BatchCollectionSection() {
             <p className="font-display text-[11px] uppercase tracking-[0.12em] text-[#1e1517]/65 md:text-xs">
               Batch #1
             </p>
-            <h2 className="mt-3 font-display text-6xl font-bold uppercase tracking-tight text-[#1e1517] md:text-8xl">
+            <h2 className="mt-3 break-words font-display text-[clamp(2.25rem,10vw,8rem)] font-bold uppercase tracking-tight text-[#1e1517]">
               The Batch #1 Collection
             </h2>
           </div>

@@ -10,7 +10,7 @@ const navItems = [
 ];
 
 const logoLightSrc = "/assets/logos/BRIDGEARG - Exportacion logos-02.svg";
-const desktopLogoWidth = "260px";
+const desktopLogoWidth = "clamp(140px, 32vw, 260px)";
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -50,7 +50,7 @@ export function Header() {
           WebkitBackdropFilter: isHome ? (scrolled ? "blur(20px)" : "none") : "blur(16px)",
           transition: "background-color 0.4s ease, backdrop-filter 0.4s ease",
           borderBottomColor: isHome && !scrolled ? "transparent" : "rgba(255,255,255,0.08)",
-          height: "80px",
+          height: "var(--header-h)",
         }}
       >
         <div className="flex h-full items-center px-4">
@@ -111,7 +111,7 @@ export function Header() {
       />
 
       <aside
-        className="fixed right-0 top-0 z-[60] h-screen w-full max-w-[420px]"
+        className="fixed right-0 top-0 z-[60] h-[100svh] w-full max-w-[420px]"
         style={{
           transform: isOpen ? "translateX(0)" : "translateX(100%)",
           transition: "transform 0.55s cubic-bezier(0.16, 1, 0.3, 1)",
@@ -123,10 +123,10 @@ export function Header() {
       >
         <div
           className="flex items-center justify-between px-5"
-          style={{ height: "80px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}
+          style={{ height: "var(--header-h)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}
         >
           <Link to="/" className="flex items-center">
-            <img src={logoLightSrc} alt="BridgeArg" className="block h-auto" style={{ width: "180px" }} />
+            <img src={logoLightSrc} alt="BridgeArg" className="block h-auto" style={{ width: "min(180px, 50vw)" }} />
           </Link>
           <button onClick={() => setIsOpen(false)} className="relative h-8 w-8" aria-label="Close menu">
             <span

@@ -23,7 +23,10 @@ export function HeroSection() {
   }, []);
 
   return (
-    <section className="relative w-full overflow-hidden" style={{ minHeight: "calc(100vh - 100px)" }}>
+    <section
+      className="relative w-full overflow-hidden"
+      style={{ minHeight: "calc(100svh - var(--header-h))" }}
+    >
       <div
         className="absolute inset-0 z-0"
         style={{
@@ -34,7 +37,10 @@ export function HeroSection() {
       />
       <div className="absolute inset-0 z-10 bg-[#1e1517]/80" />
 
-      <div className="relative z-20 mx-auto flex min-h-[calc(100vh-100px)] max-w-[1800px] items-center justify-center px-6 py-12 md:px-12 lg:px-24">
+      <div
+        className="relative z-20 mx-auto flex max-w-[1800px] items-center justify-center px-6 py-12 md:px-12 lg:px-24"
+        style={{ minHeight: "calc(100svh - var(--header-h))" }}
+      >
         <div className="flex w-full max-w-3xl flex-col gap-y-3 text-center md:gap-y-4">
           <p className="font-display text-sm font-medium uppercase tracking-[0.2em] text-white md:text-base 2xl:text-lg">
             BATCH #1: LIMITED VAULT

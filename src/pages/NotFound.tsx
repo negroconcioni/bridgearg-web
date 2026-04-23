@@ -19,7 +19,7 @@ const NotFound = () => {
         <SEO title="Page Not Found" />
         <Header />
         <main className="section-padded">
-          <div className="container mx-auto flex min-h-[60vh] items-center justify-center text-center">
+          <div className="container mx-auto flex min-h-[60svh] items-center justify-center text-center">
             <div>
               <span className="text-label block mb-4">Error</span>
               <h1 className="text-display text-8xl mb-4">404</h1>

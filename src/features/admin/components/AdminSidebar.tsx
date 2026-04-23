@@ -1,6 +1,7 @@
-import { NavLink } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
+import { Plus, Menu, X } from "lucide-react";
 import { getSupabase } from "@/lib/supabaseClient";
 import { getSupabaseAdmin, isSupabaseAdminConfigured } from "@/lib/supabaseAdminClient";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,21 @@ const sectionTitle = "mt-6 mb-2 text-[10px] font-semibold uppercase tracking-[0.
 
 export function AdminSidebar() {
   const qc = useQueryClient();
+  const location = useLocation();
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [isOpen]);
 
   const { data: lotes = [] } = useQuery({
     queryKey: ["admin", "lotes"],
@@ -44,10 +60,18 @@ export function AdminSidebar() {
     },
   });
 
-  return (
-    <aside className="flex w-56 shrink-0 flex-col border-r border-white/10 bg-[#1a1618] text-[#faf9ef] md:w-64">
-      <div className="border-b border-white/10 px-4 py-5">
+  const sidebarContent = (
+    <>
+      <div className="flex items-center justify-between border-b border-white/10 px-4 py-5">
         <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[#faf9ef]">Bridgearg Admin</div>
+        <button
+          type="button"
+          onClick={() => setIsOpen(false)}
+          className="md:hidden flex h-8 w-8 items-center justify-center text-[#faf9ef]/80 hover:text-[#faf9ef]"
+          aria-label="Cerrar menú"
+        >
+          <X className="h-4 w-4" />
+        </button>
       </div>
       <nav className="flex-1 overflow-y-auto px-2 py-4">
         <div className={sectionTitle}>Catálogo</div>
@@ -85,6 +109,42 @@ export function AdminSidebar() {
           Resumen
         </NavLink>
       </nav>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setIsOpen(true)}
+        className="md:hidden fixed left-3 top-3 z-40 flex h-10 w-10 items-center justify-center rounded-none border border-bridge-black/25 bg-[#faf9ef] text-bridge-black"
+        aria-label="Abrir menú admin"
+      >
+        <Menu className="h-4 w-4" />
+      </button>
+
+      <aside className="hidden md:flex w-56 shrink-0 flex-col border-r border-white/10 bg-[#1a1618] text-[#faf9ef] md:w-64">
+        {sidebarContent}
+      </aside>
+
+      <div
+        onClick={() => setIsOpen(false)}
+        className="md:hidden fixed inset-0 z-40 bg-black/50"
+        style={{
+          opacity: isOpen ? 1 : 0,
+          pointerEvents: isOpen ? "auto" : "none",
+          transition: "opacity 0.3s ease",
+        }}
+      />
+      <aside
+        className="md:hidden fixed left-0 top-0 z-50 flex h-screen w-[min(280px,80vw)] flex-col border-r border-white/10 bg-[#1a1618] text-[#faf9ef]"
+        style={{
+          transform: isOpen ? "translateX(0)" : "translateX(-100%)",
+          transition: "transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
+        }}
+      >
+        {sidebarContent}
+      </aside>
+    </>
   );
 }

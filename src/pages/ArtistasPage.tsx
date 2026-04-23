@@ -163,8 +163,8 @@ const ArtistasPage = () => {
                 <div className="grid grid-cols-1 gap-16 md:grid-cols-2 lg:grid-cols-3 lg:gap-20">
                   {Array.from({ length: 6 }).map((_, i) => (
                     <div key={i} className="flex flex-col items-center">
-                      <div className="w-full max-w-[260px]">
-                        <Skeleton className="aspect-[2/3] rounded-full bg-[#e8e0d0]" />
+                      <div className="w-full max-w-[clamp(180px,60vw,260px)]">
+                        <Skeleton className="aspect-[2/3] rounded-[24px] bg-[#e8e0d0]" />
                       </div>
                       <div className="flex flex-col items-center gap-3 pt-6">
                         <Skeleton className="h-8 w-40 bg-[#e8e0d0]" />
@@ -181,8 +181,8 @@ const ArtistasPage = () => {
                       to={`/artistas/${artist.slug}`}
                       className="group flex flex-col items-center cursor-pointer"
                     >
-                      <div className="w-full max-w-[260px]">
-                        <div className="relative aspect-[2/3] overflow-hidden rounded-full bg-[#e8e4d8] transition-transform duration-300 ease-out group-hover:scale-[1.03]">
+                      <div className="w-full max-w-[clamp(180px,60vw,260px)]">
+                        <div className="relative aspect-[2/3] overflow-hidden rounded-[24px] bg-[#e8e4d8] transition-transform duration-300 ease-out group-hover:scale-[1.03]">
                           <OptimizedImage
                             src={artist.imageUrl ?? ""}
                             alt={artist.name}
