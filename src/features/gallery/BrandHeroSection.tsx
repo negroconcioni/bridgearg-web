@@ -98,17 +98,7 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
   };
 
   useEffect(() => {
-    if (isPlaying) {
-      startSlideInterval(true);
-    } else {
-      if (slideStartedAtRef.current > 0) {
-        elapsedOnCurrentSlideRef.current = Math.min(
-          SLIDE_DURATION,
-          Date.now() - slideStartedAtRef.current,
-        );
-      }
-      clearSlideTimers();
-    }
+    if (isPlaying) startSlideInterval(true);
     return () => clearSlideTimers();
   }, [isPlaying]);
 
@@ -164,22 +154,44 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
   };
 
   const handlePlayPause = () => {
-    setIsPlaying((prev) => !prev);
+    if (isPlaying) {
+      elapsedOnCurrentSlideRef.current = Math.min(
+        SLIDE_DURATION,
+        Date.now() - slideStartedAtRef.current,
+      );
+      clearSlideTimers();
+      setIsPlaying(false);
+      return;
+    }
+
+    setIsPlaying(true);
   };
 
   void logoWidth;
 
   return (
     <section
-      className="relative overflow-hidden flex items-center"
-      style={{ minHeight: "calc(100vh - 80px)" }}
+      className="relative overflow-hidden"
+      style={{
+        isolation: "isolate",
+        paddingTop: "var(--header-h)",
+        minHeight: "100svh",
+        display: "flex",
+        flexDirection: "column",
+      }}
     >
-      <div className="absolute inset-0 z-0">
+      <div
+        aria-hidden
+        style={{ position: "absolute", inset: 0, zIndex: 0, overflow: "hidden" }}
+      >
         {heroImages.map((src, index) => (
           <div
             key={`${src}-${index}`}
-            className="absolute inset-0"
             style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
               backgroundImage: `url("${src}")`,
               backgroundSize: "cover",
               backgroundPosition: "center",
@@ -190,14 +202,11 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
         ))}
       </div>
 
-      <div className="absolute inset-0 z-10 bg-gradient-to-b from-[#1e1517]/20 via-[#1e1517]/65 to-[#1e1517]/85" />
-      <div className="absolute z-20" style={{ top: "0px", left: "50%", transform: "translateX(-50%)", width: "600px" }}>
-        <img
-          src="/assets/logos/BRIDGEARG - Exportacion logos-02.svg"
-          alt="BridgeArg"
-          style={{ width: "100%", height: "auto", display: "block" }}
-        />
-      </div>
+      <div
+        aria-hidden
+        className="bg-gradient-to-b from-[#1e1517]/20 via-[#1e1517]/65 to-[#1e1517]/85"
+        style={{ position: "absolute", inset: 0, zIndex: 1 }}
+      />
 
       {/* availableCount !== null && (
           <div className="absolute right-6 top-24 z-20 text-right md:right-12 md:top-28 lg:right-24">
@@ -212,13 +221,42 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
 
 
       <motion.div
-        className="relative z-20 w-full px-6 pt-6 md:px-12 md:pt-8 lg:px-24"
+        className="relative w-full"
+        style={{
+          zIndex: 10,
+          flex: "1 1 auto",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "flex-start",
+          minHeight: "calc(100svh - var(--header-h))",
+          paddingLeft: "clamp(24px, 6vw, 96px)",
+          paddingRight: "clamp(24px, 6vw, 96px)",
+          paddingTop: "clamp(24px, 4svh, 64px)",
+          paddingBottom: "clamp(120px, 16svh, 200px)",
+          gap: "clamp(32px, 6svh, 80px)",
+        }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1.1, ease: "easeOut", delay: 0.2 }}
       >
-        <div style={{ width: "100%", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start", gap: "40px" }}>
-          <div className="max-w-2xl" style={{ maxWidth: "700px", flex: "1", marginTop: "120px" }}>
+        <img
+          src="/assets/logos/BRIDGEARG - Exportacion logos-02.svg"
+          alt="BridgeArg"
+          style={{
+            alignSelf: "center",
+            width: "min(520px, 72vw)",
+            height: "auto",
+            display: "block",
+            flexShrink: 0,
+          }}
+        />
+
+        <div
+          className="flex w-full flex-col items-start md:flex-row md:items-center md:justify-start"
+          style={{ gap: "clamp(16px, 4vw, 40px)" }}
+        >
+          <div className="max-w-[700px]" style={{ flex: "1" }}>
             <span style={{
               fontFamily: '"Onest", sans-serif',
               fontSize: "clamp(14px, 1.5vw, 20px)",
@@ -257,13 +295,12 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
                   transform: "rotate(-7deg)",
                   transformOrigin: "left center",
                   marginTop: "25px",
-                  whiteSpace: "nowrap",
                 }}
               >
                 from the End of the World.
               </span>
             </h1>
-            <p className="font-display text-2xl font-light text-white/90 leading-relaxed mt-7" style={{ maxWidth: "660px", fontSize: "clamp(16px, 1.8vw, 26px)" }}>
+            <p className="font-display text-2xl font-light text-white/90 leading-relaxed mt-7 max-w-[min(100%,660px)]" style={{ fontSize: "clamp(16px, 1.8vw, 26px)" }}>
               Connecting extraordinary Argentine contemporary art with global collectors — professionally, legally,
               and sustainably.
             </p>
@@ -274,14 +311,15 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
                 gap: "16px",
                 alignItems: "center",
                 flexShrink: 0,
-                marginTop: "80px",
+                marginTop: "clamp(28px, 5svh, 80px)",
+                flexWrap: "wrap",
               }}
             >
               <Link
                 to="/artworks"
                 style={{
                   fontFamily: '"Onest", sans-serif',
-                  fontSize: "15px",
+                  fontSize: "clamp(11px, 1.1vw, 15px)",
                   letterSpacing: "0.25em",
                   textTransform: "uppercase",
                   color: "#ffffff",
@@ -290,7 +328,6 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
                   padding: "8px 0",
                   display: "inline-block",
                   textDecoration: "none",
-                  whiteSpace: "nowrap",
                   transition: "color 0.3s ease, borderColor 0.3s ease, letterSpacing 0.3s ease",
                 }}
                 onMouseEnter={e => {
@@ -312,7 +349,7 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
                 to="/artists"
                 style={{
                   fontFamily: '"Onest", sans-serif',
-                  fontSize: "15px",
+                  fontSize: "clamp(11px, 1.1vw, 15px)",
                   letterSpacing: "0.25em",
                   textTransform: "uppercase",
                   color: "#ffffff",
@@ -321,7 +358,6 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
                   padding: "8px 0",
                   display: "inline-block",
                   textDecoration: "none",
-                  whiteSpace: "nowrap",
                   transition: "color 0.3s ease, borderColor 0.3s ease, letterSpacing 0.3s ease",
                 }}
                 onMouseEnter={e => {
@@ -344,7 +380,13 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
         </div>
       </motion.div>
 
-      <div className="absolute bottom-16 z-20 w-full px-6 md:bottom-20 md:px-12 lg:px-24">
+      <div
+        className="absolute bottom-16 z-20 w-full md:bottom-20"
+        style={{
+          paddingLeft: "clamp(24px, 6vw, 96px)",
+          paddingRight: "clamp(24px, 6vw, 96px)",
+        }}
+      >
         <div className="flex justify-end">
           <motion.span
             key={activeImageIndex}
@@ -363,7 +405,13 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
         </div>
       </div>
 
-      <div className="absolute bottom-6 z-20 w-full px-6 md:bottom-8 md:px-12 lg:px-24">
+      <div
+        className="absolute bottom-6 z-20 w-full md:bottom-8"
+        style={{
+          paddingLeft: "clamp(24px, 6vw, 96px)",
+          paddingRight: "clamp(24px, 6vw, 96px)",
+        }}
+      >
         <div className="flex items-center gap-5">
           <button
             onClick={handlePlayPause}

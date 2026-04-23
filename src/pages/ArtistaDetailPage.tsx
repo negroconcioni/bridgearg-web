@@ -188,7 +188,7 @@ const ArtistaDetailPage = () => {
       <PageTransition>
         <div className="min-h-screen bg-[#fcf8ea]">
           <Header />
-          <main className="flex min-h-[60vh] items-center justify-center bg-[#fcf8ea] px-12 py-24">
+          <main className="flex min-h-[60svh] items-center justify-center bg-[#fcf8ea] px-6 py-24 md:px-12">
             <div className="flex items-center gap-4 text-[#1e1517]/55">
               <Loader2 className="h-8 w-8 animate-spin" />
               <span className="font-display text-xs uppercase tracking-[0.18em]">Loading artist</span>
@@ -205,7 +205,7 @@ const ArtistaDetailPage = () => {
       <PageTransition>
         <div className="min-h-screen bg-[#fcf8ea]">
           <Header />
-          <main className="bg-[#fcf8ea] px-12 py-32">
+          <main className="bg-[#fcf8ea] px-6 py-32 md:px-12">
             <div className="mx-auto max-w-3xl text-center">
               <h1 className="font-display text-4xl font-semibold tracking-tight text-[#1e1517] md:text-6xl">
                 Artist not found
@@ -236,11 +236,11 @@ const ArtistaDetailPage = () => {
         />
         <Header />
         <main>
-          <section className="overflow-visible bg-[#fcf8ea] px-6 pb-24 pt-28 md:px-12 md:pb-28 md:pt-36">
+          <section className="bg-[#fcf8ea] px-6 pb-24 pt-28 md:px-12 md:pb-28 md:pt-36">
             <div className="mx-auto max-w-7xl">
               <div className="grid grid-cols-1 gap-y-8 md:grid-cols-12 md:gap-x-8 lg:gap-x-10">
                 <div className="md:col-span-8">
-                  <div className="mb-4 pl-12">
+                  <div className="mb-4 md:pl-12">
                     <Link
                       to="/artistas"
                       className="font-display text-xs uppercase tracking-[0.18em] text-[#1e1517]/50 hover:text-[#1e1517]"
@@ -253,13 +253,13 @@ const ArtistaDetailPage = () => {
                       About the Artist
                     </span>
                   </div>
-                  <h1 className="mt-8 pl-12 font-display text-4xl font-bold uppercase tracking-tight text-[#1e1517] md:text-6xl lg:text-[92px]">
+                  <h1 className="mt-8 font-display text-[clamp(2.25rem,9vw,5.75rem)] font-bold uppercase tracking-tight text-[#1e1517] md:pl-12">
                     {artist.name}
                   </h1>
                 </div>
 
                 <div className="md:col-span-12">
-                  <div className="relative left-1/2 h-[1px] w-screen -translate-x-1/2 bg-[#1e1517]/20" />
+                  <div className="h-px w-full bg-[#1e1517]/20" />
                 </div>
 
                 <div className="order-2 md:order-none md:col-span-2 md:pt-12">
@@ -299,7 +299,7 @@ const ArtistaDetailPage = () => {
                   </div>
                 </div>
 
-                <div className="order-1 md:order-none md:col-start-9 md:col-span-4 md:-mt-24">
+                <div className="order-1 md:order-none md:col-start-9 md:col-span-4 md:-mt-12 lg:-mt-24">
                   <div className="relative flex items-center justify-center md:block">
                     {/* Nombre decorativo — solo visible en desktop */}
                     <p
@@ -311,7 +311,7 @@ const ArtistaDetailPage = () => {
                     {/* Imagen circular — en mobile fluye normalmente, en desktop va absolute sobre el nombre */}
                     <div className="md:absolute md:inset-0 flex items-center justify-center">
                       {artist.imageUrl ? (
-                        <div className="aspect-[2/3] w-full max-w-[200px] md:max-w-xs overflow-hidden rounded-full bg-[#efe6d5] md:max-w-sm">
+                        <div className="aspect-[2/3] w-full max-w-[clamp(180px,55vw,320px)] overflow-hidden rounded-[24px] bg-[#efe6d5]">
                           <OptimizedImage
                             src={artist.imageUrl}
                             alt={artist.name}
@@ -321,7 +321,7 @@ const ArtistaDetailPage = () => {
                           />
                         </div>
                       ) : (
-                        <div className="flex aspect-[2/3] w-full max-w-[200px] md:max-w-xs items-center justify-center rounded-full border border-[#1e1517]/10 bg-[#efe6d5] px-8 text-center">
+                        <div className="flex aspect-[2/3] w-full max-w-[clamp(180px,55vw,320px)] items-center justify-center rounded-[24px] border border-[#1e1517]/10 bg-[#efe6d5] px-8 text-center">
                           <p className="font-display text-sm uppercase tracking-[0.16em] text-[#1e1517]/48">
                             Portrait coming soon
                           </p>
@@ -338,7 +338,7 @@ const ArtistaDetailPage = () => {
                 <div className="md:col-span-12">
                   <div className="grid grid-cols-1 gap-y-6 md:grid-cols-12 md:gap-x-8 lg:gap-x-10">
                     <div className="md:col-span-9">
-                      <p className="pl-12 font-display text-xs uppercase tracking-[0.24em] text-[#1e1517]/58">
+                      <p className="font-display text-xs uppercase tracking-[0.24em] text-[#1e1517]/58 md:pl-12">
                         The Workspace
                       </p>
                       <div className="mt-6 md:ml-[-3rem]">
@@ -374,7 +374,7 @@ const ArtistaDetailPage = () => {
             </div>
           </section>
 
-          <section className="bg-[#fcf8ea] px-12 pb-32 md:pb-36">
+          <section className="bg-[#fcf8ea] px-6 pb-32 md:px-12 md:pb-36">
             <div className="mx-auto max-w-7xl">
               <div className="my-20">
                 <h2 className="font-display text-4xl font-normal tracking-tight text-[#1e1517]">
@@ -478,7 +478,7 @@ const ArtistaDetailPage = () => {
 
           {allArtists.length > 1 && (
             <>
-              <section className="bg-[#fcf8ea] px-12 pb-16 md:pb-20 border-t border-[#1e1517]/10">
+              <section className="bg-[#fcf8ea] px-6 pb-16 md:px-12 md:pb-20 border-t border-[#1e1517]/10">
                 <div className="mx-auto flex max-w-7xl items-start justify-between gap-8">
                   {(() => {
                     const index = allArtists.findIndex((a) => a.slug === artist.slug);
@@ -519,7 +519,7 @@ const ArtistaDetailPage = () => {
                 </div>
               </section>
 
-              <section className="bg-[#fcf8ea] px-12 pb-24 md:pb-32 border-t border-[#1e1517]/10">
+              <section className="bg-[#fcf8ea] px-6 pb-24 md:px-12 md:pb-32 border-t border-[#1e1517]/10">
                 <div className="mx-auto max-w-7xl">
                   <p className="mb-6 font-display text-sm uppercase tracking-[0.28em] text-[#1e1517]/50">
                     More Artists
@@ -534,8 +534,8 @@ const ArtistaDetailPage = () => {
                           to={`/artistas/${other.slug}`}
                           className="group flex flex-col items-center text-center"
                         >
-                          <div className="w-full max-w-[220px]">
-                            <div className="relative aspect-[2/3] overflow-hidden rounded-full bg-[#efe6d5] transition-transform duration-300 ease-out group-hover:scale-[1.03]">
+                          <div className="w-full max-w-[clamp(160px,55vw,220px)]">
+                            <div className="relative aspect-[2/3] overflow-hidden rounded-[24px] bg-[#efe6d5] transition-transform duration-300 ease-out group-hover:scale-[1.03]">
                               <OptimizedImage
                                 src={other.imageUrl ?? ""}
                                 alt={other.name}

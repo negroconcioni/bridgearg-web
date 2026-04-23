@@ -111,9 +111,9 @@ export default function AdminApp() {
   return (
     <div className="admin-root flex min-h-screen bg-[#faf9ef] font-display text-bridge-black">
       <AdminSidebar />
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col border-l border-bridge-black/15">
-        <header className="flex shrink-0 items-center justify-between gap-4 border-b border-bridge-black/15 px-4 py-3">
-          <div className="min-w-0 text-xs uppercase tracking-[0.12em] text-muted-foreground">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col md:border-l md:border-bridge-black/15">
+        <header className="flex shrink-0 items-center justify-between gap-4 border-b border-bridge-black/15 px-4 py-3 pl-14 md:pl-4">
+          <div className="min-w-0 truncate text-xs uppercase tracking-[0.12em] text-muted-foreground">
             {location.pathname.replace(/^\/admin\/?/, "") || "obras"}
           </div>
           <div className="flex items-center gap-3">

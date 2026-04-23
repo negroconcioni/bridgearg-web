@@ -157,11 +157,21 @@
   * {
     @apply border-border;
   }
-  
+
+  :root {
+    --header-h: 80px;
+  }
+
+  html,
+  body {
+    overflow-x: clip;
+    max-width: 100%;
+  }
+
   html {
     scroll-behavior: smooth;
   }
-  
+
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-display);
@@ -338,7 +348,7 @@
   @media (max-width: 768px) {
     .stories-card {
       width: 85vw;
-      height: 85vh;
+      height: 85svh;
       border-radius: 24px;
       overflow: hidden;
       margin: 0 auto;

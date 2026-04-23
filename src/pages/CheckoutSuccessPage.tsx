@@ -19,7 +19,7 @@ const CheckoutSuccessPage = () => {
           url="/checkout/success"
         />
         <Header />
-        <main className="section-padded flex items-center justify-center min-h-[70vh]">
+        <main className="section-padded flex items-center justify-center min-h-[70svh]">
           <div className="container mx-auto max-w-lg text-center">
             <div className="flex justify-center mb-8">
               <CheckCircle className="h-16 w-16 text-foreground" />

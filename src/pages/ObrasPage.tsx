@@ -226,7 +226,7 @@ const ArtworksPage = () => {
           <section className="section-padded border-b border-border">
             <div className="container mx-auto">
               <span className="text-label block mb-4">Curated Collection</span>
-              <h1 className="text-display text-5xl md:text-7xl lg:text-8xl">
+              <h1 className="text-display break-words text-[clamp(2.75rem,11vw,7rem)]">
                 Collection
               </h1>
               <p className="text-muted-foreground text-lg mt-6 max-w-xl">
@@ -237,11 +237,11 @@ const ArtworksPage = () => {
           </section>
 
           <section ref={sectionRef} className="section-padded relative">
-            <div className="container mx-auto lg:pl-16">
+            <div className="container mx-auto lg:px-16">
               <div className="mb-8 rounded-lg border border-border bg-card/40 p-4 backdrop-blur-sm md:mb-10">
-                <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-                  <div className="flex flex-1 flex-col gap-4 md:flex-row md:items-end md:gap-4">
-                    <div className="w-full md:w-1/4">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                  <div className="flex flex-1 flex-col gap-4 md:flex-row md:flex-wrap md:items-end md:gap-4">
+                    <div className="w-full min-w-0 md:flex-1 md:basis-48">
                       <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                         Artist
                       </label>
@@ -259,7 +259,7 @@ const ArtworksPage = () => {
                       </select>
                     </div>
 
-                    <div className="w-full md:w-1/4">
+                    <div className="w-full min-w-0 md:flex-1 md:basis-48">
                       {/* Medium options populate automatically from Supabase. Add 'medium' field to artworks records. */}
                       <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                         Medium
@@ -278,7 +278,7 @@ const ArtworksPage = () => {
                       </select>
                     </div>
 
-                    <div className="w-full md:w-1/4">
+                    <div className="w-full min-w-0 md:flex-1 md:basis-56">
                       <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                         Availability
                       </label>
@@ -300,7 +300,7 @@ const ArtworksPage = () => {
                       </div>
                     </div>
 
-                    <div className="w-full md:w-1/4">
+                    <div className="w-full min-w-0 md:flex-1 md:basis-56">
                       <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                         Price range (USD)
                       </label>
@@ -361,7 +361,7 @@ const ArtworksPage = () => {
                     </div>
                   </div>
 
-                  <div className="flex flex-col gap-3 md:w-60">
+                  <div className="flex w-full flex-col gap-3 lg:w-60">
                     <div>
                       <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                         Sort by

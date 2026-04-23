@@ -23,7 +23,7 @@ export function BrandStorySection() {
               <img
                 src="/assets/logos/BRIDGEARG - Exportacion logos-09.svg"
                 alt="BridgeArg"
-                style={{ width: "160px", height: "160px", flexShrink: 0, opacity: 0.9 }}
+                style={{ width: "clamp(80px, 11vw, 160px)", height: "clamp(80px, 11vw, 160px)", flexShrink: 0, opacity: 0.9 }}
               />
               <h2
                 className="font-display text-[#FAF6E9] leading-[1.1] tracking-[-0.02em]"
@@ -88,7 +88,7 @@ export function BrandStorySection() {
               viewport={{ once: true }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              <img src={image1Src} alt="" style={{ width: "100%", height: "520px", objectFit: "cover", borderRadius: "6px" }} />
+              <img src={image1Src} alt="" style={{ width: "100%", height: "clamp(280px, 40vw, 520px)", objectFit: "cover", borderRadius: "6px" }} />
             </motion.div>
 
             {/* Text right */}
@@ -101,12 +101,19 @@ export function BrandStorySection() {
               viewport={{ once: true }}
               transition={{ duration: 0.8, ease: "easeOut", delay: 0.15 }}
             >
-              <div style={{ position: "relative", padding: "16px 0" }}>
+              <div
+                className="flex flex-col gap-4"
+                style={{
+                  position: "relative",
+                  paddingLeft: "clamp(16px, 4vw, 56px)",
+                  paddingTop: "16px",
+                  paddingBottom: "16px",
+                }}
+              >
                 <img src={assetSrc} alt="" style={{ position: "absolute", top: "-16px", left: "-16px", width: "24px", height: "24px", transform: "rotate(0deg)" }} />
                 <img src={assetSrc} alt="" style={{ position: "absolute", top: "-16px", right: "-16px", width: "24px", height: "24px", transform: "rotate(90deg)" }} />
                 <img src={assetSrc} alt="" style={{ position: "absolute", bottom: "-16px", left: "-16px", width: "24px", height: "24px", transform: "rotate(270deg)" }} />
                 <img src={assetSrc} alt="" style={{ position: "absolute", bottom: "-16px", right: "-16px", width: "24px", height: "24px", transform: "rotate(180deg)" }} />
-                <div style={{ paddingLeft: "56px" }} className="flex flex-col gap-4">
                 <span style={{
                   fontFamily: '"BestDB", "Caveat", cursive',
                   fontWeight: 400,
@@ -117,7 +124,6 @@ export function BrandStorySection() {
                   transform: "rotate(-7deg)",
                   transformOrigin: "left center",
                   marginTop: "25px",
-                  whiteSpace: "nowrap",
                 }}>
                   The Process
                 </span>
@@ -136,7 +142,6 @@ export function BrandStorySection() {
                  legally, and transparently to your door
                 </p>
               </div>
-              </div>
             </motion.div>
           </div>
 
@@ -145,18 +150,25 @@ export function BrandStorySection() {
             {/* Text left */}
             <motion.div
               className="flex flex-col gap-6 md:order-1"
-              style={{ paddingLeft: "10px", paddingRight: "clamp(0px, 5vw, 20px)", width: "100%" }}
+              style={{ paddingLeft: "clamp(0px, 5vw, 20px)", paddingRight: "clamp(0px, 5vw, 20px)", width: "100%" }}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, ease: "easeOut", delay: 0.15 }}
             >
-              <div style={{ position: "relative", padding: "16px 0" }}>
+              <div
+                className="flex flex-col gap-4"
+                style={{
+                  position: "relative",
+                  paddingLeft: "clamp(16px, 4vw, 56px)",
+                  paddingTop: "16px",
+                  paddingBottom: "16px",
+                }}
+              >
                 <img src={assetSrc} alt="" style={{ position: "absolute", top: "-16px", left: "-16px", width: "24px", height: "24px", transform: "rotate(0deg)" }} />
                 <img src={assetSrc} alt="" style={{ position: "absolute", top: "-16px", right: "-16px", width: "24px", height: "24px", transform: "rotate(90deg)" }} />
                 <img src={assetSrc} alt="" style={{ position: "absolute", bottom: "-16px", left: "-16px", width: "24px", height: "24px", transform: "rotate(270deg)" }} />
                 <img src={assetSrc} alt="" style={{ position: "absolute", bottom: "-16px", right: "-16px", width: "24px", height: "24px", transform: "rotate(180deg)" }} />
-                <div style={{ paddingLeft: "56px" }} className="flex flex-col gap-4">
                 <span style={{
                   fontFamily: '"BestDB", "Caveat", cursive',
                   fontWeight: 400,
@@ -167,7 +179,6 @@ export function BrandStorySection() {
                   transform: "rotate(-7deg)",
                   transformOrigin: "left center",
                   marginTop: "25px",
-                  whiteSpace: "nowrap",
                 }}>
                   The packaging
                 </span>
@@ -185,8 +196,6 @@ export function BrandStorySection() {
                 Each shipment includes a Certificate of Authenticity hand-signed by the artist, 
                 reinforcing the legacy and value of your new acquisition.
                 </p>
-                
-              </div>
               </div>
             </motion.div>
 
@@ -198,7 +207,7 @@ export function BrandStorySection() {
               viewport={{ once: true }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              <img src={image2Src} alt="" style={{ width: "100%", height: "520px", objectFit: "cover", borderRadius: "6px" }} />
+              <img src={image2Src} alt="" style={{ width: "100%", height: "clamp(280px, 40vw, 520px)", objectFit: "cover", borderRadius: "6px" }} />
             </motion.div>
           </div>
 
