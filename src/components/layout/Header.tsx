@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 const navItems = [
   { label: "Home", path: "/" },
@@ -11,124 +9,185 @@ const navItems = [
   { label: "Contact", path: "/contacto" },
 ];
 
-const logoSrc = encodeURI("/assets/logos/BRIDGEARG - Exportacion logos-05.svg");
-const cream = "#fcf8ea";
-const headerBg = "#1e1517";
-const desktopLogoWidth = "260px"; // TAMAÑO LOGO
-const mobileLogoWidth = "200px"; // TAMAÑO LOGO
+const logoLightSrc = "/assets/logos/BRIDGEARG - Exportacion logos-02.svg";
+const desktopLogoWidth = "260px";
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+  const isHome = location.pathname === "/";
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 60);
-    };
-
+    const handleScroll = () => setScrolled(window.scrollY > 60);
     handleScroll();
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const getNavClassName = (path: string) =>
-    `font-display text-xs font-medium uppercase tracking-[0.1em] transition-colors relative ${
-      location.pathname === path
-        ? "text-[#fcf8ea] after:absolute after:bottom-[-4px] after:left-0 after:right-0 after:h-px after:bg-[#fcf8ea]"
-        : "text-[#fcf8ea]/60 hover:text-[#fcf8ea]"
-    }`;
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
   return (
     <>
       <header
-        className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 transition-colors duration-300"
+        className="fixed left-0 right-0 top-0 z-50 border-b border-white/10"
         style={{
-          backgroundColor: scrolled ? "rgba(250, 249, 239, 0.85)" : headerBg,
-          backdropFilter: scrolled ? "blur(12px)" : "none",
+          backgroundColor: isHome
+            ? scrolled
+              ? "rgba(30,21,23,0.25)"
+              : "transparent"
+            : "rgba(30,21,23,0.55)",
+          backdropFilter: isHome ? (scrolled ? "blur(20px)" : "none") : "blur(16px)",
+          WebkitBackdropFilter: isHome ? (scrolled ? "blur(20px)" : "none") : "blur(16px)",
+          transition: "background-color 0.4s ease, backdrop-filter 0.4s ease",
+          borderBottomColor: isHome && !scrolled ? "transparent" : "rgba(255,255,255,0.08)",
           height: "80px",
         }}
       >
-        <div
-          className="flex h-full items-center pl-4 pr-4"
-          style={{ justifyContent: "flex-start" }}
-        >
-          <Link to="/" className="mr-0 flex shrink-0 items-center" aria-label="BridgeArg home">
-            <div className="logo-container flex items-center">
-              <img
-                src={logoSrc}
-                alt="BridgeArg"
-                className="block h-auto"
-                style={{ width: desktopLogoWidth }}
-              />
-            </div>
+        <div className="flex h-full items-center px-4">
+          <Link to="/" className="flex shrink-0 items-center" aria-label="BridgeArg home">
+            <img
+              src={logoLightSrc}
+              alt="BridgeArg"
+              className="block h-auto"
+              style={{
+                width: desktopLogoWidth,
+                opacity: isHome ? (scrolled ? 1 : 0) : 1,
+                transition: "opacity 0.4s ease",
+              }}
+            />
           </Link>
 
-          <div className="ml-auto hidden min-w-0 items-center gap-5 lg:flex lg:gap-7">
-            <nav className="flex items-center gap-5 lg:gap-7">
-              {navItems.map((item) => (
-                <Link key={item.path} to={item.path} className={getNavClassName(item.path)}>
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
-          </div>
-
           <button
-            onClick={() => setIsOpen(true)}
-            className="ml-auto p-2 transition-colors hover:bg-white/5 lg:hidden"
-            style={{ color: cream }}
-            aria-label="Open menu"
+            onClick={() => setIsOpen((prev) => !prev)}
+            className="ml-auto flex h-10 w-10 items-center justify-center"
+            aria-label={isOpen ? "Close menu" : "Open menu"}
           >
-            <Menu className="h-6 w-6" />
+            <span className="relative block h-4 w-6">
+              <span
+                className="absolute left-0 top-0 h-[2px] w-full bg-[#fcf8ea]"
+                style={{
+                  transform: isOpen ? "translateY(7px) rotate(45deg)" : "none",
+                  transition: "transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
+                }}
+              />
+              <span
+                className="absolute left-0 top-[7px] h-[2px] w-full bg-[#fcf8ea]"
+                style={{
+                  opacity: isOpen ? 0 : 1,
+                  transition: "opacity 0.2s ease",
+                }}
+              />
+              <span
+                className="absolute left-0 top-[14px] h-[2px] w-full bg-[#fcf8ea]"
+                style={{
+                  transform: isOpen ? "translateY(-7px) rotate(-45deg)" : "none",
+                  transition: "transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
+                }}
+              />
+            </span>
           </button>
         </div>
       </header>
 
-      {isOpen && (
-        <>
-          <div className="mobile-menu-overlay" onClick={() => setIsOpen(false)} />
-          <div className="mobile-drawer open">
-            <div className="flex items-center justify-between border-b border-white/10 p-6">
-              <Link to="/" className="mr-0 flex items-center" onClick={() => setIsOpen(false)}>
-                <div className="logo-container flex items-center">
-                  <img
-                    src={logoSrc}
-                    alt="BridgeArg"
-                    className="block h-auto"
-                    style={{ width: mobileLogoWidth }}
-                  />
-                </div>
-              </Link>
-              <button
+      <div
+        onClick={() => setIsOpen(false)}
+        className="fixed inset-0 z-[55]"
+        style={{
+          backgroundColor: "rgba(0,0,0,0.5)",
+          opacity: isOpen ? 1 : 0,
+          pointerEvents: isOpen ? "auto" : "none",
+          transition: "opacity 0.35s ease",
+        }}
+      />
+
+      <aside
+        className="fixed right-0 top-0 z-[60] h-screen w-full max-w-[420px]"
+        style={{
+          transform: isOpen ? "translateX(0)" : "translateX(100%)",
+          transition: "transform 0.55s cubic-bezier(0.16, 1, 0.3, 1)",
+          background: "rgba(30,21,23,0.45)",
+          backdropFilter: "blur(28px)",
+          WebkitBackdropFilter: "blur(28px)",
+          borderLeft: "1px solid rgba(255,255,255,0.08)",
+        }}
+      >
+        <div
+          className="flex items-center justify-between px-5"
+          style={{ height: "80px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}
+        >
+          <Link to="/" className="flex items-center">
+            <img src={logoLightSrc} alt="BridgeArg" className="block h-auto" style={{ width: "180px" }} />
+          </Link>
+          <button onClick={() => setIsOpen(false)} className="relative h-8 w-8" aria-label="Close menu">
+            <span
+              className="absolute left-1/2 top-1/2 h-[2px] w-6 bg-[#fcf8ea]"
+              style={{ transform: "translate(-50%, -50%) rotate(45deg)" }}
+            />
+            <span
+              className="absolute left-1/2 top-1/2 h-[2px] w-6 bg-[#fcf8ea]"
+              style={{ transform: "translate(-50%, -50%) rotate(-45deg)" }}
+            />
+          </button>
+        </div>
+
+        <nav className="px-8 pt-10">
+          {navItems.map((item, index) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
                 onClick={() => setIsOpen(false)}
-                className="p-2 transition-colors hover:bg-white/5"
-                style={{ color: cream }}
-                aria-label="Close menu"
+                className="relative mb-6 block font-display text-lg uppercase tracking-[0.12em]"
+                style={{
+                  color: isActive ? "#fcf8ea" : "rgba(252,248,234,0.45)",
+                  opacity: isOpen ? 1 : 0,
+                  transform: isOpen ? "translateX(0)" : "translateX(16px)",
+                  transition: `opacity 0.35s ease ${index * 65}ms, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1) ${index * 65}ms`,
+                }}
               >
-                <X className="h-6 w-6" />
-              </button>
-            </div>
-
-            <nav className="space-y-6 p-6">
-              {navItems.map((item, index) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setIsOpen(false)}
-                  className={`block py-2 font-display text-base font-medium uppercase tracking-[0.1em] animate-fade-up animate-stagger-${index + 1} ${
-                    location.pathname === item.path ? "text-[#fcf8ea] opacity-100" : "text-[#fcf8ea] opacity-80 hover:opacity-100"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
-          </div>
-        </>
-      )}
-
-      <div className="h-[80px]" />
+                {item.label}
+                {isActive && (
+                  <span
+                    className="absolute top-1/2 h-2 w-2 -translate-y-1/2 rounded-full"
+                    style={{ right: "-18px", backgroundColor: "#7FB2D1" }}
+                  />
+                )}
+              </Link>
+            );
+          })}
+          <Link
+            to="/contacto"
+            onClick={() => setIsOpen(false)}
+            style={{
+              fontFamily: '"Onest", sans-serif',
+              fontSize: "14px",
+              fontWeight: 700,
+              letterSpacing: "0.15em",
+              textTransform: "uppercase",
+              transform: "rotate(-7deg)",
+              display: "inline-block",
+              color: "#7FB2D1",
+              textDecoration: "none",
+              borderBottom: "1px solid #7FB2D1",
+              paddingBottom: "2px",
+              marginTop: "2rem",
+            }}
+          >
+            I'm an Artist
+          </Link>
+        </nav>
+      </aside>
     </>
   );
 }
