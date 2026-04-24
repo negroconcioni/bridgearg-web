@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAvailableCount } from "@/lib/api";
 
-const heroImageUrl = "/assets/ui/new-hero-bg-2.png";
-
 export function HeroSection() {
   const [availableCount, setAvailableCount] = useState<number>(0);
 
@@ -27,14 +25,6 @@ export function HeroSection() {
       className="relative w-full overflow-hidden"
       style={{ minHeight: "calc(100svh - var(--header-h))" }}
     >
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: `url("${heroImageUrl}")`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      />
       <div className="absolute inset-0 z-10 bg-[#1e1517]/80" />
 
       <div
