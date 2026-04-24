@@ -7,9 +7,10 @@ import { OptimizedImage } from "@/components/OptimizedImage";
 import bridgeHero from "@/assets/bridgearg-hero.jpg";
 import { getArtists, getWorks, getWorksTotalCount } from "@/lib/api";
 import { SEO } from "@/components/SEO";
+import { images } from "@/lib/images";
 
 /** Wide editorial strip; swap for `getArtworkImagePublicUrl("…")` from `@/lib/supabaseStorage` when uploaded. */
-const aboutWideImageSrc = "/assets/ui/new-hero-bg.jpg";
+const aboutWideImageSrc = images.newHeroBg;
 
 const teamMembers = [
   {

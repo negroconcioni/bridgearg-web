@@ -1,9 +1,10 @@
 import { motion } from "framer-motion";
+import { images } from "@/lib/images";
 
 const assetSrc = "/assets/BRIDGEARG%20-%20Exportacion%20logos%20-%20PNG-16.png";
-const image1Src = "/assets/ui/the_process.jpg";
+const image1Src = images.theProcess;
 const image1bSrc = "/assets/ui/the_process_2.jpg";
-const image2Src = "/assets/ui/boxes.jpg";
+const image2Src = images.boxes;
 const image2bSrc = "/assets/ui/tubo_2.png";
 
 export function BrandStorySection() {

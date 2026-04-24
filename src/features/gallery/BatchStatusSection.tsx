@@ -1,11 +1,12 @@
 import { Eye } from "lucide-react";
+import { images } from "@/lib/images";
 
 const bridgeDividerSrc = encodeURI("/assets/BRIDGEARG - Exportacion logos - PNG-21.png");
 
 const serviceCards = [
   {
     title: "Provenance & Authenticity",
-    imageSrc: "/assets/ui/Mockup.png",
+    imageSrc: images.mockup,
     imageAlt: "Certificate of authenticity package",
     imageClassName: "aspect-square",
     imageFitClassName: "object-contain p-6 md:p-8",
@@ -14,7 +15,7 @@ const serviceCards = [
   },
   {
     title: "Specialized Art Handling",
-    imageSrc: encodeURI("/assets/ui/Free_Package_Box_Mockup.png"),
+    imageSrc: images.freePackageBoxMockup,
     imageAlt: "Museum-grade art shipping tube",
     imageClassName: "aspect-square",
     imageFitClassName: "object-contain p-6 md:p-8",

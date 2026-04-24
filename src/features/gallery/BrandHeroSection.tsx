@@ -2,16 +2,17 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { getAvailableCount } from "@/lib/api";
+import { images } from "@/lib/images";
 
 const heroImages = [
-  "/assets/ui/fondo_jose.jpg",
-  "/assets/ui/fondo_mariano_2.jpg",
-  "/assets/ui/fondo_tulio.jpg",
-  "/assets/ui/fondo_ale_2.jpg",
-  "/assets/ui/fondo_caro_2.jpg",
-  "/assets/ui/fondo_boyo_3.jpg",
-  "/assets/ui/fondo_fabio_2.jpg",
-  "/assets/ui/fondo_roger_2.jpeg",
+  images.fondoJose,
+  images.fondoMariano,
+  images.fondoTulio,
+  images.fondoAle,
+  images.fondoCaro,
+  images.fondoBoyo,
+  images.fondoFabio,
+  images.fondoRoger,
 ];
 const heroArtists = [
   "Jose Benito",
