@@ -26,8 +26,6 @@ type ArtistCard = {
   featuredWork: WorkFromApi | null;
 };
 
-const bridgeDividerSrc = encodeURI("/assets/BRIDGEARG - Exportacion logos - PNG-21.png");
-
 const ArtistasPage = () => {
   const {
     data: artists = [],
@@ -70,18 +68,10 @@ const ArtistasPage = () => {
     }));
   }, [artists, works]);
 
-  const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const filteredAndSortedArtistCards = useMemo(() => {
-    const term = searchTerm.trim().toLowerCase();
-
-    let list = artistCards;
-    if (term) {
-      list = list.filter(({ artist }) => artist.name.toLowerCase().includes(term));
-    }
-
-    return [...list].sort((a, b) => {
+    return [...artistCards].sort((a, b) => {
       const nameA = a.artist.name.trim();
       const nameB = b.artist.name.trim();
       const cmp = nameA.localeCompare(nameB, undefined, {
@@ -90,11 +80,11 @@ const ArtistasPage = () => {
       });
       return sortOrder === "asc" ? cmp : -cmp;
     });
-  }, [artistCards, searchTerm, sortOrder]);
+  }, [artistCards, sortOrder]);
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-[#fcf8ea]">
+      <div className="min-h-screen bg-background">
         <SEO
           title="Artists"
           description="Discover contemporary Argentine artists represented by BridgeArg."
@@ -102,65 +92,96 @@ const ArtistasPage = () => {
         />
         <Header />
         <main>
-          <section className="bg-[#fcf8ea] px-6 py-20 md:px-10 md:py-24 lg:py-32">
-            <div className="mx-auto max-w-5xl text-center">
-              <h1 className="font-display text-4xl font-semibold tracking-tight text-[#1e1517] md:text-5xl lg:text-[72px]">
-                Artists
-              </h1>
-              <p className="mx-auto mt-4 md:mt-6 max-w-2xl font-display text-base leading-8 text-[#1e1517]/72 md:text-lg">
-                A vanguard roster of contemporary voices shaping new dialogues between Argentina
-                and the global collector.
-              </p>
+          <section
+            className="bg-background py-20 md:py-24 lg:py-32"
+            style={{ paddingLeft: "clamp(24px, 5vw, 80px)", paddingRight: "clamp(24px, 5vw, 80px)" }}
+          >
+            <div className="relative mx-auto max-w-[1800px]">
+              <div className="mx-auto max-w-5xl text-center">
+                <h1 className="font-display text-4xl font-semibold tracking-tight text-[#1e1517] md:text-5xl lg:text-[72px]">
+                  Artists
+                </h1>
+                <p className="mx-auto mt-4 md:mt-6 max-w-2xl font-display text-base leading-8 text-[#1e1517]/72 md:text-lg">
+                  A vanguard roster of contemporary voices shaping new dialogues between Argentina
+                  and the global collector.
+                </p>
+              </div>
+
+              {!loading && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    gap: "8px",
+                    zIndex: 2,
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setSortOrder("asc")}
+                    className={`px-3 py-1 text-[11px] font-medium uppercase tracking-[0.16em] transition-colors ${
+                      sortOrder === "asc"
+                        ? "text-[#1e1517] border border-[#1e1517]/40 bg-background"
+                        : "text-[#1e1517]/45 border border-transparent hover:text-[#1e1517]"
+                    }`}
+                    style={{ fontFamily: "'Onest', sans-serif" }}
+                  >
+                    A → Z
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSortOrder("desc")}
+                    className={`px-3 py-1 text-[11px] font-medium uppercase tracking-[0.16em] transition-colors ${
+                      sortOrder === "desc"
+                        ? "text-[#1e1517] border border-[#1e1517]/40 bg-background"
+                        : "text-[#1e1517]/45 border border-transparent hover:text-[#1e1517]"
+                    }`}
+                    style={{ fontFamily: "'Onest', sans-serif" }}
+                  >
+                    Z → A
+                  </button>
+                </div>
+              )}
             </div>
           </section>
 
-          <section className="bg-[#fcf8ea] px-6 pb-24 md:px-10 md:pb-32">
-            <div className="mx-auto max-w-7xl">
-              {!loading && (
-                <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-                  <div className="w-full md:w-2/3">
-                    <label className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.18em] text-[#1e1517]/60">
-                      Search artists
-                    </label>
-                    <input
-                      type="text"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      placeholder="Type a name…"
-                      className="w-full border-b border-[#1e1517]/20 bg-transparent pb-2 font-sans text-sm text-[#1e1517] outline-none transition-colors placeholder:text-[#1e1517]/35 focus:border-[#1e1517]"
-                      style={{ fontFamily: "'Onest', sans-serif" }}
-                    />
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setSortOrder("asc")}
-                      className={`px-3 py-1 text-[11px] font-medium uppercase tracking-[0.16em] transition-colors ${
-                        sortOrder === "asc"
-                          ? "text-[#1e1517] border border-[#1e1517]/40 bg-[#fcf8ea]"
-                          : "text-[#1e1517]/45 border border-transparent hover:text-[#1e1517]"
-                      }`}
-                      style={{ fontFamily: "'Onest', sans-serif" }}
-                    >
-                      A → Z
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setSortOrder("desc")}
-                      className={`px-3 py-1 text-[11px] font-medium uppercase tracking-[0.16em] transition-colors ${
-                        sortOrder === "desc"
-                          ? "text-[#1e1517] border border-[#1e1517]/40 bg-[#fcf8ea]"
-                          : "text-[#1e1517]/45 border border-transparent hover:text-[#1e1517]"
-                      }`}
-                      style={{ fontFamily: "'Onest', sans-serif" }}
-                    >
-                      Z → A
-                    </button>
+          <section
+            className="bg-background pb-24 md:pb-32"
+            style={{ paddingLeft: "clamp(24px, 5vw, 80px)", paddingRight: "clamp(24px, 5vw, 80px)" }}
+          >
+            <div className="mx-auto max-w-[1800px]">
+              {!loading && filteredAndSortedArtistCards.length > 0 && (
+                <div style={{ marginBottom: "clamp(48px, 8vh, 96px)" }}>
+                  <div
+                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"
+                    style={{ rowGap: "12px" }}
+                  >
+                    {filteredAndSortedArtistCards.map(({ artist }) => (
+                      <Link
+                        key={`list-${artist.id}`}
+                        to={`/artistas/${artist.slug}`}
+                        className="block w-full text-center text-[#1e1517] hover:text-[#7FB2D1] transition-colors duration-200"
+                        style={{
+                          fontFamily: '"Onest", sans-serif',
+                          fontSize: "clamp(13px, 1vw, 16px)",
+                          fontWeight: 500,
+                          textTransform: "uppercase",
+                          letterSpacing: "0.08em",
+                          padding: "4px 0",
+                        }}
+                      >
+                        {artist.name}
+                      </Link>
+                    ))}
                   </div>
                 </div>
               )}
+
               {loading ? (
-                <div className="grid grid-cols-1 gap-16 md:grid-cols-2 lg:grid-cols-3 lg:gap-20">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-[clamp(32px,5vw,80px)] gap-y-[clamp(48px,8vh,120px)]">
                   {Array.from({ length: 6 }).map((_, i) => (
                     <div key={i} className="flex flex-col items-center">
                       <div className="w-full max-w-[clamp(180px,60vw,260px)]">
@@ -174,54 +195,71 @@ const ArtistasPage = () => {
                   ))}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 gap-16 md:grid-cols-2 lg:grid-cols-3 lg:gap-20 transition-opacity duration-300 ease-out">
-                  {filteredAndSortedArtistCards.map(({ artist, featuredWork }) => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-[clamp(32px,5vw,80px)] gap-y-[clamp(48px,8vh,120px)] transition-opacity duration-300 ease-out">
+                  {filteredAndSortedArtistCards.map(({ artist }) => (
                     <Link
                       key={artist.id}
                       to={`/artistas/${artist.slug}`}
                       className="group flex flex-col items-center cursor-pointer"
                     >
                       <div className="w-full max-w-[clamp(180px,60vw,260px)]">
-                        <div className="relative aspect-[2/3] overflow-hidden rounded-[24px] bg-[#e8e4d8] transition-transform duration-300 ease-out group-hover:scale-[1.03]">
-                          <OptimizedImage
-                            src={artist.imageUrl ?? ""}
-                            alt={artist.name}
-                            className="h-full w-full"
-                            imageClassName="h-full w-full object-cover object-[50%_0%] grayscale transition-all duration-300 ease-out group-hover:grayscale-0 group-hover:scale-[1.03]"
-                            logSrcOnError
+                        <div
+                          style={{
+                            position: "relative",
+                            width: "100%",
+                            aspectRatio: "763 / 738",
+                            maxWidth: "1500px",
+                            margin: "0 auto",
+                          }}
+                        >
+                          <img
+                            src="/assets/BRIDGEARG - Asset-12.svg"
+                            alt=""
+                            aria-hidden
+                            style={{
+                              position: "absolute",
+                              inset: 0,
+                              width: "100%",
+                              height: "100%",
+                              zIndex: 1,
+                              pointerEvents: "none",
+                            }}
                           />
-
-                          {featuredWork ? (
+                          <div
+                            style={{
+                              position: "absolute",
+                              top: "29.45%",
+                              left: "31.45%",
+                              width: "39.5%",
+                              aspectRatio: "1",
+                              borderRadius: "50%",
+                              overflow: "hidden",
+                              zIndex: 2,
+                            }}
+                          >
                             <OptimizedImage
-                              src={featuredWork.imagenUrl}
-                              title={featuredWork.title}
-                              artistName={artist.name}
-                              variant="artwork"
-                              className="absolute inset-0 h-full w-full"
-                              imageClassName="h-full w-full object-cover object-[50%_0%] opacity-0 transition-all duration-300 ease-out group-hover:scale-[1.03] group-hover:opacity-100"
+                              src={artist.imageUrl ?? ""}
+                              alt={artist.name}
+                              className="!h-full !w-full"
+                              imageClassName="h-full w-full object-cover object-top"
+                              logSrcOnError
                             />
-                          ) : null}
-
-                          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-opacity duration-300 ease-out group-hover:bg-black/35 group-hover:opacity-100">
-                            <span className="px-4 py-1 font-display text-xs uppercase tracking-[0.16em] text-white">
-                              {artist.name}
-                            </span>
                           </div>
                         </div>
-                      </div>
-
-                      <div className="pt-6 text-center">
-                        <p
-                          className="mt-3 text-xs font-medium uppercase tracking-[0.14em] text-[#1e1517] text-center"
-                          style={{ fontFamily: "'Onest', sans-serif", fontStyle: "normal" }}
+                        <span
+                          style={{
+                            fontFamily: '"Onest", sans-serif',
+                            fontWeight: 700,
+                            color: "#1e1517",
+                            letterSpacing: "0.08em",
+                            fontSize: "clamp(16px, 1.5vw, 22px)",
+                            marginTop: "clamp(16px, 2vh, 28px)",
+                            display: "inline-block",
+                            textTransform: "uppercase",
+                          }}
                         >
                           {artist.name}
-                        </p>
-                        <img
-                          src={bridgeDividerSrc}
-                          alt=""
-                          className="mx-auto mt-3 h-3 w-auto object-contain opacity-25"
-                        />
+                        </span>
                       </div>
                     </Link>
                   ))}
@@ -230,7 +268,7 @@ const ArtistasPage = () => {
             </div>
           </section>
 
-          <section className="bg-[#fcf8ea] px-6 pb-32 md:px-10">
+          <section className="bg-background px-6 pb-32 md:px-10">
             <div className="mx-auto max-w-5xl text-center">
               <p
                 className="font-display text-3xl md:text-4xl tracking-tight text-[#1e1517]"

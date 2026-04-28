@@ -1,6 +1,6 @@
 export function CuratorialStatementSection() {
   return (
-    <section className="relative bg-[#fcf8ea] px-6 py-24 md:px-12 md:py-32 lg:px-24 2xl:py-40">
+    <section className="relative bg-background px-6 py-24 md:px-12 md:py-32 lg:px-24 2xl:py-40">
       <img
         src="/assets/BRIDGEARG - Exportacion logos - PNG-19.png"
         alt=""

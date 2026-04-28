@@ -74,7 +74,7 @@ export function BrandStorySection() {
         </div>
       </section>
 
-      <section className="bg-[#fcf8ea] px-6 py-24 md:px-12 md:py-32 lg:px-24">
+      <section className="bg-background px-6 py-24 md:px-12 md:py-32 lg:px-24">
         <div className="mx-auto max-w-[1800px] space-y-32">
 
           {/* Block 1 — image left, text right */}

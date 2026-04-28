@@ -51,7 +51,7 @@ export function ArtistsSection() {
   };
 
   return (
-    <section className="relative w-full overflow-hidden bg-[#fcf8ea] px-6 py-20 md:px-12 lg:px-24 md:py-24 2xl:py-28">
+    <section className="relative w-full overflow-hidden bg-background px-6 py-20 md:px-12 lg:px-24 md:py-24 2xl:py-28">
       <div className="mx-auto max-w-[1800px]">
         <div className="flex items-center justify-center gap-2 sm:gap-8 md:gap-14 xl:gap-20 2xl:gap-24">
         <AnimatePresence mode="popLayout" initial={false}>

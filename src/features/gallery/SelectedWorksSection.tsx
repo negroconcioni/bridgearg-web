@@ -106,7 +106,7 @@ export function SelectedWorksSection() {
   if (cards.length === 0) return null;
 
   return (
-    <section className="border-t border-[#1e1517]/10 bg-[#fcf8ea] px-6 py-24 md:px-12 md:py-28 lg:px-24 2xl:py-32">
+    <section className="border-t border-[#1e1517]/10 bg-background px-6 py-24 md:px-12 md:py-28 lg:px-24 2xl:py-32">
       <div className="mx-auto max-w-[1800px]">
         <div className="mb-14 md:mb-16">
           <p className="font-display text-[10px] font-normal uppercase tracking-[0.2em] text-[#1e1517]/68 md:text-xs 2xl:text-sm">

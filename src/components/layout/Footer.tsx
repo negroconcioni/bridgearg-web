@@ -109,7 +109,7 @@ export function Footer() {
                 <button
                   type="submit"
                   disabled={newsletterStatus === "loading"}
-                  className={`border border-[#fcf8ea]/20 px-4 py-2 font-display text-xs uppercase tracking-[0.12em] text-[#fcf8ea] transition-colors hover:bg-[#fcf8ea]/10 ${
+                  className={`border border-[#fcf8ea]/20 px-4 py-2 font-display text-xs uppercase tracking-[0.12em] text-[#fcf8ea] transition-colors hover:bg-background/10 ${
                     newsletterStatus === "loading"
                       ? "cursor-not-allowed opacity-70 hover:bg-transparent"
                       : ""

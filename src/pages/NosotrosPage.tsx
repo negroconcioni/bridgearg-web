@@ -345,7 +345,7 @@ const NosotrosPage = () => {
             </section>
           )}
 
-          <section className="bg-[#fcf8ea] py-24">
+          <section className="bg-background py-24">
             <div className="container mx-auto px-6 text-center md:px-10">
               <h2 className="font-display text-3xl text-[#1e1517] md:text-4xl">
                 Ready to connect?

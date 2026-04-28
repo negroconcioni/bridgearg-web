@@ -186,9 +186,9 @@ const ArtistaDetailPage = () => {
   if (loadingArtist) {
     return (
       <PageTransition>
-        <div className="min-h-screen bg-[#fcf8ea]">
+        <div className="min-h-screen bg-background">
           <Header />
-          <main className="flex min-h-[60svh] items-center justify-center bg-[#fcf8ea] px-6 py-24 md:px-12">
+          <main className="flex min-h-[60svh] items-center justify-center bg-background px-6 py-24 md:px-12">
             <div className="flex items-center gap-4 text-[#1e1517]/55">
               <Loader2 className="h-8 w-8 animate-spin" />
               <span className="font-display text-xs uppercase tracking-[0.18em]">Loading artist</span>
@@ -203,9 +203,9 @@ const ArtistaDetailPage = () => {
   if (!artist) {
     return (
       <PageTransition>
-        <div className="min-h-screen bg-[#fcf8ea]">
+        <div className="min-h-screen bg-background">
           <Header />
-          <main className="bg-[#fcf8ea] px-6 py-32 md:px-12">
+          <main className="bg-background px-6 py-32 md:px-12">
             <div className="mx-auto max-w-3xl text-center">
               <h1 className="font-display text-4xl font-semibold tracking-tight text-[#1e1517] md:text-6xl">
                 Artist not found
@@ -226,7 +226,7 @@ const ArtistaDetailPage = () => {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-[#fcf8ea]">
+      <div className="min-h-screen bg-background">
         <SEO
           title={artist.name}
           description={artist.bio ?? `Works and biography of ${artist.name}, contemporary Argentine artist.`}
@@ -236,7 +236,7 @@ const ArtistaDetailPage = () => {
         />
         <Header />
         <main>
-          <section className="bg-[#fcf8ea] px-6 pb-24 pt-28 md:px-12 md:pb-28 md:pt-36">
+          <section className="bg-background px-6 pb-24 pt-28 md:px-12 md:pb-28 md:pt-36">
             <div className="mx-auto max-w-7xl">
               <div className="grid grid-cols-1 gap-y-8 md:grid-cols-12 md:gap-x-8 lg:gap-x-10">
                 <div className="md:col-span-8">
@@ -374,7 +374,7 @@ const ArtistaDetailPage = () => {
             </div>
           </section>
 
-          <section className="bg-[#fcf8ea] px-6 pb-32 md:px-12 md:pb-36">
+          <section className="bg-background px-6 pb-32 md:px-12 md:pb-36">
             <div className="mx-auto max-w-7xl">
               <div className="my-20">
                 <h2 className="font-display text-4xl font-normal tracking-tight text-[#1e1517]">
@@ -478,7 +478,7 @@ const ArtistaDetailPage = () => {
 
           {allArtists.length > 1 && (
             <>
-              <section className="bg-[#fcf8ea] px-6 pb-16 md:px-12 md:pb-20 border-t border-[#1e1517]/10">
+              <section className="bg-background px-6 pb-16 md:px-12 md:pb-20 border-t border-[#1e1517]/10">
                 <div className="mx-auto flex max-w-7xl items-start justify-between gap-8">
                   {(() => {
                     const index = allArtists.findIndex((a) => a.slug === artist.slug);
@@ -519,7 +519,7 @@ const ArtistaDetailPage = () => {
                 </div>
               </section>
 
-              <section className="bg-[#fcf8ea] px-6 pb-24 md:px-12 md:pb-32 border-t border-[#1e1517]/10">
+              <section className="bg-background px-6 pb-24 md:px-12 md:pb-32 border-t border-[#1e1517]/10">
                 <div className="mx-auto max-w-7xl">
                   <p className="mb-6 font-display text-sm uppercase tracking-[0.28em] text-[#1e1517]/50">
                     More Artists
