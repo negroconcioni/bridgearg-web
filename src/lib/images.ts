@@ -4,7 +4,7 @@ export const images = {
   fondoBoyo: "https://wzofuvxsvomntglezygh.supabase.co/storage/v1/object/public/ui-assets/fondo_boyo_3.jpg",
   fondoCaro: "https://wzofuvxsvomntglezygh.supabase.co/storage/v1/object/public/ui-assets/fondo_caro_2.jpg",
   fondoFabio: "https://wzofuvxsvomntglezygh.supabase.co/storage/v1/object/public/ui-assets/fondo_fabio_2.jpg",
-  fondoJose: "https://wzofuvxsvomntglezygh.supabase.co/storage/v1/object/public/ui-assets/fondo_jose.jpg",
+  fondoJose: "https://wzofuvxsvomntglezygh.supabase.co/storage/v1/object/public/ui-assets/fondo_jose_2.png",
   fondoMariano: "https://wzofuvxsvomntglezygh.supabase.co/storage/v1/object/public/ui-assets/fondo_mariano_2.jpg",
   fondoRoger: "https://wzofuvxsvomntglezygh.supabase.co/storage/v1/object/public/ui-assets/fondo_roger_2.jpeg",
   fondoTulio: "https://wzofuvxsvomntglezygh.supabase.co/storage/v1/object/public/ui-assets/fondo_tulio.jpg",
@@ -12,4 +12,6 @@ export const images = {
   mockup: "https://wzofuvxsvomntglezygh.supabase.co/storage/v1/object/public/ui-assets/Mockup.png",
   newHeroBg: "https://wzofuvxsvomntglezygh.supabase.co/storage/v1/object/public/ui-assets/new-hero-bg.jpg",
   theProcess: "https://wzofuvxsvomntglezygh.supabase.co/storage/v1/object/public/ui-assets/the_process.jpg",
+  fondoArtistas: "https://wzofuvxsvomntglezygh.supabase.co/storage/v1/object/public/ui-assets/fondo_artists.jpg",
+  objectsHistory: "https://wzofuvxsvomntglezygh.supabase.co/storage/v1/object/public/ui-assets/objectsHistory2.jpg",
 };

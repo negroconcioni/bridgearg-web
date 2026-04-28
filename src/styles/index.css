@@ -50,6 +50,17 @@
   font-display: swap;
 }
 
+.back-to-artists-link {
+  color: rgba(30, 21, 23, 0.55);
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.back-to-artists-link:hover {
+  color: #7FB2D1;
+  border-bottom-color: #7FB2D1;
+}
+
 /* BridgeARG Design System - Technical Gallery Aesthetic */
 
 @layer base {
