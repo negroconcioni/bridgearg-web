@@ -133,7 +133,11 @@ export function Header() {
         }}
       >
         <div className="flex h-full items-center px-4">
-          <Link to="/" className="flex shrink-0 items-center" aria-label="BridgeArg home">
+          <Link
+            to="/"
+            aria-label="BridgeArg home"
+            style={{ display: "inline-flex", alignItems: "center", flexShrink: 0, width: desktopLogoWidth }}
+          >
             <img
               src={logoLightSrc}
               alt="BridgeArg"

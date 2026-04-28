@@ -55,6 +55,11 @@ export interface ArtistRow {
   slug: string;
   bio: string | null;
   image_url: string | null;
+  discipline?: string | null;
+  origin?: string | null;
+  speciality?: string | null;
+  statement?: string | null;
+  studio_image_url?: string | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -65,6 +70,11 @@ export interface ArtistFromApi {
   slug: string;
   bio: string | null;
   imageUrl: string | null;
+  discipline: string | null;
+  origin: string | null;
+  specialty: string | null;
+  statement: string | null;
+  studioImageUrl: string | null;
 }
 
 /** Relation when selecting artworks with artists (slug for routing). */
@@ -122,6 +132,11 @@ function mapArtistRowToArtist(row: ArtistRow): ArtistFromApi {
     slug: row.slug,
     bio: row.bio ?? null,
     imageUrl: row.image_url?.trim() || null,
+    discipline: row.discipline ?? null,
+    origin: row.origin ?? null,
+    specialty: row.speciality ?? null,
+    statement: row.statement ?? null,
+    studioImageUrl: row.studio_image_url?.trim() || null,
   };
 }
 
@@ -272,7 +287,7 @@ export async function getArtworks(artistId?: number): Promise<ArtworkFromApi[]> 
 export async function getArtists(): Promise<ArtistFromApi[]> {
   const { supabase, isSupabaseConfigured } = await import("@/lib/supabaseClient");
   if (!isSupabaseConfigured || !supabase) return [];
-  const { data, error } = await supabase.from("artists").select("id,name,slug,bio,image_url").order("name", { ascending: true });
+  const { data, error } = await supabase.from("artists").select("id,name,slug,bio,image_url,discipline,origin,speciality,statement,studio_image_url").order("name", { ascending: true });
   if (error) throw new Error(error.message ?? "Could not load artists");
   return (data ?? []).map((row) => mapArtistRowToArtist(row as ArtistRow));
 }
@@ -301,7 +316,7 @@ export async function getAvailableCount(): Promise<number> {
 export async function getArtistBySlug(slug: string): Promise<ArtistFromApi | null> {
   const { supabase, isSupabaseConfigured } = await import("@/lib/supabaseClient");
   if (!isSupabaseConfigured || !supabase) return null;
-  const { data, error } = await supabase.from("artists").select("id,name,slug,bio,image_url").eq("slug", slug).single();
+  const { data, error } = await supabase.from("artists").select("id,name,slug,bio,image_url,discipline,origin,speciality,statement,studio_image_url").eq("slug", slug).single();
   if (error) {
     if (error.code === "PGRST116") return null;
     throw new Error(error.message ?? "Could not load artist");

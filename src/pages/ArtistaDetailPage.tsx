@@ -7,141 +7,23 @@ import { Header } from "@/components/layout/Header";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import { PageTransition } from "@/components/PageTransition";
 import { toast } from "@/hooks/use-toast";
-import { getSupabase, isSupabaseConfigured } from "@/lib/supabaseClient";
 import { SEO } from "@/components/SEO";
-import { getArtists, type ArtistFromApi } from "@/lib/api";
+import { getArtistBySlug, getWorks } from "@/lib/api";
 
-/**
- * TODO - Base de datos:
- * Los artistas actuales son datos demo ("Artista Ejemplo 1-10").
- * Antes del lanzamiento, cargar artistas reales con:
- * - Nombres reales
- * - Slugs únicos (usados para routing en /artistas/:slug)
- * - Fotos de perfil individuales (image_url)
- * - Bio, origin, specialty, birthYear
- * - Foto del estudio (studio_image_url) y descripción (studio_description)
- */
-
-type ArtistDetail = {
-  id: number;
-  slug: string;
-  name: string;
-  bio: string | null;
-  imageUrl: string | null;
-  origin: string | null;
-  specialty: string | null;
-  birthYear: string | null;
-  studioImageUrl: string | null;
-  studioDescription: string | null;
-};
-
-type ArtistDetailRow = {
-  id: number;
-  slug: string;
-  name: string;
-  bio?: string | null;
-  image_url?: string | null;
-  origin?: string | null;
-  specialty?: string | null;
-  birth_year?: string | number | null;
-  studio_image_url?: string | null;
-  studio_description?: string | null;
-};
-
-type ArtistWork = {
-  id: number;
-  title: string;
-  imageUrl: string | null;
-  status: string | null;
-  price: number | null;
-  currency: string;
-  available: boolean;
-};
-
-type ArtistWorkRow = {
-  id: number;
-  title: string;
-  image_url?: string | null;
-  status?: string | null;
-  price_usd?: number | null;
-};
-
-function mapArtistDetailRow(row: ArtistDetailRow): ArtistDetail {
-  return {
-    id: row.id,
-    slug: row.slug,
-    name: row.name,
-    bio: row.bio ?? null,
-    imageUrl: row.image_url?.trim() || null,
-    origin: row.origin ?? null,
-    specialty: row.specialty ?? null,
-    birthYear: row.birth_year != null ? String(row.birth_year) : null,
-    studioImageUrl: row.studio_image_url?.trim() || null,
-    studioDescription: row.studio_description ?? null,
-  };
+function getBioParagraphs(bio: string | null | undefined): string[] {
+  if (!bio) return [];
+  return bio
+    .split(/\n\n+/)
+    .map((p) => p.trim())
+    .filter(Boolean);
 }
 
-function mapArtistWorkRow(row: ArtistWorkRow): ArtistWork {
-  const status = row.status ?? null;
-  const sold = isSoldWork(status);
-  return {
-    id: row.id,
-    title: row.title,
-    imageUrl: row.image_url?.trim() || null,
-    status,
-    price: row.price_usd ?? null,
-    currency: "USD",
-    available: !sold,
-  };
-}
-
-function formatWorkPrice(price: number | null, currency: string): string {
-  if (price == null) return "Price on request";
-
-  const formatted = Number(price).toLocaleString("en-US", {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  });
-
-  return `${formatted} ${currency}`;
-}
-
-function isSoldWork(status: string | null): boolean {
-  if (!status) return false;
-  const normalized = status.toLowerCase();
-  return normalized === "sold" || normalized === "vendido";
-}
-
-async function fetchArtistDetail(slug: string): Promise<ArtistDetail | null> {
-  if (!isSupabaseConfigured) return null;
-
-  const supabase = getSupabase();
-  const select =
-    "id,slug,name,bio,image_url,origin,specialty,birth_year,studio_image_url,studio_description";
-  const { data, error } = await supabase.from("artists").select(select).eq("slug", slug).single();
-
-  if (error) {
-    if (error.code === "PGRST116") return null;
-    throw new Error(error.message ?? "Could not load artist");
-  }
-
-  return data ? mapArtistDetailRow(data as ArtistDetailRow) : null;
-}
-
-async function fetchArtistWorks(artistId: number): Promise<ArtistWork[]> {
-  if (!isSupabaseConfigured) return [];
-
-  const supabase = getSupabase();
-  const { data, error } = await supabase
-    .from("artworks")
-    .select("id,title,image_url,status,price_usd")
-    .eq("artist_id", artistId)
-    .order("id", { ascending: true });
-
-  if (error) throw new Error(error.message ?? "Could not load works");
-
-  return ((data ?? []) as ArtistWorkRow[]).map(mapArtistWorkRow);
-}
+const QUICK_NAV = [
+  { label: "Statement", href: "#statement" },
+  { label: "Works", href: "#works" },
+  { label: "Process", href: "#process" },
+  { label: "Details", href: "#details" },
+];
 
 const ArtistaDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -152,23 +34,17 @@ const ArtistaDetailPage = () => {
     isError: artistError,
   } = useQuery({
     queryKey: ["artist", slug],
-    queryFn: () => fetchArtistDetail(slug!),
+    queryFn: () => getArtistBySlug(slug!),
     enabled: !!slug,
   });
 
   const {
     data: works = [],
-    isLoading: loadingWorks,
     isError: worksError,
   } = useQuery({
-    queryKey: ["artistWorks", artist?.id],
-    queryFn: () => fetchArtistWorks(artist!.id),
-    enabled: !!artist?.id,
-  });
-
-  const { data: allArtists = [] } = useQuery<ArtistFromApi[]>({
-    queryKey: ["artists"],
-    queryFn: getArtists,
+    queryKey: ["artistWorks", slug],
+    queryFn: () => getWorks(slug!),
+    enabled: !!slug,
   });
 
   useEffect(() => {
@@ -211,7 +87,7 @@ const ArtistaDetailPage = () => {
                 Artist not found
               </h1>
               <Link
-                to="/artistas"
+                to="/artists"
                 className="mt-8 inline-flex items-center rounded-full border border-[#1e1517]/20 px-6 py-3 font-display text-xs uppercase tracking-[0.12em] text-[#1e1517] transition-colors hover:bg-[#1e1517] hover:text-[#fcf8ea]"
               >
                 Back to Artists
@@ -224,6 +100,15 @@ const ArtistaDetailPage = () => {
     );
   }
 
+  const bioParagraphs = getBioParagraphs(artist.bio);
+  const heroBio = bioParagraphs[0] ?? "Biography available on request.";
+  const statementParagraphs = bioParagraphs.slice(0, 2);
+  const metaTags = [artist.origin, artist.discipline, artist.specialty].filter(
+    (tag): tag is string => Boolean(tag),
+  );
+  const featuredWorks = works.slice(0, 3);
+  const studioImageSrc = artist.studioImageUrl ?? artist.imageUrl ?? "";
+
   return (
     <PageTransition>
       <div className="min-h-screen bg-background">
@@ -231,330 +116,520 @@ const ArtistaDetailPage = () => {
           title={artist.name}
           description={artist.bio ?? `Works and biography of ${artist.name}, contemporary Argentine artist.`}
           image={artist.imageUrl ?? undefined}
-          url={`/artistas/${artist.slug}`}
+          url={`/artists/${artist.slug}`}
           type="article"
         />
         <Header />
         <main>
-          <section className="bg-background px-6 pb-24 pt-28 md:px-12 md:pb-28 md:pt-36">
-            <div className="mx-auto max-w-7xl">
-              <div className="grid grid-cols-1 gap-y-8 md:grid-cols-12 md:gap-x-8 lg:gap-x-10">
-                <div className="md:col-span-8">
-                  <div className="mb-4 md:pl-12">
-                    <Link
-                      to="/artistas"
-                      className="font-display text-xs uppercase tracking-[0.18em] text-[#1e1517]/50 hover:text-[#1e1517]"
+          {/* 1. HERO */}
+          <section
+            className="relative grid grid-cols-1 md:[grid-template-columns:1.05fr_0.95fr]"
+            style={{
+              minHeight: "auto",
+              padding: "80px clamp(24px, 6vw, 96px) clamp(40px, 6vh, 80px)",
+              gap: "clamp(40px, 7vw, 100px)",
+              alignItems: "end",
+              borderBottom: "1px solid rgba(30,21,23,0.16)",
+              overflow: "hidden",
+            }}
+          >
+            <div style={{ position: "relative", zIndex: 1 }}>
+              <h1 style={{ margin: "0 0 28px 0", lineHeight: 0.8 }}>
+                {artist.name.split(" ").map((word, i) => (
+                  <span
+                    key={`${word}-${i}`}
+                    style={{
+                      display: "block",
+                      fontFamily: '"BestDB", "Caveat", cursive',
+                      fontSize: "clamp(74px, 10vw, 170px)",
+                      fontWeight: 400,
+                      lineHeight: 0.8,
+                      letterSpacing: "-0.04em",
+                      color: "#7FB2D1",
+                      transform: "rotate(-7deg)",
+                      transformOrigin: "left center",
+                    }}
+                  >
+                    {word}
+                  </span>
+                ))}
+              </h1>
+              {metaTags.length > 0 && (
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "28px",
+                    flexWrap: "wrap",
+                    marginBottom: "34px",
+                  }}
+                >
+                  {metaTags.map((tag, i) => (
+                    <span
+                      key={`${tag}-${i}`}
+                      style={{
+                        fontSize: "12px",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.12em",
+                        borderTop: "1px solid #1e1517",
+                        paddingTop: "10px",
+                        fontFamily: '"Onest", sans-serif',
+                      }}
                     >
-                      ← Artists
-                    </Link>
-                  </div>
-                  <div className="inline-flex items-center rounded-full border border-[#1e1517]/20 px-4 py-2">
-                    <span className="font-display text-[11px] uppercase tracking-[0.16em] text-[#1e1517]">
-                      About the Artist
+                      {tag}
                     </span>
-                  </div>
-                  <h1 className="mt-8 font-display text-[clamp(2.25rem,9vw,5.75rem)] font-bold uppercase tracking-tight text-[#1e1517] md:pl-12">
-                    {artist.name}
-                  </h1>
-                </div>
-
-                <div className="md:col-span-12">
-                  <div className="h-px w-full bg-[#1e1517]/20" />
-                </div>
-
-                <div className="order-2 md:order-none md:col-span-2 md:pt-12">
-                  <div className="space-y-12">
-                    <div>
-                      <p className="font-display text-[11px] font-normal uppercase tracking-[0.45em] text-[#1e1517]/58">
-                        Origin
-                      </p>
-                      <p className="mt-4 font-display text-sm leading-7 text-[#1e1517]">
-                        {artist.origin || "Available on request"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="font-display text-[11px] font-normal uppercase tracking-[0.45em] text-[#1e1517]/58">
-                        Specialty
-                      </p>
-                      <p className="mt-4 font-display text-sm leading-7 text-[#1e1517]">
-                        {artist.specialty || "Available on request"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="font-display text-[11px] font-normal uppercase tracking-[0.45em] text-[#1e1517]/58">
-                        Born
-                      </p>
-                      <p className="mt-4 font-display text-sm leading-7 text-[#1e1517]">
-                        {artist.birthYear || "Unknown"}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="order-3 md:order-none md:col-start-3 md:col-span-5 md:pt-12">
-                  <div className="overflow-visible">
-                    <p className="font-display text-base font-light leading-relaxed text-[#1e1517] [text-align:justify]">
-                      {artist.bio || "Biography available on request."}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="order-1 md:order-none md:col-start-9 md:col-span-4 md:-mt-12 lg:-mt-24">
-                  <div className="relative flex items-center justify-center md:block">
-                    {/* Nombre decorativo — solo visible en desktop */}
-                    <p
-                      className="pointer-events-none select-none font-display text-4xl md:text-5xl lg:text-[60px] uppercase tracking-tight text-[#1e1517] opacity-[0.07] hidden md:block"
-                      style={{ fontFamily: "BestDB, serif" }}
-                    >
-                      {artist.name}
-                    </p>
-                    {/* Imagen circular — en mobile fluye normalmente, en desktop va absolute sobre el nombre */}
-                    <div className="md:absolute md:inset-0 flex items-center justify-center">
-                      {artist.imageUrl ? (
-                        <div className="aspect-[2/3] w-full max-w-[clamp(180px,55vw,320px)] overflow-hidden rounded-[24px] bg-[#efe6d5]">
-                          <OptimizedImage
-                            src={artist.imageUrl}
-                            alt={artist.name}
-                            className="h-full w-full"
-                            imageClassName="object-cover"
-                            logSrcOnError
-                          />
-                        </div>
-                      ) : (
-                        <div className="flex aspect-[2/3] w-full max-w-[clamp(180px,55vw,320px)] items-center justify-center rounded-[24px] border border-[#1e1517]/10 bg-[#efe6d5] px-8 text-center">
-                          <p className="font-display text-sm uppercase tracking-[0.16em] text-[#1e1517]/48">
-                            Portrait coming soon
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="md:col-span-12">
-                  <div className="mx-auto my-32 h-[1px] w-3/5 bg-[#1e1517]/20" />
-                </div>
-
-                <div className="md:col-span-12">
-                  <div className="grid grid-cols-1 gap-y-6 md:grid-cols-12 md:gap-x-8 lg:gap-x-10">
-                    <div className="md:col-span-9">
-                      <p className="font-display text-xs uppercase tracking-[0.24em] text-[#1e1517]/58 md:pl-12">
-                        The Workspace
-                      </p>
-                      <div className="mt-6 md:ml-[-3rem]">
-                        {artist.studioImageUrl ? (
-                          <div className="aspect-[16/9] overflow-hidden bg-[#efe6d5]">
-                            <OptimizedImage
-                              src={artist.studioImageUrl}
-                              alt={`${artist.name} studio`}
-                              className="h-full w-full"
-                              imageClassName="object-cover"
-                              logSrcOnError
-                            />
-                          </div>
-                        ) : (
-                          <div className="flex aspect-[16/9] items-center justify-center border border-[#1e1517]/10 bg-[#efe6d5] px-8 text-center">
-                            <p className="font-display text-sm uppercase tracking-[0.16em] text-[#1e1517]/48">
-                              Studio image coming soon
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="md:col-span-3 md:pt-20">
-                      <p className="font-display text-base font-light leading-relaxed text-[#1e1517]/72">
-                        {artist.studioDescription ||
-                          "A closer look at the artist's workspace and the atmosphere where each body of work takes shape."}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section className="bg-background px-6 pb-32 md:px-12 md:pb-36">
-            <div className="mx-auto max-w-7xl">
-              <div className="my-20">
-                <h2 className="font-display text-4xl font-normal tracking-tight text-[#1e1517]">
-                  {artist.name}
-                  {"'"}s Works
-                </h2>
-              </div>
-
-              {loadingWorks ? (
-                <div className="flex items-center justify-center py-24">
-                  <Loader2 className="h-8 w-8 animate-spin text-[#1e1517]/50" />
-                </div>
-              ) : works.length === 0 ? (
-                <div className="py-12">
-                  <p className="font-display text-sm uppercase tracking-[0.16em] text-[#1e1517]/50">
-                    No works available yet.
-                  </p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                  {works.map((work, index) => {
-                    const sold = isSoldWork(work.status);
-                    const available = work.available;
-
-                    return (
-                      <div key={work.id} className="group block">
-                        <Link to={`/artworks/${work.id}`}>
-                          <div className="relative overflow-hidden bg-[#efe6d5] aspect-[3/4]">
-                            <OptimizedImage
-                              src={work.imageUrl ?? ""}
-                              title={work.title}
-                              artistName={artist.name}
-                              variant="artwork"
-                              className="h-full w-full"
-                              imageClassName="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                              logSrcOnError
-                            />
-
-                            <div
-                              className={`absolute inset-0 transition-all duration-500 ease-out ${
-                                sold ? "bg-black/35" : "bg-black/0 group-hover:bg-black/60"
-                              }`}
-                            />
-
-                          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-[#1e1517]/0 p-6 opacity-0 backdrop-blur-none transition-all duration-500 ease-out group-hover:bg-[#1e1517]/60 group-hover:opacity-100 group-hover:backdrop-blur-sm">
-                            {sold ? (
-                              <span className="inline-flex items-center gap-1 rounded-full bg-[#1e1517]/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-[#1e1517]/60">
-                                ● Private Collection
-                              </span>
-                            ) : (
-                              <div className="text-center text-white">
-                                <p className="font-display text-lg tracking-tight md:text-xl">
-                                  {work.title}
-                                </p>
-                                <p className="mt-2 font-display text-[10px] uppercase tracking-[0.22em] text-white/80">
-                                  View work →
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                          </div>
-                        </Link>
-
-                        <div className="pt-4 space-y-2">
-                          <h3 className="font-display text-sm font-medium uppercase tracking-[0.08em] text-[#1e1517]">
-                            {work.title}
-                          </h3>
-
-                          <div className="flex items-center gap-2">
-                            <p
-                              className={`font-display text-xs font-normal tracking-[0.04em] text-[#1e1517]/78 ${
-                                sold ? "line-through opacity-40" : ""
-                              }`}
-                            >
-                              {formatWorkPrice(work.price, work.currency)}
-                            </p>
-                            <span className="inline-flex items-center gap-1 rounded-full bg-[#1e1517]/5 px-2 py-0.5 font-display text-[10px] uppercase tracking-[0.18em] text-[#1e1517]/70">
-                              <span
-                                className={`inline-block h-1.5 w-1.5 rounded-full ${
-                                  available ? "bg-emerald-500" : "bg-[#1e1517]/40"
-                                }`}
-                              />
-                              {available ? "Available" : "Sold"}
-                            </span>
-                          </div>
-
-                          <Link
-                            to={`/contacto?obra=${encodeURIComponent(work.title)}`}
-                            className="inline-flex border border-[#1e1517]/30 px-4 py-1.5 font-display text-xs font-medium uppercase tracking-[0.18em] text-[#1e1517] transition-colors hover:bg-[#1e1517] hover:text-[#fcf8ea]"
-                          >
-                            Inquire
-                          </Link>
-                        </div>
-                      </div>
-                    );
-                  })}
+                  ))}
                 </div>
               )}
+              <p
+                style={{
+                  maxWidth: "640px",
+                  fontSize: "clamp(16px, 1.4vw, 20px)",
+                  lineHeight: 1.45,
+                  color: "rgba(30,21,23,0.74)",
+                  margin: 0,
+                  fontFamily: '"Onest", sans-serif',
+                }}
+              >
+                {heroBio}
+              </p>
+              <span
+                style={{
+                  fontFamily: '"BestDB", "Caveat", cursive',
+                  fontSize: "clamp(24px, 2.5vw, 34px)",
+                  color: "#7FB2D1",
+                  marginTop: "16px",
+                  transform: "rotate(-4deg)",
+                  display: "inline-block",
+                }}
+              >
+                Made with patience
+              </span>
+            </div>
+
+            <div style={{ position: "relative", zIndex: 1 }}>
+              <div
+                style={{
+                  backgroundColor: "#fcfcfc",
+                  padding: "clamp(20px, 2.5vw, 34px)",
+                  boxShadow: "0 28px 80px rgba(30,21,23,0.08)",
+                  transform: "translateY(25px)",
+                }}
+              >
+                <div
+                  style={{
+                    width: "100%",
+                    height: "clamp(420px, 62vh, 720px)",
+                    overflow: "hidden",
+                    filter: "saturate(0.92)",
+                  }}
+                >
+                  <OptimizedImage
+                    src={artist.imageUrl ?? ""}
+                    alt={artist.name}
+                    className="!h-full !w-full"
+                    imageClassName="h-full w-full object-cover"
+                    logSrcOnError
+                  />
+                </div>
+              </div>
             </div>
           </section>
 
-          {allArtists.length > 1 && (
-            <>
-              <section className="bg-background px-6 pb-16 md:px-12 md:pb-20 border-t border-[#1e1517]/10">
-                <div className="mx-auto flex max-w-7xl items-start justify-between gap-8">
-                  {(() => {
-                    const index = allArtists.findIndex((a) => a.slug === artist.slug);
-                    const prevArtist =
-                      index > 0 && index < allArtists.length ? allArtists[index - 1] : null;
-                    const nextArtist =
-                      index >= 0 && index < allArtists.length - 1 ? allArtists[index + 1] : null;
+          {/* 2. QUICK NAV STICKY */}
+          <nav
+            style={{
+              position: "sticky",
+              top: "80px",
+              zIndex: 12,
+              backgroundColor: "rgba(127,178,209,0.95)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              borderBottom: "1px solid rgba(30,21,23,0.16)",
+              display: "flex",
+              justifyContent: "center",
+              gap: "clamp(20px, 4vw, 48px)",
+              padding: "18px 24px",
+            }}
+          >
+            {QUICK_NAV.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className="text-[#fcf8ea] opacity-75 hover:opacity-100 hover:text-[#1e1517] transition-all duration-200"
+                style={{
+                  fontFamily: '"Onest", sans-serif',
+                  fontSize: "12px",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.14em",
+                  textDecoration: "none",
+                }}
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
 
-                    return (
-                      <>
-                        <div className="flex-1">
-                          {prevArtist && (
-                            <Link to={`/artistas/${prevArtist.slug}`} className="block">
-                              <span className="font-display text-xs uppercase tracking-[0.18em] text-[#1e1517]/60">
-                                ← Previous artist
-                              </span>
-                              <p className="mt-1 font-display text-sm text-[#1e1517]">
-                                {prevArtist.name}
-                              </p>
-                            </Link>
-                          )}
-                        </div>
-                        <div className="flex-1 text-right">
-                          {nextArtist && (
-                            <Link to={`/artistas/${nextArtist.slug}`} className="block">
-                              <span className="font-display text-xs uppercase tracking-[0.18em] text-[#1e1517]/60">
-                                Next artist →
-                              </span>
-                              <p className="mt-1 font-display text-sm text-[#1e1517]">
-                                {nextArtist.name}
-                              </p>
-                            </Link>
-                          )}
-                        </div>
-                      </>
-                    );
-                  })()}
-                </div>
-              </section>
+          {/* 3. STATEMENT */}
+          <section
+            id="statement"
+            className="grid grid-cols-1 md:[grid-template-columns:0.8fr_1.2fr]"
+            style={{
+              padding: "clamp(60px, 12vh, 120px) clamp(24px, 6vw, 96px)",
+              gap: "clamp(40px, 7vw, 100px)",
+              borderBottom: "1px solid rgba(30,21,23,0.16)",
+            }}
+          >
+            <div>
+              <span
+                style={{
+                  fontSize: "12px",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.17em",
+                  color: "rgba(30,21,23,0.55)",
+                  fontFamily: '"Onest", sans-serif',
+                }}
+              >
+                Artist statement
+              </span>
+            </div>
+            <div>
+              <h2
+                style={{
+                  fontFamily: '"Onest", sans-serif',
+                  fontSize: "clamp(28px, 4vw, 66px)",
+                  fontWeight: 400,
+                  lineHeight: 0.95,
+                  letterSpacing: "-0.04em",
+                  margin: "0 0 28px 0",
+                  color: "#1e1517",
+                }}
+              >
+                {artist.statement || "Objects that hold memory, texture and origin."}
+              </h2>
+              {(statementParagraphs.length > 0 ? statementParagraphs : [heroBio]).map((p, i) => (
+                <p
+                  key={i}
+                  style={{
+                    fontSize: "clamp(15px, 1.2vw, 18px)",
+                    lineHeight: 1.7,
+                    color: "rgba(30,21,23,0.72)",
+                    margin: "0 0 22px 0",
+                    fontFamily: '"Onest", sans-serif',
+                  }}
+                >
+                  {p}
+                </p>
+              ))}
+              <span
+                style={{
+                  fontFamily: '"BestDB", "Caveat", cursive',
+                  fontSize: "clamp(28px, 3vw, 38px)",
+                  lineHeight: 1.05,
+                  color: "#7FB2D1",
+                  marginTop: "44px",
+                  transform: "rotate(-4deg)",
+                  display: "inline-block",
+                }}
+              >
+                The material always speaks first.
+              </span>
+            </div>
+          </section>
 
-              <section className="bg-background px-6 pb-24 md:px-12 md:pb-32 border-t border-[#1e1517]/10">
-                <div className="mx-auto max-w-7xl">
-                  <p className="mb-6 font-display text-sm uppercase tracking-[0.28em] text-[#1e1517]/50">
-                    More Artists
-                  </p>
-                  <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-                    {allArtists
-                      .filter((a) => a.slug !== artist.slug)
-                      .slice(0, 3)
-                      .map((other) => (
-                        <Link
-                          key={other.id}
-                          to={`/artistas/${other.slug}`}
-                          className="group flex flex-col items-center text-center"
+          {/* 4. WORKS */}
+          <section
+            id="works"
+            style={{ padding: "clamp(60px, 12vh, 120px) clamp(24px, 6vw, 96px)" }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "end",
+                justifyContent: "space-between",
+                marginBottom: "34px",
+                flexWrap: "wrap",
+                gap: "20px",
+              }}
+            >
+              <h2
+                style={{
+                  fontFamily: '"Onest", sans-serif',
+                  fontSize: "clamp(36px, 5vw, 54px)",
+                  fontWeight: 400,
+                  letterSpacing: "-0.05em",
+                  margin: 0,
+                  color: "#1e1517",
+                }}
+              >
+                Available works
+              </h2>
+            </div>
+
+            {featuredWorks.length === 0 ? (
+              <p
+                style={{
+                  fontFamily: '"Onest", sans-serif',
+                  fontSize: "12px",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.16em",
+                  color: "rgba(30,21,23,0.55)",
+                }}
+              >
+                No works available yet.
+              </p>
+            ) : (
+              <div
+                className="grid grid-cols-1 md:[grid-template-columns:1.1fr_0.9fr_1fr]"
+                style={{ gap: "34px", alignItems: "start" }}
+              >
+                {featuredWorks.map((work, i) => {
+                  const offsetClass =
+                    i === 1 ? "md:mt-[90px]" : i === 2 ? "md:mt-[28px]" : "";
+                  return (
+                    <Link
+                      key={work.id}
+                      to={`/artworks/${work.id}`}
+                      className={`group block hover:-translate-y-2 hover:shadow-[0_24px_70px_rgba(30,21,23,0.08)] ${offsetClass}`}
+                      style={{
+                        backgroundColor: "#fcfcfc",
+                        padding: "24px",
+                        cursor: "pointer",
+                        transition: "transform 0.35s ease, box-shadow 0.35s ease",
+                        position: "relative",
+                        overflow: "hidden",
+                        textDecoration: "none",
+                        color: "inherit",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "100%",
+                          height: "430px",
+                          overflow: "hidden",
+                        }}
+                      >
+                        <OptimizedImage
+                          src={work.imagenUrl ?? ""}
+                          title={work.title}
+                          artistName={artist.name}
+                          variant="artwork"
+                          className="!h-full !w-full"
+                          imageClassName="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                          logSrcOnError
+                        />
+                      </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          gap: "20px",
+                          marginTop: "18px",
+                          fontSize: "14px",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.1em",
+                          fontFamily: '"Onest", sans-serif',
+                          color: "#1e1517",
+                        }}
+                      >
+                        <span>{work.title}</span>
+                        <em
+                          style={{
+                            color: "rgba(30,21,23,0.55)",
+                            fontStyle: "normal",
+                          }}
                         >
-                          <div className="w-full max-w-[clamp(160px,55vw,220px)]">
-                            <div className="relative aspect-[2/3] overflow-hidden rounded-[24px] bg-[#efe6d5] transition-transform duration-300 ease-out group-hover:scale-[1.03]">
-                              <OptimizedImage
-                                src={other.imageUrl ?? ""}
-                                alt={other.name}
-                                className="h-full w-full"
-                                imageClassName="h-full w-full object-cover object-[50%_0%] grayscale transition-all duration-300 ease-out group-hover:grayscale-0 group-hover:scale-[1.03]"
-                                logSrcOnError
-                              />
-                            </div>
-                          </div>
-                          <p className="mt-4 font-display text-xs font-medium uppercase tracking-[0.14em] text-[#1e1517]">
-                            {other.name}
-                          </p>
-                        </Link>
-                      ))}
-                  </div>
-                </div>
-              </section>
-            </>
-          )}
+                          {work.priceDisplay}
+                        </em>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+
+          {/* 5. PROCESS */}
+          <section
+            id="process"
+            className="grid grid-cols-1 md:grid-cols-2"
+            style={{
+              gap: "34px",
+              backgroundColor: "#1e1517",
+              color: "#fcf8ea",
+            }}
+          >
+            <div style={{ padding: "clamp(40px, 6vh, 80px) clamp(24px, 4vw, 64px)" }}>
+              <span
+                style={{
+                  display: "block",
+                  fontSize: "12px",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.17em",
+                  color: "rgba(252,248,234,0.55)",
+                  fontFamily: '"Onest", sans-serif',
+                  marginBottom: "16px",
+                }}
+              >
+                Process
+              </span>
+              <h2
+                style={{
+                  fontFamily: '"Onest", sans-serif',
+                  fontSize: "clamp(36px, 4.5vw, 56px)",
+                  fontWeight: 400,
+                  lineHeight: 0.95,
+                  letterSpacing: "-0.04em",
+                  margin: "0 0 24px 0",
+                  color: "#fcf8ea",
+                }}
+              >
+                The hand behind the piece.
+              </h2>
+              <p
+                style={{
+                  lineHeight: 1.7,
+                  color: "rgba(252,248,234,0.72)",
+                  fontSize: "clamp(14px, 1.3vw, 17px)",
+                  fontFamily: '"Onest", sans-serif',
+                  margin: 0,
+                }}
+              >
+                Each piece begins with long observation: the wood, the clay, the texture of the day.
+                Tools stay simple, time stays generous. The studio is where intuition meets discipline,
+                and where every object is shaped one decision at a time.
+              </p>
+              <a
+                href="#works"
+                className="inline-flex items-center gap-3 border border-[#fcf8ea] text-[#fcf8ea] hover:bg-[#fcf8ea] hover:text-[#1e1517] transition-colors duration-300"
+                style={{
+                  padding: "14px 22px",
+                  fontSize: "12px",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.13em",
+                  marginTop: "32px",
+                  fontFamily: '"Onest", sans-serif',
+                  textDecoration: "none",
+                }}
+              >
+                View works →
+              </a>
+            </div>
+            <div style={{ minHeight: "260px" }}>
+              <OptimizedImage
+                src={studioImageSrc}
+                alt={`${artist.name} studio`}
+                className="!h-full !w-full"
+                imageClassName="h-full w-full object-cover"
+                logSrcOnError
+              />
+            </div>
+          </section>
+
+          {/* 6. DETAILS */}
+          <section
+            id="details"
+            className="grid grid-cols-1 md:grid-cols-4"
+            style={{
+              borderTop: "1px solid rgba(30,21,23,0.16)",
+              borderBottom: "1px solid rgba(30,21,23,0.16)",
+            }}
+          >
+            {[
+              { label: "Discipline", value: artist.discipline ?? "—" },
+              { label: "Origin", value: artist.origin ?? "Argentina" },
+              { label: "Shipping", value: "Available to U.S." },
+              { label: "Certificate", value: "Included" },
+            ].map((cell) => (
+              <div
+                key={cell.label}
+                className="border-b last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0"
+                style={{
+                  padding: "42px 28px",
+                  borderColor: "rgba(30,21,23,0.16)",
+                }}
+              >
+                <span
+                  style={{
+                    display: "block",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.14em",
+                    color: "rgba(30,21,23,0.45)",
+                    marginBottom: "14px",
+                    fontSize: "11px",
+                    fontFamily: '"Onest", sans-serif',
+                  }}
+                >
+                  {cell.label}
+                </span>
+                <strong
+                  style={{
+                    fontSize: "20px",
+                    fontWeight: 400,
+                    fontFamily: '"Onest", sans-serif',
+                    color: "#1e1517",
+                  }}
+                >
+                  {cell.value}
+                </strong>
+              </div>
+            ))}
+          </section>
+
+          {/* 7. CTA */}
+          <section
+            style={{
+              minHeight: "55vh",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              position: "relative",
+              padding: "clamp(60px, 12vh, 120px) clamp(24px, 6vw, 96px)",
+            }}
+          >
+            <div>
+              <h2
+                style={{
+                  fontFamily: '"BestDB", "Caveat", cursive',
+                  fontSize: "clamp(48px, 8vw, 140px)",
+                  fontWeight: 400,
+                  lineHeight: 0.82,
+                  color: "#7FB2D1",
+                  margin: "0 0 24px 0",
+                  transform: "rotate(-4deg)",
+                  display: "inline-block",
+                }}
+              >
+                Bring this story home.
+              </h2>
+              <p
+                style={{
+                  maxWidth: "580px",
+                  margin: "0 auto 30px",
+                  color: "rgba(30,21,23,0.7)",
+                  fontSize: "clamp(15px, 1.2vw, 18px)",
+                  fontFamily: '"Onest", sans-serif',
+                  lineHeight: 1.6,
+                }}
+              >
+                BridgeArg handles documentation, packaging and shipping so each piece can travel safely across borders.
+              </p>
+              <Link
+                to="/contacto"
+                className="inline-flex items-center gap-3 border border-[#1e1517] text-[#1e1517] hover:bg-[#1e1517] hover:text-[#fcf8ea] transition-colors duration-300"
+                style={{
+                  padding: "14px 22px",
+                  fontSize: "12px",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.13em",
+                  fontFamily: '"Onest", sans-serif',
+                  textDecoration: "none",
+                }}
+              >
+                Inquire about this artist →
+              </Link>
+            </div>
+          </section>
         </main>
         <Footer />
       </div>
