@@ -44,7 +44,7 @@ export function BatchCollectionSection() {
   }, [filterMode, works]);
 
   return (
-    <section className="bg-[#fcf8ea] px-6 pb-40 pt-8 md:px-10">
+    <section className="bg-background px-6 pb-40 pt-8 md:px-10">
       <div className="mx-auto max-w-7xl">
         <div className="mb-12 flex flex-col gap-8 md:mb-16 md:flex-row md:items-end md:justify-between">
           <div>
@@ -115,7 +115,7 @@ export function BatchCollectionSection() {
                     </div>
 
                     <div className="absolute left-4 top-4">
-                      <span className="inline-flex items-center rounded-full border border-[#1e1517]/35 bg-[#fcf8ea] px-3 py-1 font-display text-[10px] uppercase tracking-[0.1em] text-[#1e1517]">
+                      <span className="inline-flex items-center rounded-full border border-[#1e1517]/35 bg-background px-3 py-1 font-display text-[10px] uppercase tracking-[0.1em] text-[#1e1517]">
                         {statusLabel}
                       </span>
                     </div>

@@ -31,7 +31,7 @@ const serviceCards = [
 
 export function BatchStatusSection() {
   return (
-    <section className="bg-[#fcf8ea] px-6 py-24 md:px-12 md:py-32 lg:px-24 2xl:py-36">
+    <section className="bg-background px-6 py-24 md:px-12 md:py-32 lg:px-24 2xl:py-36">
       <div className="mx-auto max-w-[1800px]">
         <div className="mb-14 max-w-2xl md:mb-20">
           <p className="font-display text-[11px] font-medium uppercase tracking-[0.12em] text-[#1e1517]/65 md:text-xs 2xl:text-sm">

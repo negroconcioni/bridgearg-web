@@ -422,8 +422,8 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
           >
             {isPlaying ? (
               <span className="flex items-center gap-[5px]">
-                <span className="h-4 w-[2px] bg-[#fcf8ea]" />
-                <span className="h-4 w-[2px] bg-[#fcf8ea]" />
+                <span className="h-4 w-[2px] bg-background" />
+                <span className="h-4 w-[2px] bg-background" />
               </span>
             ) : (
               <span
@@ -451,7 +451,7 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
                 {index < activeImageIndex && (
                   <span
                     className="absolute inset-y-0 left-0"
-                    style={{ width: "100%", backgroundColor: "#fcf8ea" }}
+                    style={{ width: "100%", backgroundColor: "hsl(var(--background))" }}
                   />
                 )}
                 {index === activeImageIndex && (
@@ -461,7 +461,7 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
                     className="absolute inset-y-0 left-0"
                     style={{
                       width: "0%",
-                      backgroundColor: "#fcf8ea",
+                      backgroundColor: "hsl(var(--background))",
                       animation: `hero-progress-fill ${SLIDE_DURATION}ms linear forwards`,
                       animationPlayState: isPlaying ? "running" : "paused",
                     }}
