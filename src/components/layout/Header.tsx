@@ -5,7 +5,7 @@ import { getArtists, getWorks, type ArtistFromApi, type WorkFromApi } from "@/li
 
 const navItems = [
   { label: "Home", path: "/" },
-  { label: "Artists", path: "/artists" },
+  { label: "Artists", path: "/artistas" },
   { label: "Collection", path: "/artworks" },
   { label: "About", path: "/nosotros" },
   { label: "Contact", path: "/contacto" },
@@ -375,7 +375,7 @@ export function Header() {
                       {searchResults.artists.map((artist) => (
                         <Link
                           key={`artist-${artist.id}`}
-                          to={`/artists/${artist.slug}`}
+                          to={`/artistas/${artist.slug}`}
                           onClick={closeSearch}
                           className="block transition-colors duration-200 hover:text-[#7FB2D1]"
                           style={{

@@ -87,7 +87,7 @@ const ArtistaDetailPage = () => {
                 Artist not found
               </h1>
               <Link
-                to="/artists"
+                to="/artistas"
                 className="mt-8 inline-flex items-center rounded-full border border-[#1e1517]/20 px-6 py-3 font-display text-xs uppercase tracking-[0.12em] text-[#1e1517] transition-colors hover:bg-[#1e1517] hover:text-[#fcf8ea]"
               >
                 Back to Artists
@@ -103,7 +103,7 @@ const ArtistaDetailPage = () => {
   const bioParagraphs = getBioParagraphs(artist.bio);
   const heroBio = bioParagraphs[0] ?? "Biography available on request.";
   const statementParagraphs = bioParagraphs.slice(0, 2);
-  const metaTags = [artist.origin, artist.discipline, artist.specialty].filter(
+  const metaTags = [artist.origin, artist.discipline, artist.speciality].filter(
     (tag): tag is string => Boolean(tag),
   );
   const featuredWorks = works.slice(0, 3);
@@ -134,7 +134,38 @@ const ArtistaDetailPage = () => {
             }}
           >
             <div style={{ position: "relative", zIndex: 1 }}>
-              <h1 style={{ margin: "0 0 28px 0", lineHeight: 0.8 }}>
+              <Link
+                to="/artistas"
+                style={{
+                  position: "relative",
+                  zIndex: 10,
+                  fontFamily: '"Onest", sans-serif',
+                  fontSize: "11px",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.14em",
+                  textDecoration: "none",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  marginBottom: "24px",
+                  color: "rgba(30,21,23,0.55)",
+                  borderBottom: "1px solid transparent",
+                  paddingBottom: "2px",
+                  cursor: "pointer",
+                  transition: "color 0.2s ease, border-color 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "#7FB2D1";
+                  e.currentTarget.style.borderBottomColor = "#7FB2D1";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "rgba(30,21,23,0.55)";
+                  e.currentTarget.style.borderBottomColor = "transparent";
+                }}
+              >
+                ← Back to Artists
+              </Link>
+              <h1 style={{ position: "relative", zIndex: 1, margin: "0 0 28px 0", lineHeight: 0.8 }}>
                 {artist.name.split(" ").map((word, i) => (
                   <span
                     key={`${word}-${i}`}
@@ -192,18 +223,6 @@ const ArtistaDetailPage = () => {
               >
                 {heroBio}
               </p>
-              <span
-                style={{
-                  fontFamily: '"BestDB", "Caveat", cursive',
-                  fontSize: "clamp(24px, 2.5vw, 34px)",
-                  color: "#7FB2D1",
-                  marginTop: "16px",
-                  transform: "rotate(-4deg)",
-                  display: "inline-block",
-                }}
-              >
-                Made with patience
-              </span>
             </div>
 
             <div style={{ position: "relative", zIndex: 1 }}>
@@ -224,7 +243,7 @@ const ArtistaDetailPage = () => {
                   }}
                 >
                   <OptimizedImage
-                    src={artist.imageUrl ?? ""}
+                    src={artist.detailImageUrl ?? artist.imageUrl ?? ""}
                     alt={artist.name}
                     className="!h-full !w-full"
                     imageClassName="h-full w-full object-cover"

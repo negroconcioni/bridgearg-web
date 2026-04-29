@@ -347,7 +347,7 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
                 View the Collection
               </Link>
               <Link
-                to="/artists"
+                to="/artistas"
                 style={{
                   fontFamily: '"Onest", sans-serif',
                   fontSize: "clamp(11px, 1.1vw, 15px)",
