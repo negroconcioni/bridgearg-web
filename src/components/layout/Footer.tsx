@@ -44,7 +44,7 @@ export function Footer() {
             </h4>
             <nav className="space-y-3">
               <Link
-                to="/artists"
+                to="/artistas"
                 className="block w-fit font-display text-sm text-[#fcf8ea] decoration-[#fcf8ea]/70 underline-offset-4 transition-all hover:underline"
               >
                 Artists
