@@ -57,7 +57,7 @@ const ArtistasPage = () => {
     const filtered = artistCards.filter((c) => {
       if (activeFilter === "all") return true;
       if (c.artist.discipline === activeFilter) return true;
-      if (c.artist.discipline === "Mixed Media" && activeFilter !== "Textile") return true;
+      if (c.artist.discipline === "Mixed Media" && activeFilter !== "Hand-Embroidered") return true;
       return false;
     });
     return [...filtered].sort((a, b) => {
@@ -307,7 +307,7 @@ const ArtistasPage = () => {
                       src={card.artist.imageUrl ?? ""}
                       alt={card.artist.name}
                       className="!h-full !w-full"
-                      imageClassName="h-full w-full object-cover"
+                      imageClassName={`h-full w-full object-cover ${card.artist.slug === "sara-goldman" ? "object-top" : "object-center"}`}
                       logSrcOnError
                     />
                   </div>
@@ -476,21 +476,9 @@ const ArtistasPage = () => {
                 padding: "clamp(40px, 6vw, 70px)",
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: "space-between",
-                gap: "32px",
+                justifyContent: "center",
               }}
             >
-              <span
-                style={{
-                  fontFamily: '"Onest", sans-serif',
-                  fontSize: "12px",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.18em",
-                  color: "rgba(252,248,234,0.55)",
-                }}
-              >
-                Featured selection
-              </span>
               <h2
                 style={{
                   margin: 0,
@@ -500,22 +488,11 @@ const ArtistasPage = () => {
                   fontWeight: 600,
                   fontFamily: '"Onest", sans-serif',
                   color: "#fcf8ea",
+                  textAlign: "left",
                 }}
               >
                 Objects that are history, craft, design and identity.
               </h2>
-              <p
-                style={{
-                  margin: 0,
-                  maxWidth: "530px",
-                  color: "rgba(252,248,234,0.72)",
-                  lineHeight: 1.75,
-                  fontSize: "clamp(14px, 1.3vw, 17px)",
-                  fontFamily: '"Onest", sans-serif',
-                }}
-              >
-                Use this section to highlight a rotating artist, a seasonal curatorial line, or a special selection of works ready to ship.
-              </p>
             </div>
             <div
               aria-hidden

@@ -3,7 +3,7 @@ import { images } from "@/lib/images";
 
 const assetSrc = "/assets/BRIDGEARG%20-%20Exportacion%20logos%20-%20PNG-16.png";
 const image1Src = images.theProcess;
-const image2Src = images.boxes;
+const image2Src = images.cuadroCarmela;
 
 export function BrandStorySection() {
   const attrs = ["Culture", "Quality", "Transparency", "Warmth", "Transcendence", "Closeness"];
