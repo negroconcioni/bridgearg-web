@@ -103,7 +103,7 @@ const ArtistaDetailPage = () => {
   const bioParagraphs = getBioParagraphs(artist.bio);
   const heroBio = bioParagraphs[0] ?? "Biography available on request.";
   const statementParagraphs = bioParagraphs.slice(0, 2);
-  const metaTags = [artist.origin, artist.discipline, artist.speciality].filter(
+  const metaTags = [artist.origin, artist.discipline].filter(
     (tag): tag is string => Boolean(tag),
   );
   const featuredWorks = works.slice(0, 3);
