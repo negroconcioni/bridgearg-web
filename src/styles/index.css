@@ -433,3 +433,57 @@
   }
 }
 
+/* Price range slider (Obras filter panel) */
+input[type="range"].cream-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  height: 24px;
+}
+
+input[type="range"].cream-slider::-webkit-slider-runnable-track {
+  height: 2px;
+  background: rgba(252, 248, 234, 0.3);
+  border-radius: 0;
+}
+
+input[type="range"].cream-slider::-moz-range-track {
+  height: 2px;
+  background: rgba(252, 248, 234, 0.3);
+  border-radius: 0;
+}
+
+input[type="range"].cream-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: #fcf8ea;
+  border-radius: 50%;
+  border: none;
+  margin-top: -6px;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(30, 21, 23, 0.2);
+  transition: transform 0.15s ease;
+}
+
+input[type="range"].cream-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+input[type="range"].cream-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: #fcf8ea;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(30, 21, 23, 0.2);
+  transition: transform 0.15s ease;
+}
+
+input[type="range"].cream-slider::-moz-range-thumb:hover {
+  transform: scale(1.15);
+}
+

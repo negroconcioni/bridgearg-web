@@ -16,6 +16,7 @@ import {
   FALLBACK_ARTIST_NAME,
 } from "@/lib/api";
 import { WorkImage } from "@/components/WorkImage";
+import { getWorkImageUrl } from "@/lib/work-images";
 import { toast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
 
@@ -26,6 +27,7 @@ const ArtworkDetailPage = () => {
   const [work, setWork] = useState<WorkFromApi | null>(null);
   const [loading, setLoading] = useState(true);
   const [acquiring, setAcquiring] = useState(false);
+  const [activeImageUrl, setActiveImageUrl] = useState<string | null>(null);
 
   const { data: relatedWorks = [] } = useQuery({
     queryKey: ["works", work?.artistSlug],
@@ -57,6 +59,10 @@ const ArtworkDetailPage = () => {
     return () => {
       cancelled = true;
     };
+  }, [workId]);
+
+  useEffect(() => {
+    setActiveImageUrl(null);
   }, [workId]);
 
   useEffect(() => {
@@ -219,6 +225,9 @@ const ArtworkDetailPage = () => {
       .join(" · ") || null;
   const weightText = work.weight_kg != null ? `${work.weight_kg} kg` : null;
 
+  const allImages = [work.imagenUrl, ...(work.galleryUrls ?? [])].filter(Boolean);
+  const currentImage = activeImageUrl ?? allImages[0] ?? "";
+
   return (
     <PageTransition>
       <div className="min-h-screen bg-background">
@@ -246,18 +255,88 @@ const ArtworkDetailPage = () => {
             <div className="container mx-auto">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
                 <div className="w-full overflow-hidden rounded-2xl bg-background shadow-sm">
-                  <div className="relative aspect-[4/5] overflow-hidden rounded-2xl">
-                    <WorkImage
-                      imagenUrl={work.imagenUrl}
-                      title={work.title}
-                      artistName={artistName}
-                      className="h-full w-full rounded-2xl"
-                    />
-                    {work.status === "sold" && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-foreground/50 rounded-2xl">
-                        <span className="inline-flex items-center gap-1 rounded-full bg-[#1e1517]/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-[#1e1517]/60">
-                          ● Private Collection
-                        </span>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                    <div style={{ position: "relative", width: "100%" }}>
+                      <div
+                        style={{
+                          width: "100%",
+                          backgroundColor: "#fcfcfc",
+                          padding: "clamp(16px, 2vw, 28px)",
+                          boxShadow: "0 24px 60px rgba(30,21,23,0.06)",
+                        }}
+                      >
+                        <img
+                          src={currentImage ? getWorkImageUrl(currentImage) : ""}
+                          alt={work.title}
+                          style={{
+                            width: "100%",
+                            height: "auto",
+                            maxHeight: "clamp(420px, 70vh, 800px)",
+                            objectFit: "contain",
+                            display: "block",
+                          }}
+                        />
+                      </div>
+                      {work.status === "sold" && (
+                        <div
+                          className="rounded-2xl"
+                          style={{
+                            position: "absolute",
+                            inset: 0,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            backgroundColor: "rgba(30,21,23,0.5)",
+                          }}
+                        >
+                          <span className="inline-flex items-center gap-1 rounded-full bg-[#1e1517]/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-[#1e1517]/60">
+                            ● Private Collection
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {allImages.length > 1 && (
+                      <div
+                        style={{
+                          display: "grid",
+                          gridTemplateColumns: `repeat(${Math.min(allImages.length, 6)}, 1fr)`,
+                          gap: "12px",
+                        }}
+                      >
+                        {allImages.map((url, i) => {
+                          const isActive = (activeImageUrl ?? allImages[0]) === url;
+                          return (
+                            <button
+                              key={url + i}
+                              type="button"
+                              onClick={() => setActiveImageUrl(url)}
+                              style={{
+                                padding: 0,
+                                border: isActive ? "2px solid #7FB2D1" : "2px solid transparent",
+                                backgroundColor: "#fcfcfc",
+                                cursor: "pointer",
+                                aspectRatio: "1",
+                                overflow: "hidden",
+                                transition: "border-color 0.2s ease",
+                              }}
+                              aria-label={`View image ${i + 1}`}
+                            >
+                              <img
+                                src={getWorkImageUrl(url)}
+                                alt={`${work.title} ${i + 1}`}
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  objectFit: "cover",
+                                  display: "block",
+                                  opacity: isActive ? 1 : 0.7,
+                                  transition: "opacity 0.2s ease",
+                                }}
+                              />
+                            </button>
+                          );
+                        })}
                       </div>
                     )}
                   </div>
@@ -382,12 +461,16 @@ const ArtworkDetailPage = () => {
                   {otherWorks.map((relatedWork) => (
                     <Link key={relatedWork.id} to={`/artworks/${relatedWork.id}`} className="group block">
                       <div className="flex flex-col border border-border bg-card transition-shadow hover:shadow-md">
-                        <div className="relative aspect-[4/5] overflow-hidden bg-muted">
+                        <div
+                          className="relative aspect-[4/5] overflow-hidden"
+                          style={{ backgroundColor: "rgba(30,21,23,0.04)" }}
+                        >
                           <WorkImage
                             imagenUrl={relatedWork.imagenUrl}
                             title={relatedWork.title}
                             artistName={artistName}
                             className="h-full w-full"
+                            imageClassName="!object-contain !object-center transition-[filter] duration-500 ease-out saturate-[0.86] contrast-[0.95] group-hover:saturate-100 group-hover:contrast-100"
                           />
                           {!relatedWork.available && (
                             <div className="absolute inset-0 flex items-center justify-center bg-foreground/50">

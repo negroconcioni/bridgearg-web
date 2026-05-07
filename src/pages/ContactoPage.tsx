@@ -1,16 +1,51 @@
+import type { CSSProperties } from "react";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/PageTransition";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import { submitContact } from "@/lib/api";
 import { Loader2 } from "lucide-react";
 import { SEO } from "@/components/SEO";
+
+const CONTACT_SUBJECT_OPTIONS = [
+  "Artwork inquiry",
+  "Artist representation",
+  "Collector support",
+  "Partnership",
+  "Customer service",
+] as const;
+
+const sectionLabelStyle: CSSProperties = {
+  fontSize: "12px",
+  letterSpacing: "0.22em",
+  textTransform: "uppercase",
+  color: "rgba(30,21,23,0.62)",
+  marginBottom: "24px",
+  fontFamily: '"Onest", sans-serif',
+};
+
+const fieldLabelStyle: CSSProperties = {
+  display: "block",
+  fontSize: "11px",
+  letterSpacing: "0.2em",
+  textTransform: "uppercase",
+  marginBottom: "14px",
+  fontFamily: '"Onest", sans-serif',
+  color: "#1e1517",
+};
+
+const fieldControlStyle: CSSProperties = {
+  width: "100%",
+  border: 0,
+  outline: 0,
+  backgroundColor: "transparent",
+  fontSize: "17px",
+  color: "#1e1517",
+  fontFamily: "inherit",
+  padding: "8px 0",
+};
 
 const ContactoPage = () => {
   const [searchParams] = useSearchParams();
@@ -21,9 +56,7 @@ const ContactoPage = () => {
 
   const normalizedSubjectParam =
     subjectParam &&
-    ["Artwork inquiry", "Artist inquiry", "General inquiry", "Press"].includes(
-      subjectParam,
-    )
+    (CONTACT_SUBJECT_OPTIONS as readonly string[]).includes(subjectParam)
       ? subjectParam
       : "";
 
@@ -32,7 +65,7 @@ const ContactoPage = () => {
     : obraParam
       ? "Artwork inquiry"
       : artistaParam
-        ? "Artist inquiry"
+        ? "Artist representation"
         : "";
 
   const initialMessage = obraParam
@@ -95,7 +128,10 @@ const ContactoPage = () => {
       nextErrors.message = "This field is required";
     }
 
-    if (!formData.subject) {
+    if (
+      !formData.subject ||
+      !(CONTACT_SUBJECT_OPTIONS as readonly string[]).includes(formData.subject)
+    ) {
       nextErrors.subject = "Please select a subject";
     }
 
@@ -123,6 +159,8 @@ const ContactoPage = () => {
     }
   };
 
+  const placeholderClass = "placeholder:text-[rgba(30,21,23,0.42)]";
+
   return (
     <PageTransition>
       <div className="min-h-screen bg-background">
@@ -133,245 +171,760 @@ const ContactoPage = () => {
         />
         <Header />
         <main>
-          {/* Page Header */}
-          <section className="section-padded border-b border-border">
-            <div className="container mx-auto">
-              <span className="text-label block mb-4">Get in Touch</span>
-              <h1 className="text-display text-5xl md:text-7xl lg:text-8xl">
-                Get in Touch
-              </h1>
-              <p className="text-muted-foreground text-lg mt-6 max-w-xl">
-                Interested in a work? Would you like to know more about our artists?
-                We are here to help.
+          {/* 1. Hero */}
+          <section
+            className="relative grid max-[979px]:grid-cols-1 min-[980px]:grid-cols-[1.05fr_0.95fr]"
+            style={{
+              padding: "80px clamp(24px, 14vw, 200px) 72px",
+              gap: "70px",
+              alignItems: "center",
+              borderBottom: "1px solid rgba(30,21,23,0.18)",
+              overflow: "hidden",
+              minHeight: "62vh",
+            }}
+          >
+            <div
+              style={{
+                position: "absolute",
+                width: "390px",
+                height: "390px",
+                border: "1px solid rgba(127,178,209,0.32)",
+                borderRadius: "50%",
+                right: "14vw",
+                top: "110px",
+                opacity: 0.55,
+                pointerEvents: "none",
+                zIndex: 0,
+              }}
+              aria-hidden
+            />
+            <div style={{ position: "relative", zIndex: 2 }}>
+              <p
+                style={{
+                  fontSize: "12px",
+                  letterSpacing: "0.22em",
+                  textTransform: "uppercase",
+                  color: "rgba(30,21,23,0.62)",
+                  marginBottom: "26px",
+                  fontFamily: '"Onest", sans-serif',
+                }}
+              >
+                Get in touch
               </p>
+              <h1
+                style={{
+                  fontSize: "clamp(70px, 8vw, 138px)",
+                  lineHeight: 0.9,
+                  letterSpacing: "-0.075em",
+                  fontWeight: 800,
+                  maxWidth: "750px",
+                  fontFamily: '"Onest", sans-serif',
+                  margin: 0,
+                }}
+              >
+                <span style={{ display: "block", color: "#1e1517" }}>Let&apos;s build the</span>
+                <span
+                  style={{
+                    display: "inline-block",
+                    fontFamily: '"BestDB", "Caveat", cursive',
+                    fontWeight: 400,
+                    color: "#7FB2D1",
+                    transform: "rotate(-7deg)",
+                    transformOrigin: "left center",
+                  }}
+                >
+                  bridge.
+                </span>
+              </h1>
+              <p
+                style={{
+                  fontSize: "21px",
+                  lineHeight: 1.55,
+                  color: "rgba(30,21,23,0.62)",
+                  maxWidth: "590px",
+                  marginTop: "34px",
+                  fontFamily: '"Onest", sans-serif',
+                }}
+              >
+                Whether you are interested in a work, an artist, or a possible collaboration, BridgeArg
+                is here to guide the crossing with clarity and care.
+              </p>
+            </div>
+            <div
+              className="max-[979px]:mt-0 max-[979px]:border-t max-[979px]:border-[rgba(30,21,23,0.18)] max-[979px]:border-l-0 max-[979px]:pl-0 max-[979px]:pt-7 min-[980px]:self-end min-[980px]:border-l min-[980px]:border-[rgba(30,21,23,0.18)] min-[980px]:pl-[34px]"
+              style={{
+                maxWidth: "420px",
+                position: "relative",
+                zIndex: 2,
+              }}
+            >
+              <strong
+                style={{
+                  display: "inline-block",
+                  fontFamily: '"BestDB", "Caveat", cursive',
+                  fontSize: "32px",
+                  lineHeight: 1.1,
+                  fontWeight: 400,
+                  marginBottom: "18px",
+                  color: "#7FB2D1",
+                  transform: "rotate(-4deg)",
+                }}
+              >
+                Every conversation starts with care.
+              </strong>
+              <span
+                style={{
+                  display: "block",
+                  fontSize: "14px",
+                  lineHeight: 1.8,
+                  color: "rgba(30,21,23,0.62)",
+                  fontFamily: '"Onest", sans-serif',
+                }}
+              >
+                Tell us what you are looking for — we will help you find the right piece, artist, or
+                path.
+              </span>
             </div>
           </section>
 
-          {/* Contact Form */}
-          <section className="section-padded">
-            <div className="container mx-auto">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-                {/* Form / Success state */}
-                {formSent ? (
-                  <div className="space-y-6 rounded-lg border border-border bg-card/40 p-8">
-                    <div className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background text-xl">
-                      ✓
-                    </div>
-                    <div>
-                      <h2 className="font-display text-2xl text-foreground">Message sent</h2>
-                      <p className="mt-2 text-sm text-muted-foreground">
-                        We'll get back to you within 24 hours. Thank you for reaching out to BridgeArg.
-                      </p>
-                    </div>
+          {/* 2. Route strip */}
+          <section
+            className="grid max-[979px]:grid-cols-1 min-[980px]:grid-cols-[1fr_auto_1fr]"
+            style={{
+              borderBottom: "1px solid rgba(30,21,23,0.18)",
+              minHeight: "150px",
+              alignItems: "center",
+            }}
+          >
+            <div style={{ padding: "42px clamp(16px, 7vw, 120px)" }}>
+              <span
+                style={{
+                  display: "block",
+                  fontSize: "11px",
+                  letterSpacing: "0.22em",
+                  textTransform: "uppercase",
+                  color: "rgba(30,21,23,0.62)",
+                  marginBottom: "12px",
+                  fontFamily: '"Onest", sans-serif',
+                }}
+              >
+                Argentina
+              </span>
+              <b
+                style={{
+                  fontSize: "30px",
+                  letterSpacing: "-0.04em",
+                  fontFamily: '"Onest", sans-serif',
+                  fontWeight: 600,
+                  color: "#1e1517",
+                }}
+              >
+                Buenos Aires
+              </b>
+            </div>
+            <div
+              className="max-[979px]:mx-[8vw] max-[979px]:w-auto min-[980px]:w-[30vw]"
+              style={{
+                height: "1px",
+                backgroundColor: "#1e1517",
+                position: "relative",
+                opacity: 0.55,
+              }}
+            >
+              <span
+                style={{
+                  position: "absolute",
+                  top: "-5px",
+                  left: 0,
+                  width: "11px",
+                  height: "11px",
+                  borderRadius: "50%",
+                  backgroundColor: "#1e1517",
+                }}
+                aria-hidden
+              />
+              <span
+                style={{
+                  position: "absolute",
+                  top: "-5px",
+                  right: 0,
+                  width: "11px",
+                  height: "11px",
+                  borderRadius: "50%",
+                  backgroundColor: "#1e1517",
+                }}
+                aria-hidden
+              />
+              <span
+                style={{
+                  position: "absolute",
+                  left: "50%",
+                  top: "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: "42px",
+                  height: "42px",
+                  border: "1px solid rgba(30,21,23,0.18)",
+                  borderRadius: "50%",
+                  backgroundColor: "#fcf8ea",
+                  display: "grid",
+                  placeItems: "center",
+                }}
+                aria-hidden
+              >
+                <span
+                  style={{
+                    width: "11px",
+                    height: "11px",
+                    backgroundColor: "#7FB2D1",
+                    borderRadius: "50%",
+                  }}
+                />
+              </span>
+            </div>
+            <div
+              className="max-[979px]:text-left min-[980px]:text-right"
+              style={{ padding: "42px clamp(16px, 7vw, 120px)" }}
+            >
+              <span
+                style={{
+                  display: "block",
+                  fontSize: "11px",
+                  letterSpacing: "0.22em",
+                  textTransform: "uppercase",
+                  color: "rgba(30,21,23,0.62)",
+                  marginBottom: "12px",
+                  fontFamily: '"Onest", sans-serif',
+                }}
+              >
+                United States
+              </span>
+              <b
+                style={{
+                  fontSize: "30px",
+                  letterSpacing: "-0.04em",
+                  fontFamily: '"Onest", sans-serif',
+                  fontWeight: 600,
+                  color: "#1e1517",
+                }}
+              >
+                New York
+              </b>
+            </div>
+          </section>
+
+          {/* 3. Contact wrap */}
+          <section
+            className="grid max-[979px]:grid-cols-1 min-[980px]:grid-cols-[1.1fr_0.9fr]"
+            style={{
+              padding: "94px clamp(24px, 14vw, 200px) 115px",
+              gap: "clamp(40px, 5vw, 82px)",
+              alignItems: "start",
+            }}
+          >
+            {/* A. Form column */}
+            <div>
+              <p style={sectionLabelStyle}>Inquiry form</p>
+              <p
+                style={{
+                  fontFamily: '"Onest", sans-serif',
+                  fontSize: "clamp(28px, 3vw, 36px)",
+                  lineHeight: 1.15,
+                  fontWeight: 400,
+                  maxWidth: "620px",
+                  marginBottom: "46px",
+                  color: "#1e1517",
+                }}
+              >
+                A simple way to begin a conversation about art, logistics, representation or
+                collaboration.
+              </p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginBottom: "42px" }}>
+                {CONTACT_SUBJECT_OPTIONS.map((label) => {
+                  const active = formData.subject === label;
+                  return (
                     <button
+                      key={label}
                       type="button"
+                      disabled={formSent}
                       onClick={() => {
-                        setFormData({
-                          name: "",
-                          email: "",
-                          subject: initialSubject || undefined,
-                          message: initialMessage,
-                        });
-                        setFormSent(false);
-                      }}
-                      className="text-label mt-4 underline underline-offset-4 hover:text-foreground"
-                    >
-                      Send another message
-                    </button>
-                  </div>
-                ) : (
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="tech-box">
-                      <label
-                        htmlFor="name"
-                        className="text-technical text-foreground mb-3 block"
-                      >
-                        NAME
-                      </label>
-                      <Input
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={(e) => {
-                          setFormData({ ...formData, name: e.target.value });
-                          if (errors.name) {
-                            setErrors({ ...errors, name: "" });
-                          }
-                        }}
-                        placeholder="Your name"
-                        required
-                        className="border-border bg-transparent focus:border-foreground"
-                      />
-                      {errors.name && (
-                        <p className="mt-1 text-xs text-destructive">{errors.name}</p>
-                      )}
-                    </div>
-
-                    <div className="tech-box">
-                      <label
-                        htmlFor="email"
-                        className="text-technical text-foreground mb-3 block"
-                      >
-                        EMAIL
-                      </label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => {
-                          setFormData({ ...formData, email: e.target.value });
-                          if (errors.email) {
-                            setErrors({ ...errors, email: "" });
-                          }
-                        }}
-                        placeholder="your@email.com"
-                        required
-                        className="border-border bg-transparent focus:border-foreground"
-                      />
-                      {errors.email && (
-                        <p className="mt-1 text-xs text-destructive">{errors.email}</p>
-                      )}
-                    </div>
-
-                    <div className="tech-box">
-                      <label
-                        htmlFor="subject"
-                        className="text-technical text-foreground mb-3 block"
-                      >
-                        SUBJECT
-                      </label>
-                      <input
-                        type="hidden"
-                        name="subject"
-                        value={formData.subject ?? ""}
-                        readOnly
-                        aria-hidden
-                      />
-                      <Select
-                        value={formData.subject}
-                      onValueChange={(value) => {
-                        setFormData({ ...formData, subject: value });
+                        setFormData({ ...formData, subject: label });
                         if (errors.subject) {
                           setErrors({ ...errors, subject: "" });
                         }
                       }}
-                      >
-                        <SelectTrigger
-                          id="subject"
-                          aria-required="true"
-                          className="border-border bg-transparent focus:border-foreground"
-                        >
-                          <SelectValue placeholder="Select a subject" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Artwork inquiry">Artwork inquiry</SelectItem>
-                          <SelectItem value="Artist inquiry">Artist inquiry</SelectItem>
-                          <SelectItem value="General inquiry">General inquiry</SelectItem>
-                          <SelectItem value="Press">Press</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      {errors.subject && (
-                        <p className="mt-1 text-xs text-destructive">{errors.subject}</p>
-                      )}
-                    </div>
-
-                    <div className="tech-box">
-                      <label
-                        htmlFor="message"
-                        className="text-technical text-foreground mb-3 block"
-                      >
-                        MESSAGE
-                      </label>
-                      <Textarea
-                        id="message"
-                        name="message"
-                        value={formData.message}
-                        onChange={(e) => {
-                          setFormData({ ...formData, message: e.target.value });
-                          if (errors.message) {
-                            setErrors({ ...errors, message: "" });
-                          }
-                        }}
-                        placeholder="Your message..."
-                        required
-                        rows={5}
-                        className="min-h-[160px] resize-y border-border bg-transparent focus:border-foreground"
-                      />
-                      {errors.message && (
-                        <p className="mt-1 text-xs text-destructive">{errors.message}</p>
-                      )}
-                    </div>
-
-                    <Button
-                      type="submit"
-                      variant="hero"
-                      size="lg"
-                      className={`w-full md:w-auto ${sending ? "cursor-not-allowed opacity-70" : ""}`}
-                      disabled={sending}
+                      className={
+                        active
+                          ? "border border-[#1e1517] bg-[#1e1517] text-[#fcf8ea] transition duration-200 hover:bg-[#1e1517] hover:text-[#fcf8ea] hover:border-[#1e1517] disabled:cursor-not-allowed disabled:opacity-60"
+                          : "border border-[rgba(30,21,23,0.18)] bg-transparent text-[#1e1517] transition duration-200 hover:border-[#1e1517] hover:bg-[#1e1517] hover:text-[#fcf8ea] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:border-[rgba(30,21,23,0.18)] disabled:hover:bg-transparent disabled:hover:text-[#1e1517]"
+                      }
+                      style={{
+                        padding: "12px 16px",
+                        fontSize: "11px",
+                        letterSpacing: "0.14em",
+                        textTransform: "uppercase",
+                        cursor: "pointer",
+                        borderRadius: 0,
+                        fontFamily: '"Onest", sans-serif',
+                      }}
                     >
-                      {sending ? (
-                        <>
-                          <Loader2 className="h-5 w-5 animate-spin" />
-                          Sending…
-                        </>
-                      ) : (
-                        "Send Message"
-                      )}
-                    </Button>
-                  </form>
-                )}
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
 
-                {/* Contact Info */}
-                <div className="space-y-8">
-                  <div className="tech-box">
-                    <h3 className="text-technical text-foreground mb-4">Email</h3>
-                    <a href="mailto:info@bridgearg.com" className="text-muted-foreground hover:text-foreground transition-colors">
-                      info@bridgearg.com
-                    </a>
-                  </div>
+              {formSent && (
+                <div
+                  style={{
+                    padding: "24px",
+                    border: "1px solid #7FB2D1",
+                    backgroundColor: "rgba(127,178,209,0.08)",
+                    color: "#1e1517",
+                    marginBottom: "32px",
+                    fontFamily: '"Onest", sans-serif',
+                    fontSize: "15px",
+                    lineHeight: 1.5,
+                  }}
+                >
+                  Thank you for your inquiry. We will respond shortly.
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFormData({
+                        name: "",
+                        email: "",
+                        subject: initialSubject || undefined,
+                        message: initialMessage,
+                      });
+                      setFormSent(false);
+                    }}
+                    style={{
+                      display: "block",
+                      marginTop: "14px",
+                      fontSize: "12px",
+                      letterSpacing: "0.14em",
+                      textTransform: "uppercase",
+                      textDecoration: "underline",
+                      cursor: "pointer",
+                      background: "none",
+                      border: "none",
+                      padding: 0,
+                      color: "inherit",
+                      fontFamily: '"Onest", sans-serif',
+                    }}
+                  >
+                    Send another message
+                  </button>
+                </div>
+              )}
 
-                  {/* ⚠️ TODO: Reemplazar href y texto con el número de WhatsApp real del negocio */}
-                  <div className="tech-box">
-                    <h3 className="text-technical text-foreground mb-4">WHATSAPP</h3>
+              <form onSubmit={handleSubmit} style={{ display: "grid", gap: "26px" }}>
+                <div style={{ position: "relative", borderBottom: "1px solid rgba(30,21,23,0.18)", paddingBottom: "16px" }}>
+                  <label htmlFor="name" style={fieldLabelStyle}>
+                    Name
+                  </label>
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    value={formData.name}
+                    disabled={formSent}
+                    onChange={(e) => {
+                      setFormData({ ...formData, name: e.target.value });
+                      if (errors.name) {
+                        setErrors({ ...errors, name: "" });
+                      }
+                    }}
+                    placeholder="Your name"
+                    className={placeholderClass}
+                    style={fieldControlStyle}
+                  />
+                  {errors.name && (
+                    <p style={{ color: "red", fontSize: "12px", marginTop: "6px" }}>{errors.name}</p>
+                  )}
+                </div>
+
+                <div style={{ position: "relative", borderBottom: "1px solid rgba(30,21,23,0.18)", paddingBottom: "16px" }}>
+                  <label htmlFor="email" style={fieldLabelStyle}>
+                    Email
+                  </label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    disabled={formSent}
+                    onChange={(e) => {
+                      setFormData({ ...formData, email: e.target.value });
+                      if (errors.email) {
+                        setErrors({ ...errors, email: "" });
+                      }
+                    }}
+                    placeholder="your@email.com"
+                    className={placeholderClass}
+                    style={fieldControlStyle}
+                  />
+                  {errors.email && (
+                    <p style={{ color: "red", fontSize: "12px", marginTop: "6px" }}>{errors.email}</p>
+                  )}
+                </div>
+
+                <div style={{ position: "relative", borderBottom: "1px solid rgba(30,21,23,0.18)", paddingBottom: "16px" }}>
+                  <label htmlFor="subject" style={fieldLabelStyle}>
+                    Subject
+                  </label>
+                  <select
+                    id="subject"
+                    name="subject"
+                    value={formData.subject ?? ""}
+                    disabled={formSent}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      setFormData({ ...formData, subject: v || undefined });
+                      if (errors.subject) {
+                        setErrors({ ...errors, subject: "" });
+                      }
+                    }}
+                    className={placeholderClass}
+                    style={{
+                      ...fieldControlStyle,
+                      cursor: formSent ? "not-allowed" : "pointer",
+                      appearance: "auto",
+                    }}
+                  >
+                    <option value="" disabled>
+                      Select a subject
+                    </option>
+                    {CONTACT_SUBJECT_OPTIONS.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.subject && (
+                    <p style={{ color: "red", fontSize: "12px", marginTop: "6px" }}>{errors.subject}</p>
+                  )}
+                </div>
+
+                <div style={{ position: "relative", borderBottom: "1px solid rgba(30,21,23,0.18)", paddingBottom: "16px" }}>
+                  <label htmlFor="message" style={fieldLabelStyle}>
+                    Message
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    value={formData.message}
+                    disabled={formSent}
+                    onChange={(e) => {
+                      setFormData({ ...formData, message: e.target.value });
+                      if (errors.message) {
+                        setErrors({ ...errors, message: "" });
+                      }
+                    }}
+                    placeholder="Tell us what you are looking for..."
+                    rows={5}
+                    className={placeholderClass}
+                    style={{
+                      ...fieldControlStyle,
+                      minHeight: "150px",
+                      resize: "vertical",
+                    }}
+                  />
+                  {errors.message && (
+                    <p style={{ color: "red", fontSize: "12px", marginTop: "6px" }}>{errors.message}</p>
+                  )}
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={sending || formSent}
+                  className="transition duration-300 enabled:hover:border-[#1e1517] enabled:hover:bg-transparent enabled:hover:text-[#1e1517]"
+                  style={{
+                    marginTop: "18px",
+                    width: "max-content",
+                    backgroundColor: "#1e1517",
+                    color: "#fcf8ea",
+                    border: "1px solid #1e1517",
+                    padding: "18px 34px",
+                    fontSize: "12px",
+                    letterSpacing: "0.2em",
+                    textTransform: "uppercase",
+                    cursor: sending || formSent ? "not-allowed" : "pointer",
+                    fontFamily: '"Onest", sans-serif',
+                    opacity: sending || formSent ? 0.65 : 1,
+                  }}
+                >
+                  {sending ? (
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: "10px" }}>
+                      <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                      Sending...
+                    </span>
+                  ) : (
+                    "Send message"
+                  )}
+                </button>
+              </form>
+            </div>
+
+            {/* B. Info panel */}
+            <aside
+              className="max-[979px]:static max-[979px]:p-7 min-[980px]:sticky min-[980px]:p-[42px]"
+              style={{
+                top: "118px",
+                border: "1px solid rgba(30,21,23,0.18)",
+                backgroundColor: "rgba(252,248,234,0.58)",
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+              }}
+            >
+              <p style={sectionLabelStyle}>BridgeArg contact</p>
+              <h2
+                style={{
+                  fontFamily: '"Onest", sans-serif',
+                  fontSize: "clamp(34px, 3.5vw, 44px)",
+                  lineHeight: 1.05,
+                  fontWeight: 500,
+                  marginBottom: "30px",
+                  color: "#1e1517",
+                }}
+              >
+                One route, two shores.
+              </h2>
+              <p
+                style={{
+                  fontSize: "15px",
+                  lineHeight: 1.8,
+                  color: "rgba(30,21,23,0.62)",
+                  marginBottom: "38px",
+                  fontFamily: '"Onest", sans-serif',
+                }}
+              >
+                BridgeArg works between Argentine studios and international collectors, managing each
+                conversation with a curatorial and professional approach.
+              </p>
+              <div style={{ display: "grid", gap: "18px" }}>
+                <div style={{ borderTop: "1px solid rgba(30,21,23,0.18)", paddingTop: "22px" }}>
+                  <span
+                    style={{
+                      display: "block",
+                      fontSize: "11px",
+                      letterSpacing: "0.2em",
+                      textTransform: "uppercase",
+                      color: "rgba(30,21,23,0.62)",
+                      marginBottom: "12px",
+                      fontFamily: '"Onest", sans-serif',
+                    }}
+                  >
+                    Email
+                  </span>
+                  <a
+                    href="mailto:info@bridgearg.com"
+                    style={{
+                      fontSize: "16px",
+                      lineHeight: 1.55,
+                      color: "#1e1517",
+                      textDecoration: "none",
+                      fontFamily: '"Onest", sans-serif',
+                    }}
+                  >
+                    info@bridgearg.com
+                  </a>
+                </div>
+                <div style={{ borderTop: "1px solid rgba(30,21,23,0.18)", paddingTop: "22px" }}>
+                  <span
+                    style={{
+                      display: "block",
+                      fontSize: "11px",
+                      letterSpacing: "0.2em",
+                      textTransform: "uppercase",
+                      color: "rgba(30,21,23,0.62)",
+                      marginBottom: "12px",
+                      fontFamily: '"Onest", sans-serif',
+                    }}
+                  >
+                    Whatsapp
+                  </span>
+                  <p
+                    style={{
+                      fontSize: "16px",
+                      lineHeight: 1.55,
+                      color: "#1e1517",
+                      textDecoration: "none",
+                      fontFamily: '"Onest", sans-serif',
+                      margin: 0,
+                    }}
+                  >
+                    +54 9 11 0000 0000
+                  </p>
+                </div>
+                <div style={{ borderTop: "1px solid rgba(30,21,23,0.18)", paddingTop: "22px" }}>
+                  <span
+                    style={{
+                      display: "block",
+                      fontSize: "11px",
+                      letterSpacing: "0.2em",
+                      textTransform: "uppercase",
+                      color: "rgba(30,21,23,0.62)",
+                      marginBottom: "12px",
+                      fontFamily: '"Onest", sans-serif',
+                    }}
+                  >
+                    Buenos Aires
+                  </span>
+                  <p
+                    style={{
+                      fontSize: "16px",
+                      lineHeight: 1.55,
+                      color: "#1e1517",
+                      fontFamily: '"Onest", sans-serif',
+                      margin: 0,
+                    }}
+                  >
+                    Where artists, studios and works begin.
+                  </p>
+                </div>
+                <div style={{ borderTop: "1px solid rgba(30,21,23,0.18)", paddingTop: "22px" }}>
+                  <span
+                    style={{
+                      display: "block",
+                      fontSize: "11px",
+                      letterSpacing: "0.2em",
+                      textTransform: "uppercase",
+                      color: "rgba(30,21,23,0.62)",
+                      marginBottom: "12px",
+                      fontFamily: '"Onest", sans-serif',
+                    }}
+                  >
+                    New York
+                  </span>
+                  <p
+                    style={{
+                      fontSize: "16px",
+                      lineHeight: 1.55,
+                      color: "#1e1517",
+                      fontFamily: '"Onest", sans-serif',
+                      margin: 0,
+                    }}
+                  >
+                    Where collectors, galleries and opportunities meet.
+                  </p>
+                </div>
+                <div style={{ borderTop: "1px solid rgba(30,21,23,0.18)", paddingTop: "22px" }}>
+                  <span
+                    style={{
+                      display: "block",
+                      fontSize: "11px",
+                      letterSpacing: "0.2em",
+                      textTransform: "uppercase",
+                      color: "rgba(30,21,23,0.62)",
+                      marginBottom: "12px",
+                      fontFamily: '"Onest", sans-serif',
+                    }}
+                  >
+                    Follow us
+                  </span>
+                  <div style={{ display: "flex", gap: "20px", marginTop: "10px" }}>
                     <a
-                      href="https://wa.me/5491100000000"
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      href="#"
+                      className="border-b border-solid border-transparent pb-px transition-colors hover:border-[#1e1517]"
+                      style={{
+                        fontSize: "12px",
+                        letterSpacing: "0.18em",
+                        textTransform: "uppercase",
+                        color: "#1e1517",
+                        textDecoration: "none",
+                        fontFamily: '"Onest", sans-serif',
+                      }}
                     >
-                      +54 9 11 0000 0000
+                      Instagram
                     </a>
-                  </div>
-
-                  <div className="tech-box">
-                    <h3 className="text-technical text-foreground mb-4">Buenos Aires</h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      Palermo, Buenos Aires<br />
-                      Argentina
-                    </p>
-                  </div>
-
-                  <div className="tech-box">
-                    <h3 className="text-technical text-foreground mb-4">New York</h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      Chelsea, New York<br />
-                      United States
-                    </p>
-                  </div>
-
-                  <div className="tech-box">
-                    <h3 className="text-technical text-foreground mb-4">Follow Us</h3>
-                    <div className="flex gap-4">
-                      {/* TODO: Reemplazar con URLs reales de Instagram y LinkedIn */}
-                      <a href="#" className="text-label hover:text-foreground transition-colors">
-                        Instagram
-                      </a>
-                      <a href="#" className="text-label hover:text-foreground transition-colors">
-                        LinkedIn
-                      </a>
-                    </div>
+                    <a
+                      href="#"
+                      className="border-b border-solid border-transparent pb-px transition-colors hover:border-[#1e1517]"
+                      style={{
+                        fontSize: "12px",
+                        letterSpacing: "0.18em",
+                        textTransform: "uppercase",
+                        color: "#1e1517",
+                        textDecoration: "none",
+                        fontFamily: '"Onest", sans-serif',
+                      }}
+                    >
+                      LinkedIn
+                    </a>
                   </div>
                 </div>
               </div>
+            </aside>
+          </section>
+
+          {/* 4. Dark CTA */}
+          <section
+            style={{
+              minHeight: "52vh",
+              backgroundImage:
+                "radial-gradient(circle at 78% 18%, rgba(127,178,209,0.14), transparent 32%), linear-gradient(135deg, #1e1517, #120d0f)",
+              color: "#fcf8ea",
+              display: "grid",
+              placeItems: "center",
+              textAlign: "center",
+              padding: "80px 24px",
+              position: "relative",
+              overflow: "hidden",
+            }}
+          >
+            <div>
+              <span
+                style={{
+                  fontSize: "12px",
+                  letterSpacing: "0.24em",
+                  textTransform: "uppercase",
+                  color: "#7FB2D1",
+                  display: "block",
+                  marginBottom: "28px",
+                  fontFamily: '"Onest", sans-serif',
+                }}
+              >
+                Argentina to the world
+              </span>
+              <h2
+                style={{
+                  fontFamily: '"Onest", sans-serif',
+                  fontSize: "clamp(42px, 6vw, 92px)",
+                  fontWeight: 700,
+                  lineHeight: 1,
+                  maxWidth: "900px",
+                  margin: "0 auto",
+                  color: "#fcf8ea",
+                }}
+              >
+                <span style={{ display: "block" }}>One conversation can start the</span>
+                <span
+                  style={{
+                    display: "inline-block",
+                    fontFamily: '"BestDB", "Caveat", cursive',
+                    fontWeight: 400,
+                    color: "#7FB2D1",
+                    transform: "rotate(-4deg)",
+                    transformOrigin: "left center",
+                  }}
+                >
+                  crossing.
+                </span>
+              </h2>
+              <p
+                style={{
+                  margin: "30px auto 0",
+                  maxWidth: "570px",
+                  color: "rgba(252,248,234,0.68)",
+                  fontSize: "15px",
+                  lineHeight: 1.8,
+                  fontFamily: '"Onest", sans-serif',
+                }}
+              >
+                From artwork inquiries to international collaborations, we create the professional
+                structure that lets Argentine art travel further.
+              </p>
             </div>
           </section>
         </main>

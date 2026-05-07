@@ -129,14 +129,14 @@ export function SelectedWorksSection() {
                     transition: "opacity 0.4s ease-in-out",
                   }}
                 >
-                  <div className="relative aspect-[3/4] overflow-hidden bg-[#efe6d5]">
+                  <div className="relative aspect-[3/4] overflow-hidden bg-[rgba(30,21,23,0.04)]">
                     <OptimizedImage
                       src={work.imagenUrl}
                       title={work.title}
                       artistName={work.artistName}
                       variant="artwork"
                       className="h-full w-full"
-                      imageClassName="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                      imageClassName="!object-contain !object-center transition-[filter] duration-700 ease-out saturate-[0.86] contrast-[0.95] group-hover:saturate-100 group-hover:contrast-100"
                     />
                     <div
                       className={`absolute inset-0 flex items-center justify-center transition-all duration-500 ease-out ${

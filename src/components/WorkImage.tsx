@@ -9,13 +9,15 @@ export interface WorkImageProps {
   artistName: string;
   /** Classes applied to the outer image container. */
   className?: string;
+  /** Extra classes on the inner img (e.g. hover, filters). */
+  imageClassName?: string;
 }
 
 /**
  * Work/artwork image delegating in the unified OptimizedImage component.
  * Keeps existing usages working while centralizing logic in OptimizedImage.
  */
-export function WorkImage({ imagenUrl, title, artistName, className = "" }: WorkImageProps) {
+export function WorkImage({ imagenUrl, title, artistName, className = "", imageClassName = "" }: WorkImageProps) {
   return (
     <OptimizedImage
       src={imagenUrl}
@@ -23,6 +25,7 @@ export function WorkImage({ imagenUrl, title, artistName, className = "" }: Work
       artistName={artistName}
       variant="artwork"
       className={className}
+      imageClassName={imageClassName}
     />
   );
 }

@@ -1,5 +1,7 @@
 export const images = {
   boxes: "https://wzofuvxsvomntglezygh.supabase.co/storage/v1/object/public/ui-assets/boxes.jpg",
+  collectionsHero:
+    "https://wzofuvxsvomntglezygh.supabase.co/storage/v1/object/public/ui-assets/bridgearg-246.jpg",
   fondoAle: "https://wzofuvxsvomntglezygh.supabase.co/storage/v1/object/public/ui-assets/fondo_ale_2.jpg",
   fondoBoyo: "https://wzofuvxsvomntglezygh.supabase.co/storage/v1/object/public/ui-assets/fondo_boyo_3.jpg",
   fondoCaro: "https://wzofuvxsvomntglezygh.supabase.co/storage/v1/object/public/ui-assets/fodo_caro_2.jpg",

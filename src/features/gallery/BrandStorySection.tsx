@@ -1,9 +1,10 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { images } from "@/lib/images";
 
 const assetSrc = "/assets/BRIDGEARG%20-%20Exportacion%20logos%20-%20PNG-16.png";
 const image1Src = images.theProcess;
-const image2Src = images.cuadroCarmela;
+const image2Src = images.fondoCaro;
 
 export function BrandStorySection() {
   const attrs = ["Culture", "Quality", "Transparency", "Warmth", "Transcendence", "Closeness"];
@@ -113,17 +114,18 @@ export function BrandStorySection() {
                 <img src={assetSrc} alt="" style={{ position: "absolute", top: "-16px", right: "-16px", width: "24px", height: "24px", transform: "rotate(90deg)" }} />
                 <img src={assetSrc} alt="" style={{ position: "absolute", bottom: "-16px", left: "-16px", width: "24px", height: "24px", transform: "rotate(270deg)" }} />
                 <img src={assetSrc} alt="" style={{ position: "absolute", bottom: "-16px", right: "-16px", width: "24px", height: "24px", transform: "rotate(180deg)" }} />
-                <span style={{
-                  fontFamily: '"BestDB", "Caveat", cursive',
-                  fontWeight: 400,
-                  fontSize: "clamp(40px, 6vw, 55px)",
-                  color: "#7FB2D1",
-                  display: "block",
-                  letterSpacing: "-0.01em",
-                  transform: "rotate(-7deg)",
-                  transformOrigin: "left center",
-                  marginTop: "25px",
-                }}>
+                <span
+                  style={{
+                    fontFamily: '"Onest", sans-serif',
+                    fontWeight: 600,
+                    fontSize: "clamp(22px, 2.5vw, 32px)",
+                    color: "#7FB2D1",
+                    display: "block",
+                    letterSpacing: "-0.025em",
+                    lineHeight: 1.15,
+                    marginTop: "25px",
+                  }}
+                >
                   The Process
                 </span>
                 <h3
@@ -168,34 +170,47 @@ export function BrandStorySection() {
                 <img src={assetSrc} alt="" style={{ position: "absolute", top: "-16px", right: "-16px", width: "24px", height: "24px", transform: "rotate(90deg)" }} />
                 <img src={assetSrc} alt="" style={{ position: "absolute", bottom: "-16px", left: "-16px", width: "24px", height: "24px", transform: "rotate(270deg)" }} />
                 <img src={assetSrc} alt="" style={{ position: "absolute", bottom: "-16px", right: "-16px", width: "24px", height: "24px", transform: "rotate(180deg)" }} />
-                <span style={{
-                  fontFamily: '"BestDB", "Caveat", cursive',
-                  fontWeight: 400,
-                  fontSize: "clamp(40px, 6vw, 55px)",
-                  color: "#7FB2D1",
-                  display: "block",
-                  letterSpacing: "-0.01em",
-                  transform: "rotate(-7deg)",
-                  transformOrigin: "left center",
-                  marginTop: "25px",
-                }}>
-                  The packaging
-                </span>
-                <h3
-                  className="font-display font-semibold text-[#1e1517] tracking-tight leading-tight"
-                  style={{ fontSize: "clamp(22px,2.5vw,32px)" }}
+                <h2
+                  className="tracking-tight leading-tight text-[#1e1517]"
+                  style={{
+                    fontSize: "clamp(22px, 2.5vw, 32px)",
+                    fontFamily: '"Onest", sans-serif',
+                    fontWeight: 600,
+                    margin: 0,
+                  }}
                 >
-                  Curated with care, delivered with certainty.
-                </h3>
+                  <span style={{ display: "block" }}>BridgeArg is</span>
+                  <span
+                    style={{
+                      display: "inline-block",
+                      fontFamily: '"Onest", sans-serif',
+                      fontWeight: 600,
+                      color: "#7FB2D1",
+                      transformOrigin: "left center",
+                    }}
+                  >
+                    not an open marketplace.
+                  </span>
+                </h2>
                 <p className="font-display text-base leading-relaxed text-[#1e1517]/80 md:text-lg">
-                Every work is more than decoration; it is a story of craft and identity. We protect that 
-                story with a standardized 4-box export system and full insurance.
-                </p>
-                <p className="font-display text-base leading-relaxed text-[#1e1517]/80 md:text-lg">
-                Each shipment includes a Certificate of Authenticity hand-signed by the artist, 
-                reinforcing the legacy and value of your new acquisition.
+                  Every artist is selected for their trajectory, identity and ability to sustain a
+                  professional international relationship — so collectors can discover works with cultural
+                  value and depth.
                 </p>
               </div>
+              <Link
+                to="/nosotros"
+                className="self-start border-b border-solid border-[rgba(30,21,23,0.4)] pb-[4px] text-[12px] uppercase tracking-[0.18em] text-[#1e1517] no-underline hover:border-[#7FB2D1] hover:text-[#7FB2D1] hover:tracking-[0.25em]"
+                style={{
+                  fontFamily: '"Onest", sans-serif',
+                  textDecoration: "none",
+                  display: "inline-block",
+                  marginTop: "clamp(40px, 6vh, 60px)",
+                  transition: "color 0.3s ease, letter-spacing 0.3s ease, border-color 0.3s ease",
+                }}
+              >
+                Learn more about us →
+              </Link>
             </motion.div>
 
             {/* Image right */}

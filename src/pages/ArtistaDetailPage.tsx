@@ -425,6 +425,7 @@ const ArtistaDetailPage = () => {
                           width: "100%",
                           height: "430px",
                           overflow: "hidden",
+                          backgroundColor: "rgba(30,21,23,0.04)",
                         }}
                       >
                         <OptimizedImage
@@ -433,7 +434,7 @@ const ArtistaDetailPage = () => {
                           artistName={artist.name}
                           variant="artwork"
                           className="!h-full !w-full"
-                          imageClassName="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                          imageClassName="!h-full !w-full !object-contain !object-center transition-[filter] duration-500 ease-out !saturate-[0.86] !contrast-[0.95] group-hover:!saturate-100 group-hover:!contrast-100"
                           logSrcOnError
                         />
                       </div>
@@ -463,6 +464,45 @@ const ArtistaDetailPage = () => {
                     </Link>
                   );
                 })}
+              </div>
+            )}
+            {works.length > 3 && (
+              <div
+                style={{
+                  marginTop: "clamp(40px, 6vh, 60px)",
+                  display: "flex",
+                  justifyContent: "flex-start",
+                }}
+              >
+                <Link
+                  to={`/artworks?artist=${encodeURIComponent(artist.name)}`}
+                  style={{
+                    fontFamily: '"Onest", sans-serif',
+                    fontSize: "12px",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.18em",
+                    color: "#1e1517",
+                    textDecoration: "none",
+                    borderBottom: "1px solid rgba(30,21,23,0.4)",
+                    paddingBottom: "4px",
+                    transition: "color 0.3s ease, letter-spacing 0.3s ease, border-color 0.3s ease",
+                    display: "inline-block",
+                  }}
+                  onMouseEnter={(e) => {
+                    const el = e.currentTarget;
+                    el.style.color = "#7FB2D1";
+                    el.style.borderBottomColor = "#7FB2D1";
+                    el.style.letterSpacing = "0.25em";
+                  }}
+                  onMouseLeave={(e) => {
+                    const el = e.currentTarget;
+                    el.style.color = "#1e1517";
+                    el.style.borderBottomColor = "rgba(30,21,23,0.4)";
+                    el.style.letterSpacing = "0.18em";
+                  }}
+                >
+                  View all works by {artist.name} →
+                </Link>
               </div>
             )}
           </section>

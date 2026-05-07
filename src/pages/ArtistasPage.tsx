@@ -220,7 +220,7 @@ const ArtistasPage = () => {
                   key={dir}
                   type="button"
                   onClick={() => setSortOrder(dir)}
-                  className="border border-solid rounded-none text-[12px] uppercase tracking-[0.12em] cursor-pointer font-['Onest',sans-serif] transition-all duration-[250ms] ease-[ease] px-4 py-[9px] border-[rgba(252,248,234,0.6)] bg-transparent text-[#fcf8ea] hover:border-[#fcf8ea] hover:bg-[#fcf8ea] hover:text-[#7FB2D1]"
+                  className="border border-solid rounded-none text-[12px] uppercase tracking-[0.12em] cursor-pointer font-['Onest',sans-serif] transition-all duration-200 ease-out px-4 py-[9px] border-[rgba(252,248,234,0.6)] bg-transparent text-[#fcf8ea] hover:border-[#fcf8ea] hover:bg-[#fcf8ea] hover:text-[#7FB2D1]"
                 >
                   {dir === "asc" ? "A → Z" : "Z → A"}
                 </button>
@@ -282,7 +282,7 @@ const ArtistasPage = () => {
 
               const portraitEl = (
                 <div
-                  className={`transition-transform duration-[450ms] ease-out group-hover:-translate-y-[10px] group-hover:rotate-[-1deg] ${
+                  className={`transition-transform duration-500 ease-out group-hover:-translate-y-[10px] group-hover:rotate-[-1deg] ${
                     isEven
                       ? "md:[grid-column:1] md:[grid-row:1]"
                       : "md:[grid-column:3] md:[grid-row:1]"
@@ -414,7 +414,7 @@ const ArtistasPage = () => {
                       }}
                     >
                       <span
-                        className="border transition-all duration-[250ms] border-[rgba(30,21,23,0.25)] text-[#1e1517] group-hover:bg-[#7FB2D1] group-hover:border-[#7FB2D1] group-hover:text-[#fcf8ea]"
+                        className="border transition-all duration-200 border-[rgba(30,21,23,0.25)] text-[#1e1517] group-hover:bg-[#7FB2D1] group-hover:border-[#7FB2D1] group-hover:text-[#fcf8ea]"
                         style={{
                           width: "42px",
                           height: "42px",

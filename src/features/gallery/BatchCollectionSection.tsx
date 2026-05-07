@@ -94,14 +94,14 @@ export function BatchCollectionSection() {
                 className={`group block ${pattern.span}`}
               >
                 <article className="space-y-4">
-                  <div className={`relative overflow-hidden bg-[#efe6d5] ${pattern.aspect}`}>
+                  <div className={`relative overflow-hidden bg-[rgba(30,21,23,0.04)] ${pattern.aspect}`}>
                     <OptimizedImage
                       src={work.imagenUrl}
                       title={work.title}
                       artistName={work.artistName}
                       variant="artwork"
                       className="h-full w-full"
-                      imageClassName="transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                      imageClassName="!object-contain !object-center transition-[filter] duration-700 ease-out saturate-[0.86] contrast-[0.95] group-hover:saturate-100 group-hover:contrast-100"
                     />
 
                     <div className="absolute inset-0 bg-black/0 transition-all duration-500 ease-out group-hover:bg-black/60" />

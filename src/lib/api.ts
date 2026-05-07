@@ -30,6 +30,7 @@ export interface WorkFromApi {
   price_usd: number;
   priceDisplay: string;
   imagenUrl: string;
+  galleryUrls: string[];
   status: WorkStatus;
   available: boolean;
   artistName: string;
@@ -100,6 +101,7 @@ export interface ArtworkRow {
   id: number;
   title: string;
   image_url: string;
+  gallery_urls: string[] | null;
   status: ArtworkStatus;
   price_usd: number | null;
   price_ref_usd: number | null;
@@ -232,6 +234,7 @@ function mapArtworkRowToWork(row: ArtworkRow): WorkFromApi {
     price_usd: priceUsd,
     priceDisplay: formatPriceUSD(priceUsd),
     imagenUrl: row.image_url,
+    galleryUrls: row.gallery_urls ?? [],
     status: row.status,
     available: isAvailableStatus(row.status),
     artistName: getArtistDisplayName(row.artists),
@@ -249,8 +252,8 @@ function mapArtworkRowToWork(row: ArtworkRow): WorkFromApi {
 /** Fetches works from artworks table. */
 async function fetchWorksFromArtworks(sb: import("@supabase/supabase-js").SupabaseClient, artistSlug?: string): Promise<WorkFromApi[]> {
   const select = artistSlug
-    ? "id,title,image_url,status,price_usd,artist_id,year,medium,dimensions,weight_kg,width_cm,height_cm,depth_cm,artists!inner(name,slug)"
-    : "id,title,image_url,status,price_usd,artist_id,year,medium,dimensions,weight_kg,width_cm,height_cm,depth_cm,artists(name,slug)";
+    ? "id,title,image_url,gallery_urls,status,price_usd,artist_id,year,medium,dimensions,weight_kg,width_cm,height_cm,depth_cm,artists!inner(name,slug)"
+    : "id,title,image_url,gallery_urls,status,price_usd,artist_id,year,medium,dimensions,weight_kg,width_cm,height_cm,depth_cm,artists(name,slug)";
   let query = sb.from("artworks").select(select).order("id", { ascending: true });
   if (artistSlug) query = query.eq("artists.slug", artistSlug);
   const { data, error } = await query;
@@ -261,7 +264,7 @@ async function fetchWorksFromArtworks(sb: import("@supabase/supabase-js").Supaba
 /** Fetches a single work from artworks by id. */
 async function fetchWorkFromArtworks(sb: import("@supabase/supabase-js").SupabaseClient, id: number): Promise<WorkFromApi | null> {
   const select =
-    "id,title,image_url,status,price_usd,artist_id,year,medium,dimensions,weight_kg,width_cm,height_cm,depth_cm,artists(name,slug)";
+    "id,title,image_url,gallery_urls,status,price_usd,artist_id,year,medium,dimensions,weight_kg,width_cm,height_cm,depth_cm,artists(name,slug)";
   const { data, error } = await sb.from("artworks").select(select).eq("id", id).single();
   if (error) {
     if (error.code === "PGRST116") return null;
@@ -348,7 +351,7 @@ export async function getLatestWorks(limit = 20): Promise<WorkFromApi[]> {
   const { data, error } = await supabase
     .from("artworks")
     .select(
-      "id,title,image_url,status,price_usd,artist_id,year,medium,dimensions,weight_kg,width_cm,height_cm,depth_cm,artists(name,slug)"
+      "id,title,image_url,gallery_urls,status,price_usd,artist_id,year,medium,dimensions,weight_kg,width_cm,height_cm,depth_cm,artists(name,slug)"
     )
     .order("id", { ascending: false })
     .limit(limit);
