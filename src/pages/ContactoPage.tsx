@@ -8,6 +8,7 @@ import { toast } from "@/hooks/use-toast";
 import { submitContact } from "@/lib/api";
 import { Loader2 } from "lucide-react";
 import { SEO } from "@/components/SEO";
+import { useIsMobile, useIsTablet } from "@/hooks/use-mobile";
 
 const CONTACT_SUBJECT_OPTIONS = [
   "Artwork inquiry",
@@ -48,6 +49,8 @@ const fieldControlStyle: CSSProperties = {
 };
 
 const ContactoPage = () => {
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
   const [searchParams] = useSearchParams();
 
   const obraParam = searchParams.get("obra");
@@ -175,23 +178,23 @@ const ContactoPage = () => {
           <section
             className="relative grid max-[979px]:grid-cols-1 min-[980px]:grid-cols-[1.05fr_0.95fr]"
             style={{
-              padding: "80px clamp(24px, 14vw, 200px) 72px",
-              gap: "70px",
+              padding: isMobile ? "40px 20px" : "80px clamp(24px, 14vw, 200px) 72px",
+              gap: isMobile ? "24px" : "70px",
               alignItems: "center",
               borderBottom: "1px solid rgba(30,21,23,0.18)",
               overflow: "hidden",
-              minHeight: "62vh",
+              minHeight: isMobile ? "auto" : "62vh",
             }}
           >
             <div
               style={{
                 position: "absolute",
-                width: "390px",
-                height: "390px",
+                width: isMobile ? "240px" : "390px",
+                height: isMobile ? "240px" : "390px",
                 border: "1px solid rgba(127,178,209,0.32)",
                 borderRadius: "50%",
-                right: "14vw",
-                top: "110px",
+                right: isMobile ? "8vw" : "14vw",
+                top: isMobile ? "80px" : "110px",
                 opacity: 0.55,
                 pointerEvents: "none",
                 zIndex: 0,
@@ -214,6 +217,7 @@ const ContactoPage = () => {
               <h1
                 style={{
                   fontSize: "clamp(70px, 8vw, 138px)",
+                  ...(isMobile ? { fontSize: "52px" } : {}),
                   lineHeight: 0.9,
                   letterSpacing: "-0.075em",
                   fontWeight: 800,
@@ -239,6 +243,7 @@ const ContactoPage = () => {
               <p
                 style={{
                   fontSize: "21px",
+                  ...(isMobile ? { fontSize: "16px" } : {}),
                   lineHeight: 1.55,
                   color: "rgba(30,21,23,0.62)",
                   maxWidth: "590px",
@@ -292,7 +297,7 @@ const ContactoPage = () => {
             className="grid max-[979px]:grid-cols-1 min-[980px]:grid-cols-[1fr_auto_1fr]"
             style={{
               borderBottom: "1px solid rgba(30,21,23,0.18)",
-              minHeight: "150px",
+              minHeight: isMobile ? "auto" : "150px",
               alignItems: "center",
             }}
           >
@@ -416,8 +421,8 @@ const ContactoPage = () => {
           <section
             className="grid max-[979px]:grid-cols-1 min-[980px]:grid-cols-[1.1fr_0.9fr]"
             style={{
-              padding: "94px clamp(24px, 14vw, 200px) 115px",
-              gap: "clamp(40px, 5vw, 82px)",
+              padding: isMobile ? "40px 20px 60px" : "94px clamp(24px, 14vw, 200px) 115px",
+              gap: isMobile ? "24px" : "clamp(40px, 5vw, 82px)",
               alignItems: "start",
             }}
           >
@@ -670,7 +675,7 @@ const ContactoPage = () => {
             <aside
               className="max-[979px]:static max-[979px]:p-7 min-[980px]:sticky min-[980px]:p-[42px]"
               style={{
-                top: "118px",
+                top: isTablet ? "96px" : "118px",
                 border: "1px solid rgba(30,21,23,0.18)",
                 backgroundColor: "rgba(252,248,234,0.58)",
                 backdropFilter: "blur(8px)",
@@ -861,14 +866,14 @@ const ContactoPage = () => {
           {/* 4. Dark CTA */}
           <section
             style={{
-              minHeight: "52vh",
+              minHeight: isMobile ? "auto" : "52vh",
               backgroundImage:
                 "radial-gradient(circle at 78% 18%, rgba(127,178,209,0.14), transparent 32%), linear-gradient(135deg, #1e1517, #120d0f)",
               color: "#fcf8ea",
               display: "grid",
               placeItems: "center",
               textAlign: "center",
-              padding: "80px 24px",
+              padding: isMobile ? "50px 20px" : "80px 24px",
               position: "relative",
               overflow: "hidden",
             }}
