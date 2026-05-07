@@ -9,6 +9,7 @@ import { PageTransition } from "@/components/PageTransition";
 import { toast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
 import { getArtistBySlug, getWorks } from "@/lib/api";
+import { useIsMobile, useIsTablet } from "@/hooks/use-mobile";
 
 function getBioParagraphs(bio: string | null | undefined): string[] {
   if (!bio) return [];
@@ -26,6 +27,8 @@ const QUICK_NAV = [
 ];
 
 const ArtistaDetailPage = () => {
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
   const { slug } = useParams<{ slug: string }>();
 
   const {
@@ -126,8 +129,10 @@ const ArtistaDetailPage = () => {
             className="relative grid grid-cols-1 md:[grid-template-columns:1.05fr_0.95fr]"
             style={{
               minHeight: "auto",
-              padding: "80px clamp(24px, 6vw, 96px) clamp(40px, 6vh, 80px)",
-              gap: "clamp(40px, 7vw, 100px)",
+              padding: isMobile
+                ? "40px 20px"
+                : "80px clamp(24px, 6vw, 96px) clamp(40px, 6vh, 80px)",
+              gap: isMobile ? "24px" : "clamp(40px, 7vw, 100px)",
               alignItems: "end",
               borderBottom: "1px solid rgba(30,21,23,0.16)",
               overflow: "hidden",
@@ -257,7 +262,7 @@ const ArtistaDetailPage = () => {
           {/* 2. QUICK NAV STICKY */}
           <nav
             style={{
-              position: "sticky",
+              position: isMobile ? "static" : "sticky",
               top: "80px",
               zIndex: 12,
               backgroundColor: "rgba(127,178,209,0.95)",
@@ -267,7 +272,7 @@ const ArtistaDetailPage = () => {
               display: "flex",
               justifyContent: "center",
               gap: "clamp(20px, 4vw, 48px)",
-              padding: "18px 24px",
+              padding: isMobile ? "14px 12px" : "18px 24px",
             }}
           >
             {QUICK_NAV.map((item) => (
@@ -293,8 +298,10 @@ const ArtistaDetailPage = () => {
             id="statement"
             className="grid grid-cols-1 md:[grid-template-columns:0.8fr_1.2fr]"
             style={{
-              padding: "clamp(60px, 12vh, 120px) clamp(24px, 6vw, 96px)",
-              gap: "clamp(40px, 7vw, 100px)",
+              padding: isMobile
+                ? "40px 20px"
+                : "clamp(60px, 12vh, 120px) clamp(24px, 6vw, 96px)",
+              gap: isMobile ? "24px" : "clamp(40px, 7vw, 100px)",
               borderBottom: "1px solid rgba(30,21,23,0.16)",
             }}
           >
@@ -358,7 +365,11 @@ const ArtistaDetailPage = () => {
           {/* 4. WORKS */}
           <section
             id="works"
-            style={{ padding: "clamp(60px, 12vh, 120px) clamp(24px, 6vw, 96px)" }}
+            style={{
+              padding: isMobile
+                ? "40px 20px"
+                : "clamp(60px, 12vh, 120px) clamp(24px, 6vw, 96px)",
+            }}
           >
             <div
               style={{
@@ -399,7 +410,11 @@ const ArtistaDetailPage = () => {
             ) : (
               <div
                 className="grid grid-cols-1 md:[grid-template-columns:1.1fr_0.9fr_1fr]"
-                style={{ gap: "34px", alignItems: "start" }}
+                style={{
+                  gap: isMobile ? "20px" : "34px",
+                  alignItems: "start",
+                  gridTemplateColumns: isMobile ? "1fr" : isTablet ? "1fr 1fr" : "1.1fr 0.9fr 1fr",
+                }}
               >
                 {featuredWorks.map((work, i) => {
                   const offsetClass =
@@ -512,7 +527,7 @@ const ArtistaDetailPage = () => {
             id="process"
             className="grid grid-cols-1 md:grid-cols-2"
             style={{
-              gap: "34px",
+              gap: isMobile ? "20px" : "34px",
               backgroundColor: "#1e1517",
               color: "#fcf8ea",
             }}
@@ -591,6 +606,7 @@ const ArtistaDetailPage = () => {
             style={{
               borderTop: "1px solid rgba(30,21,23,0.16)",
               borderBottom: "1px solid rgba(30,21,23,0.16)",
+              gridTemplateColumns: isMobile ? "1fr" : isTablet ? "1fr 1fr" : "repeat(4, 1fr)",
             }}
           >
             {[
@@ -637,13 +653,15 @@ const ArtistaDetailPage = () => {
           {/* 7. CTA */}
           <section
             style={{
-              minHeight: "55vh",
+              minHeight: isMobile ? "auto" : "55vh",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               textAlign: "center",
               position: "relative",
-              padding: "clamp(60px, 12vh, 120px) clamp(24px, 6vw, 96px)",
+              padding: isMobile
+                ? "40px 20px"
+                : "clamp(60px, 12vh, 120px) clamp(24px, 6vw, 96px)",
             }}
           >
             <div>
