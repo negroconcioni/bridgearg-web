@@ -6,6 +6,7 @@ import { PageTransition } from "@/components/PageTransition";
 import { getArtists, getWorks } from "@/lib/api";
 import { images } from "@/lib/images";
 import { SEO } from "@/components/SEO";
+import { useIsMobile, useIsTablet } from "@/hooks/use-mobile";
 
 const eyebrowStyle: CSSProperties = {
   fontSize: "12px",
@@ -27,6 +28,8 @@ const displayLineStyle: CSSProperties = {
 };
 
 const NosotrosPage = () => {
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
   const { data: artists = [] } = useQuery({ queryKey: ["artists"], queryFn: getArtists });
   const { data: works = [] } = useQuery({ queryKey: ["works"], queryFn: () => getWorks() });
 
@@ -44,7 +47,7 @@ const NosotrosPage = () => {
           <section
             className="relative grid"
             style={{
-              minHeight: "100vh",
+              minHeight: isMobile ? "auto" : "100vh",
               paddingTop: "80px",
               alignItems: "end",
               borderBottom: "1px solid rgba(30,21,23,0.16)",
@@ -64,7 +67,7 @@ const NosotrosPage = () => {
             <div
               className="hero-copy relative z-[3]"
               style={{
-                padding: "12vh clamp(24px, 7vw, 120px) 14vh",
+                padding: isMobile ? "40px 20px 50px" : "12vh clamp(24px, 7vw, 120px) 14vh",
                 maxWidth: "760px",
               }}
             >
@@ -72,6 +75,7 @@ const NosotrosPage = () => {
               <h1
                 style={{
                   fontSize: "clamp(72px, 10vw, 172px)",
+                  ...(isMobile ? { fontSize: "56px" } : {}),
                   lineHeight: 0.86,
                   letterSpacing: "-0.085em",
                   fontWeight: 800,
@@ -98,6 +102,7 @@ const NosotrosPage = () => {
                 style={{
                   fontFamily: '"Onest", sans-serif',
                   fontSize: "clamp(25px, 3vw, 48px)",
+                  ...(isMobile ? { fontSize: "28px" } : {}),
                   lineHeight: 1.05,
                   maxWidth: "770px",
                   color: "#1e1517",
@@ -188,12 +193,12 @@ const NosotrosPage = () => {
           </section>
 
           {/* 3. Curation */}
-          <section style={{ padding: "135px clamp(24px, 7vw, 120px)", borderBottom: "1px solid rgba(30,21,23,0.16)" }}>
+          <section style={{ padding: isMobile ? "50px 20px" : "135px clamp(24px, 7vw, 120px)", borderBottom: "1px solid rgba(30,21,23,0.16)" }}>
             <div
               className="grid max-[949px]:grid-cols-1 max-[949px]:p-8 min-[950px]:grid-cols-[0.8fr_1.2fr] min-[950px]:items-center min-[950px]:p-[70px]"
               style={{
                 border: "1px solid rgba(30,21,23,0.16)",
-                gap: "70px",
+                gap: isMobile ? "28px" : "70px",
                 alignItems: "center",
                 backgroundColor: "rgba(255,255,255,0.16)",
               }}
@@ -260,10 +265,10 @@ const NosotrosPage = () => {
           </section>
 
           {/* 4. Why */}
-          <section style={{ padding: "130px clamp(24px, 7vw, 120px)", borderBottom: "1px solid rgba(30,21,23,0.16)" }}>
+          <section style={{ padding: isMobile ? "50px 20px" : "130px clamp(24px, 7vw, 120px)", borderBottom: "1px solid rgba(30,21,23,0.16)" }}>
             <div
               className="grid max-[949px]:grid-cols-1 min-[950px]:grid-cols-[0.9fr_1.1fr] min-[950px]:items-start"
-              style={{ gap: "90px", alignItems: "start" }}
+              style={{ gap: isMobile ? "24px" : "90px", alignItems: "start" }}
             >
               <div>
                 <p style={{ ...eyebrowStyle, marginBottom: "34px" }}>Why BridgeArg exists</p>
@@ -324,7 +329,7 @@ const NosotrosPage = () => {
           </section>
 
           {/* 5. Bridge map */}
-          <section style={{ padding: "120px clamp(24px, 7vw, 120px)", borderBottom: "1px solid rgba(30,21,23,0.16)", overflow: "hidden" }}>
+          <section style={{ padding: isMobile ? "50px 20px" : "120px clamp(24px, 7vw, 120px)", borderBottom: "1px solid rgba(30,21,23,0.16)", overflow: "hidden" }}>
             <p style={eyebrowStyle}>The Bridge</p>
             <p style={{ ...displayLineStyle, maxWidth: "800px" }}>
               A cultural route built with care, trust and precision.
@@ -372,7 +377,7 @@ const NosotrosPage = () => {
             </div>
             <div
               className="grid max-[949px]:grid-cols-1 min-[950px]:grid-cols-3"
-              style={{ gap: "20px" }}
+              style={{ gap: "20px", gridTemplateColumns: isMobile ? "1fr" : isTablet ? "1fr 1fr" : "repeat(3, 1fr)" }}
             >
               {[
                 {
@@ -445,7 +450,7 @@ const NosotrosPage = () => {
             style={{
               backgroundColor: "#1e1517",
               color: "#fcf8ea",
-              padding: "130px clamp(24px, 7vw, 120px)",
+              padding: isMobile ? "50px 20px" : "130px clamp(24px, 7vw, 120px)",
               position: "relative",
               overflow: "hidden",
               backgroundImage:
@@ -454,7 +459,7 @@ const NosotrosPage = () => {
           >
             <div
               className="grid max-[949px]:grid-cols-1 min-[950px]:grid-cols-2 min-[950px]:items-center"
-              style={{ gap: "80px", alignItems: "center" }}
+              style={{ gap: isMobile ? "24px" : "80px", alignItems: "center" }}
             >
               <div>
                 <p
@@ -556,10 +561,10 @@ const NosotrosPage = () => {
           </section>
 
           {/* 7. Process */}
-          <section style={{ padding: "130px clamp(24px, 7vw, 120px)", borderBottom: "1px solid rgba(30,21,23,0.16)" }}>
+          <section style={{ padding: isMobile ? "50px 20px" : "130px clamp(24px, 7vw, 120px)", borderBottom: "1px solid rgba(30,21,23,0.16)" }}>
             <div
               className="mb-[70px] flex max-[949px]:block min-[950px]:items-end min-[950px]:justify-between"
-              style={{ gap: "60px", marginBottom: "70px", alignItems: "end" }}
+              style={{ gap: isMobile ? "24px" : "60px", marginBottom: isMobile ? "36px" : "70px", alignItems: "end" }}
             >
               <div>
                 <p style={eyebrowStyle}>Our process</p>
@@ -614,7 +619,7 @@ const NosotrosPage = () => {
                   key={step.s}
                   className="flex flex-col justify-between transition duration-300 ease-out hover:-translate-y-[6px] hover:bg-white"
                   style={{
-                    minHeight: "360px",
+                    minHeight: isMobile ? "260px" : "360px",
                     padding: "26px",
                     borderRight: "1px solid rgba(30,21,23,0.16)",
                     borderBottom: "1px solid rgba(30,21,23,0.16)",
@@ -663,7 +668,7 @@ const NosotrosPage = () => {
           {/* 8. Final CTA */}
           <section
             style={{
-              minHeight: "88vh",
+              minHeight: isMobile ? "auto" : "88vh",
               backgroundImage: `linear-gradient(rgba(30,21,23,0.34), rgba(30,21,23,0.72)), url('${images.boxes}')`,
               backgroundSize: "cover",
               backgroundPosition: "center",
@@ -671,7 +676,7 @@ const NosotrosPage = () => {
               display: "flex",
               alignItems: "center",
               textAlign: "center",
-              padding: "clamp(60px, 12vh, 120px) clamp(24px, 7vw, 120px)",
+              padding: isMobile ? "50px 20px" : "clamp(60px, 12vh, 120px) clamp(24px, 7vw, 120px)",
             }}
           >
             <div style={{ width: "100%" }}>
