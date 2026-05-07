@@ -9,6 +9,7 @@ import { getArtists, getWorks, type ArtistFromApi, type WorkFromApi } from "@/li
 import { toast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
 import { images } from "@/lib/images";
+import { useIsMobile, useIsTablet } from "@/hooks/use-mobile";
 
 type ArtistCard = {
   artist: ArtistFromApi;
@@ -16,6 +17,8 @@ type ArtistCard = {
 };
 
 const ArtistasPage = () => {
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
   const { data: artists = [], isError: artistsError } = useQuery({
     queryKey: ["artists"],
     queryFn: getArtists,
@@ -82,14 +85,14 @@ const ArtistasPage = () => {
           {/* 1. HERO */}
           <section
             style={{
-              minHeight: "100vh",
+              minHeight: isMobile ? "auto" : "100vh",
               display: "flex",
               flexDirection: "column",
               justifyContent: "flex-end",
-              paddingTop: "clamp(120px, 18vh, 180px)",
-              paddingLeft: "clamp(24px, 7vw, 120px)",
-              paddingRight: "clamp(24px, 7vw, 120px)",
-              paddingBottom: "clamp(60px, 10vh, 120px)",
+              paddingTop: isMobile ? "100px" : "clamp(120px, 18vh, 180px)",
+              paddingLeft: isMobile ? "20px" : "clamp(24px, 7vw, 120px)",
+              paddingRight: isMobile ? "20px" : "clamp(24px, 7vw, 120px)",
+              paddingBottom: isMobile ? "40px" : "clamp(60px, 10vh, 120px)",
               borderBottom: "1px solid rgba(30,21,23,0.16)",
               position: "relative",
               overflow: "hidden",
@@ -102,7 +105,7 @@ const ArtistasPage = () => {
               style={{
                 position: "relative",
                 zIndex: 1,
-                maxWidth: "min(700px, 60%)",
+                maxWidth: isMobile ? "100%" : "min(700px, 60%)",
               }}
             >
               <span
@@ -162,14 +165,14 @@ const ArtistasPage = () => {
           {/* 2. FILTROS STICKY */}
           <div
             style={{
-              position: "sticky",
+              position: isMobile ? "static" : "sticky",
               top: "80px",
               zIndex: 30,
               backgroundColor: "rgba(127,178,209,0.95)",
               backdropFilter: "blur(14px)",
               WebkitBackdropFilter: "blur(14px)",
               borderBottom: "1px solid rgba(30,21,23,0.16)",
-              padding: "clamp(20px, 3vh, 34px) clamp(24px, 7vw, 120px)",
+              padding: isMobile ? "16px 20px" : "clamp(20px, 3vh, 34px) clamp(24px, 7vw, 120px)",
               display: "flex",
               flexWrap: "wrap",
               alignItems: "center",
@@ -232,8 +235,10 @@ const ArtistasPage = () => {
           <section
             className="grid grid-cols-1 md:[grid-template-columns:0.8fr_1.2fr]"
             style={{
-              padding: "clamp(40px, 8vh, 70px) clamp(24px, 7vw, 120px) 40px",
-              gap: "clamp(24px, 4vw, 50px)",
+              padding: isMobile
+                ? "32px 20px"
+                : "clamp(40px, 8vh, 70px) clamp(24px, 7vw, 120px) 40px",
+              gap: isMobile ? "20px" : "clamp(24px, 4vw, 50px)",
               alignItems: "start",
             }}
           >
@@ -269,7 +274,9 @@ const ArtistasPage = () => {
           {/* 4. ARTIST ROWS */}
           <section
             style={{
-              padding: "45px clamp(24px, 7vw, 120px) clamp(80px, 14vh, 120px)",
+              padding: isMobile
+                ? "30px 20px 60px"
+                : "45px clamp(24px, 7vw, 120px) clamp(80px, 14vh, 120px)",
             }}
           >
             {filteredAndSortedArtistCards.map((card, index) => {
@@ -439,12 +446,12 @@ const ArtistasPage = () => {
                   className="group max-md:!grid-template-columns-[1fr] max-md:!grid-template-rows-[auto]"
                   style={{
                     display: "grid",
-                    gridTemplateColumns: "1fr 1fr 1fr",
+                    gridTemplateColumns: isMobile ? "1fr" : isTablet ? "1fr 1fr" : "1fr 1fr 1fr",
                     gridTemplateRows: "1fr",
                     alignItems: "center",
-                    minHeight: "420px",
-                    gap: "clamp(80px, 12vw, 200px)",
-                    padding: "50px 0",
+                    minHeight: isMobile ? "auto" : "420px",
+                    gap: isMobile ? "24px" : "clamp(80px, 12vw, 200px)",
+                    padding: isMobile ? "28px 0" : "50px 0",
                     borderTop: "1px solid rgba(30,21,23,0.16)",
                     borderBottom: isLast ? "1px solid rgba(30,21,23,0.16)" : undefined,
                     cursor: "pointer",
@@ -464,10 +471,12 @@ const ArtistasPage = () => {
           <section
             className="grid grid-cols-1 md:grid-cols-2"
             style={{
-              margin: "0 clamp(24px, 7vw, 120px) clamp(80px, 14vh, 120px)",
+              margin: isMobile
+                ? "0 20px 60px"
+                : "0 clamp(24px, 7vw, 120px) clamp(80px, 14vh, 120px)",
               backgroundColor: "#1e1517",
               color: "#fcf8ea",
-              minHeight: "520px",
+              minHeight: isMobile ? "auto" : "520px",
               overflow: "hidden",
             }}
           >
@@ -509,9 +518,11 @@ const ArtistasPage = () => {
           <section
             className="flex flex-wrap items-start md:items-end"
             style={{
-              padding: "0 clamp(24px, 7vw, 120px) clamp(80px, 14vh, 110px)",
+              padding: isMobile
+                ? "0 20px 60px"
+                : "0 clamp(24px, 7vw, 120px) clamp(80px, 14vh, 110px)",
               justifyContent: "space-between",
-              gap: "40px",
+              gap: isMobile ? "24px" : "40px",
             }}
           >
             <div
