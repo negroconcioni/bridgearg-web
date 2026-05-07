@@ -7,6 +7,7 @@ import { PageTransition } from "@/components/PageTransition";
 import { FALLBACK_ARTIST_NAME, getWorks, type WorkFromApi } from "@/lib/api";
 import { getWorkImageUrl } from "@/lib/work-images";
 import { images } from "@/lib/images";
+import { useIsMobile, useIsTablet } from "@/hooks/use-mobile";
 import { toast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -51,6 +52,8 @@ const navActionStyle: CSSProperties = {
 };
 
 const ArtworksPage = () => {
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
   const sectionRef = useRef<HTMLElement>(null);
   const [searchParams] = useSearchParams();
   const {
@@ -426,10 +429,12 @@ const ArtworksPage = () => {
           <section
             className="grid grid-cols-1 min-[1000px]:grid-cols-[1.2fr_0.8fr] min-[1000px]:items-end"
             style={{
-              minHeight: "64vh",
-              padding: "clamp(60px, 10vh, 120px) clamp(24px, 7vw, 120px)",
+              minHeight: isMobile ? "auto" : "64vh",
+              padding: isMobile
+                ? "40px 20px"
+                : "clamp(60px, 10vh, 120px) clamp(24px, 7vw, 120px)",
               borderBottom: "1px solid rgba(30,21,23,0.18)",
-              gap: "clamp(40px, 6vw, 80px)",
+              gap: isMobile ? "24px" : "clamp(40px, 6vw, 80px)",
               position: "relative",
               overflow: "hidden",
               backgroundImage: `linear-gradient(rgba(30,21,23,0.55), rgba(30,21,23,0.65)), url('${images.collectionsHero}')`,
@@ -534,10 +539,10 @@ const ArtworksPage = () => {
           {/* 2. Nav row */}
           <div
             style={{
-              position: "sticky",
+              position: isMobile ? "static" : "sticky",
               top: "80px",
               zIndex: 15,
-              padding: "28px clamp(24px, 7vw, 120px)",
+              padding: isMobile ? "20px" : "28px clamp(24px, 7vw, 120px)",
               borderBottom: "1px solid rgba(30,21,23,0.18)",
               backgroundColor: "rgba(127,178,209,0.95)",
               backdropFilter: "blur(14px)",
@@ -587,13 +592,13 @@ const ArtworksPage = () => {
             <div
               className="grid max-[679px]:grid-cols-1 max-[999px]:grid-cols-2 min-[1000px]:grid-cols-3"
               style={{
-                marginLeft: "clamp(24px, 7vw, 120px)",
-                marginRight: "clamp(24px, 7vw, 120px)",
+                marginLeft: isMobile ? "20px" : "clamp(24px, 7vw, 120px)",
+                marginRight: isMobile ? "20px" : "clamp(24px, 7vw, 120px)",
                 border: "1px solid rgba(252,248,234,0.4)",
                 borderTop: "none",
-                padding: "28px",
+                padding: isMobile ? "20px" : "28px",
                 backgroundColor: "rgba(127,178,209,0.95)",
-                gap: "20px",
+                gap: isMobile ? "14px" : "20px",
               }}
             >
               <div>
@@ -705,6 +710,7 @@ const ArtworksPage = () => {
                 style={{
                   padding: "0 clamp(24px, 7vw, 120px) 96px",
                   columnGap: "24px",
+                  columnCount: isMobile ? 1 : isTablet ? 2 : 3,
                 }}
               >
                 {Array.from({ length: 6 }).map((_, i) => (
@@ -751,6 +757,7 @@ const ArtworksPage = () => {
                 style={{
                   padding: "0 clamp(24px, 7vw, 120px) 96px",
                   columnGap: "24px",
+                  columnCount: isMobile ? 1 : isTablet ? 2 : 3,
                 }}
               >
                 {sortedWorks.map((work) => renderWorkCard(work))}
