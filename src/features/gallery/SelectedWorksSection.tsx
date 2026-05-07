@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import { getWorks, isSoldStatus, type WorkFromApi } from "@/lib/api";
+import { useIsMobile, useIsTablet } from "@/hooks/use-mobile";
 
 function shuffleArray(arr: WorkFromApi[]): WorkFromApi[] {
   const shuffled = [...arr];
@@ -16,6 +17,8 @@ const ROTATION_INTERVAL = 15000;
 const CARD_DELAYS = [0, 6000, 3000, 9000];
 
 export function SelectedWorksSection() {
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
   const [allWorks, setAllWorks] = useState<WorkFromApi[]>([]);
   const [cards, setCards] = useState<WorkFromApi[]>([]);
   const [fading, setFading] = useState<boolean[]>([false, false, false, false]);
@@ -113,7 +116,10 @@ export function SelectedWorksSection() {
             Selected Works
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 xl:gap-8">
+        <div
+          className="grid grid-cols-2 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 xl:gap-8"
+          style={{ gridTemplateColumns: isMobile ? "1fr" : isTablet ? "1fr 1fr" : "repeat(4, minmax(0, 1fr))" }}
+        >
           {cards.map((work, index) => {
             const sold = isSoldStatus(work.status);
             return (

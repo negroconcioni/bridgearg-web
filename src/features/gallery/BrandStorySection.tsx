@@ -1,12 +1,15 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { images } from "@/lib/images";
+import { useIsMobile, useIsTablet } from "@/hooks/use-mobile";
 
 const assetSrc = "/assets/BRIDGEARG%20-%20Exportacion%20logos%20-%20PNG-16.png";
 const image1Src = images.theProcess;
 const image2Src = images.fondoCaro;
 
 export function BrandStorySection() {
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
   const attrs = ["Culture", "Quality", "Transparency", "Warmth", "Transcendence", "Closeness"];
 
   return (
@@ -19,7 +22,7 @@ export function BrandStorySection() {
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "24px" }}>
+            <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", alignItems: isMobile ? "flex-start" : "center", gap: isMobile ? "14px" : "24px" }}>
               <img
                 src="/assets/logos/BRIDGEARG - Exportacion logos-09.svg"
                 alt="BridgeArg"
@@ -88,14 +91,14 @@ export function BrandStorySection() {
               viewport={{ once: true }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              <img src={image1Src} alt="" style={{ width: "100%", height: "clamp(280px, 40vw, 520px)", objectFit: "cover", borderRadius: "6px" }} />
+              <img src={image1Src} alt="" style={{ width: "100%", height: isMobile ? "280px" : isTablet ? "360px" : "clamp(280px, 40vw, 520px)", objectFit: "cover", borderRadius: "6px" }} />
             </motion.div>
 
             {/* Text right */}
             <motion.div
               className="flex flex-col gap- "
               style={{ paddingLeft: "clamp(0px, 5vw, 20px)", 
-                paddingRight: "clamp(0px, 5vw, 20px)", width: "100%" }}
+                paddingRight: "clamp(0px, 5vw, 20px)", width: "100%", gap: isMobile ? "20px" : undefined }}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -119,6 +122,7 @@ export function BrandStorySection() {
                     fontFamily: '"Onest", sans-serif',
                     fontWeight: 600,
                     fontSize: "clamp(22px, 2.5vw, 32px)",
+                  ...(isMobile ? { fontSize: "24px" } : {}),
                     color: "#7FB2D1",
                     display: "block",
                     letterSpacing: "-0.025em",
@@ -205,7 +209,7 @@ export function BrandStorySection() {
                   fontFamily: '"Onest", sans-serif',
                   textDecoration: "none",
                   display: "inline-block",
-                  marginTop: "clamp(40px, 6vh, 60px)",
+                  marginTop: isMobile ? "28px" : "clamp(40px, 6vh, 60px)",
                   transition: "color 0.3s ease, letter-spacing 0.3s ease, border-color 0.3s ease",
                 }}
               >

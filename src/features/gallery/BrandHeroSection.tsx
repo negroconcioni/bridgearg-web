@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { getAvailableCount } from "@/lib/api";
 import { images } from "@/lib/images";
+import { useIsMobile, useIsTablet } from "@/hooks/use-mobile";
 
 const heroImages = [
   images.fondoJose,
@@ -33,6 +34,8 @@ export interface BrandHeroProps {
 }
 
 export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
   const [availableCount, setAvailableCount] = useState<number | null>(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -178,7 +181,7 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
       style={{
         isolation: "isolate",
         paddingTop: "var(--header-h)",
-        minHeight: "100svh",
+        minHeight: isMobile ? "auto" : "100svh",
         display: "flex",
         flexDirection: "column",
       }}
@@ -233,11 +236,11 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
           justifyContent: "center",
           alignItems: "flex-start",
           minHeight: "calc(100svh - var(--header-h))",
-          paddingLeft: "clamp(24px, 6vw, 96px)",
-          paddingRight: "clamp(24px, 6vw, 96px)",
-          paddingTop: "clamp(24px, 4svh, 64px)",
-          paddingBottom: "clamp(120px, 16svh, 200px)",
-          gap: "clamp(32px, 6svh, 80px)",
+          paddingLeft: isMobile ? "20px" : "clamp(24px, 6vw, 96px)",
+          paddingRight: isMobile ? "20px" : "clamp(24px, 6vw, 96px)",
+          paddingTop: isMobile ? "20px" : "clamp(24px, 4svh, 64px)",
+          paddingBottom: isMobile ? "100px" : "clamp(120px, 16svh, 200px)",
+          gap: isMobile ? "24px" : "clamp(32px, 6svh, 80px)",
         }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -280,6 +283,7 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
                   fontFamily: '"Onest", sans-serif',
                   fontWeight: 900,
                   fontSize: "clamp(40px, 6vw, 80px)",
+                  ...(isMobile ? { fontSize: "44px" } : {}),
                   color: "#ffffff",
                   display: "block",
                   letterSpacing: "-0.03em",
@@ -292,6 +296,7 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
                   fontFamily: '"BestDB", "Caveat", cursive',
                   fontWeight: 400,
                   fontSize: "clamp(40px, 6vw, 70px)",
+                  ...(isMobile ? { fontSize: "38px" } : {}),
                   color: "#7FB2D1",
                   display: "block",
                   letterSpacing: "-0.01em",
@@ -310,8 +315,8 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
             <div
               style={{
                 display: "flex",
-                flexDirection: "row",
-                gap: "16px",
+                flexDirection: isMobile ? "column" : "row",
+                gap: isMobile ? "12px" : "16px",
                 alignItems: "center",
                 flexShrink: 0,
                 marginTop: "clamp(28px, 5svh, 80px)",
@@ -387,7 +392,7 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
         className="absolute bottom-16 z-20 w-full md:bottom-20"
         style={{
           paddingLeft: "clamp(24px, 6vw, 96px)",
-          paddingRight: "clamp(24px, 6vw, 96px)",
+          paddingRight: isTablet ? "clamp(20px, 5vw, 72px)" : "clamp(24px, 6vw, 96px)",
         }}
       >
         <div className="flex justify-end">

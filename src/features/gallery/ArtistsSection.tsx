@@ -2,8 +2,11 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getArtists, type ArtistFromApi } from "@/lib/api";
+import { useIsMobile, useIsTablet } from "@/hooks/use-mobile";
 
 export function ArtistsSection() {
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
   const [artists, setArtists] = useState<ArtistFromApi[]>([]);
   const [index, setIndex] = useState(0);
   const navigate = useNavigate();
@@ -51,9 +54,12 @@ export function ArtistsSection() {
   };
 
   return (
-    <section className="relative w-full overflow-hidden bg-background px-6 py-20 md:px-12 lg:px-24 md:py-24 2xl:py-28">
+    <section
+      className="relative w-full overflow-hidden bg-background px-6 py-20 md:px-12 lg:px-24 md:py-24 2xl:py-28"
+      style={{ paddingTop: isMobile ? "56px" : undefined, paddingBottom: isMobile ? "56px" : undefined }}
+    >
       <div className="mx-auto max-w-[1800px]">
-        <div className="flex items-center justify-center gap-2 sm:gap-8 md:gap-14 xl:gap-20 2xl:gap-24">
+        <div className="flex items-center justify-center gap-2 sm:gap-8 md:gap-14 xl:gap-20 2xl:gap-24" style={{ gap: isMobile ? "8px" : isTablet ? "18px" : undefined }}>
         <AnimatePresence mode="popLayout" initial={false}>
           {getVisibleArtists().map((artist, i) => {
             const isCenter = i === 1 || i === 2;

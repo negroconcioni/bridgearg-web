@@ -1,5 +1,6 @@
 import { Eye } from "lucide-react";
 import { images } from "@/lib/images";
+import { useIsMobile, useIsTablet } from "@/hooks/use-mobile";
 
 const bridgeDividerSrc = encodeURI("/assets/BRIDGEARG - Exportacion logos - PNG-21.png");
 
@@ -30,6 +31,9 @@ const serviceCards = [
 ];
 
 export function BatchStatusSection() {
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
+
   return (
     <section className="bg-background px-6 py-24 md:px-12 md:py-32 lg:px-24 2xl:py-36">
       <div className="mx-auto max-w-[1800px]">
@@ -42,7 +46,10 @@ export function BatchStatusSection() {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 gap-14 md:grid-cols-3 md:gap-10 xl:gap-16 2xl:gap-20">
+        <div
+          className="grid grid-cols-1 gap-14 md:grid-cols-3 md:gap-10 xl:gap-16 2xl:gap-20"
+          style={{ gridTemplateColumns: isMobile ? "1fr" : isTablet ? "1fr 1fr" : "repeat(3, minmax(0, 1fr))", gap: isMobile ? "28px" : undefined }}
+        >
           {serviceCards.map((card) => (
             <article key={card.title} className="flex flex-col">
               {"imageSrc" in card ? (

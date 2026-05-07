@@ -7,8 +7,12 @@ import { SelectedWorksSection } from "@/features/gallery/SelectedWorksSection";
 import { BatchStatusSection } from "@/features/gallery/BatchStatusSection";
 import { PageTransition } from "@/components/PageTransition";
 import { SEO } from "@/components/SEO";
+import { useIsMobile, useIsTablet } from "@/hooks/use-mobile";
 
 const Index = () => {
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
+
   return (
     <PageTransition>
       <div className="min-h-screen bg-background">
@@ -18,7 +22,7 @@ const Index = () => {
           url="/"
         />
         <Header />
-        <main>
+        <main style={{ overflowX: "hidden", width: isTablet ? "100%" : "auto", paddingBottom: isMobile ? "0" : "0" }}>
           <BrandHeroSection />
           <BrandStorySection />
           <SelectedWorksSection />

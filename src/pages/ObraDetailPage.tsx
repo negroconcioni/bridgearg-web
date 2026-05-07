@@ -19,8 +19,11 @@ import { WorkImage } from "@/components/WorkImage";
 import { getWorkImageUrl } from "@/lib/work-images";
 import { toast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
+import { useIsMobile, useIsTablet } from "@/hooks/use-mobile";
 
 const ArtworkDetailPage = () => {
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const workId = id ? parseInt(id, 10) : NaN;
@@ -271,7 +274,7 @@ const ArtworkDetailPage = () => {
                           style={{
                             width: "100%",
                             height: "auto",
-                            maxHeight: "clamp(420px, 70vh, 800px)",
+                            maxHeight: isMobile ? "420px" : "clamp(420px, 70vh, 800px)",
                             objectFit: "contain",
                             display: "block",
                           }}
@@ -300,7 +303,7 @@ const ArtworkDetailPage = () => {
                       <div
                         style={{
                           display: "grid",
-                          gridTemplateColumns: `repeat(${Math.min(allImages.length, 6)}, 1fr)`,
+                          gridTemplateColumns: `repeat(${Math.min(allImages.length, isMobile ? 3 : isTablet ? 4 : 6)}, 1fr)`,
                           gap: "12px",
                         }}
                       >
