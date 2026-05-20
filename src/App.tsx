@@ -11,6 +11,7 @@ import AdminArtistasPage from "@/features/admin/pages/ArtistasPage";
 import AdminResumenPage from "@/features/admin/pages/ResumenPage";
 import { CustomCursor } from "@/components/CustomCursor";
 import { SupabaseAuthProvider } from "@/contexts/SupabaseAuthContext";
+import LegalPage from "@/pages/LegalPage";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +41,7 @@ const App = () => (
               <Route path="resumen" element={<AdminResumenPage />} />
               <Route path="*" element={<Navigate to="obras" replace />} />
             </Route>
+            <Route path="/legal" element={<LegalPage />} />
             <Route path="/*" element={<AnimatedRoutes />} />
           </Routes>
         </BrowserRouter>

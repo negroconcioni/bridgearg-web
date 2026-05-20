@@ -6,13 +6,11 @@ import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/PageTransition";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, ShoppingBag, Loader2, Package, FileCheck, Share2 } from "lucide-react";
+import { ArrowLeft, Mail, Package, FileCheck, Share2 } from "lucide-react";
 import {
   getWork,
   getWorks,
-  createCheckout,
   type WorkFromApi,
-  CheckoutError,
   FALLBACK_ARTIST_NAME,
 } from "@/lib/api";
 import { WorkImage } from "@/components/WorkImage";
@@ -29,7 +27,6 @@ const ArtworkDetailPage = () => {
   const workId = id ? parseInt(id, 10) : NaN;
   const [work, setWork] = useState<WorkFromApi | null>(null);
   const [loading, setLoading] = useState(true);
-  const [acquiring, setAcquiring] = useState(false);
   const [activeImageUrl, setActiveImageUrl] = useState<string | null>(null);
 
   const { data: relatedWorks = [] } = useQuery({
@@ -78,54 +75,11 @@ const ArtworkDetailPage = () => {
     }
   }, [loading, work, navigate]);
 
-  const handleAcquire = async () => {
-    if (!work || work.status !== "available") return;
-    setAcquiring(true);
-    try {
-      const { url } = await createCheckout(work.id);
-      if (url) {
-        window.location.href = url;
-        return;
-      }
-      toast({
-        title: "No se pudo iniciar el pago",
-        description: "No se obtuvo la URL de pago. Intentá de nuevo o contactanos.",
-        variant: "destructive",
-      });
-    } catch (err) {
-      if (err instanceof CheckoutError) {
-        if (err.kind === "connection") {
-          toast({
-            title: "Problema de conexión",
-            description: "No pudimos conectar con el servidor. Revisá tu conexión a internet e intentá de nuevo.",
-            variant: "destructive",
-          });
-        } else if (err.kind === "stock") {
-          toast({
-            title: "Obra no disponible",
-            description:
-              "Esta obra ya no está disponible para la compra. Actualizamos la página para que veas el estado actual.",
-            variant: "destructive",
-          });
-          window.location.reload();
-        } else {
-          toast({
-            title: "Error al iniciar el pago",
-            description: err.message,
-            variant: "destructive",
-          });
-        }
-      } else {
-        const message = err instanceof Error ? err.message : "No se pudo iniciar el pago.";
-        toast({
-          title: "Error al iniciar el pago",
-          description: message,
-          variant: "destructive",
-        });
-      }
-    } finally {
-      setAcquiring(false);
-    }
+  const handleInquire = () => {
+    if (!work) return;
+    navigate(
+      `/contacto?subject=artwork-inquiry&artwork=${encodeURIComponent(work.title)}&artist=${encodeURIComponent(artistName)}`,
+    );
   };
 
   const artistName = work?.artistName?.trim() || FALLBACK_ARTIST_NAME;
@@ -406,16 +360,11 @@ const ArtworkDetailPage = () => {
                       <Button
                         variant="acquire"
                         size="xl"
-                        onClick={handleAcquire}
-                        disabled={acquiring}
+                        onClick={handleInquire}
                         className="gap-2"
                       >
-                        {acquiring ? (
-                          <Loader2 className="h-5 w-5 animate-spin" />
-                        ) : (
-                          <ShoppingBag className="h-5 w-5" />
-                        )}
-                        {acquiring ? "Processing…" : "Acquire Piece"}
+                        <Mail className="h-5 w-5" />
+                        Inquire
                       </Button>
                     ) : (
                       <Button variant="acquire" size="xl" asChild className="gap-2">
@@ -429,28 +378,6 @@ const ArtworkDetailPage = () => {
                       </Button>
                     )}
                   </div>
-                  {isAvailable && (
-                    <div className="mt-4 flex items-center gap-2">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="13"
-                        height="13"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="text-[#1e1517]/40"
-                      >
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                      </svg>
-                      <p className="font-display text-[10px] uppercase tracking-[0.14em] text-[#1e1517]/40">
-                        Secure checkout powered by Stripe
-                      </p>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>

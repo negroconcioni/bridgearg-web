@@ -197,7 +197,7 @@ export function BrandStorySection() {
                 <p className="font-display text-base leading-relaxed text-[#1e1517]/80 md:text-lg">
                 Carmela Gastaldi (Córdoba, 1959), a cultural manager and visual artist with a diverse
                 background encompassing painting, restoration, and watercolor, found in the visual arts a territory of freedom and constant exploration.  
-                a territory of freedom and constant exploration. Her sharp aesthetic criteria ensure her
+                Her sharp aesthetic criteria ensure her
                 strong presence in the local scene; the artists on her platform unanimously describe her
                 as a highly talented professional with a profound knowledge of her craft, unanimously
                 highlighting her objectivity, transparency, and honesty. For over a decade, she has
@@ -223,12 +223,13 @@ export function BrandStorySection() {
             {/* Image right */}
             <motion.div
               className="relative md:order-2"
+              style={{ backgroundColor: "rgba(30,21,23,0.04)" }}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              <img src={image2Src} alt="" style={{ width: "100%", height: "clamp(280px, 40vw, 520px)", objectFit: "cover", borderRadius: "6px" }} />
+              <img src={image2Src} alt="" style={{ width: "100%", height: "auto", maxHeight: "clamp(380px, 50vw, 620px)", objectFit: "contain", borderRadius: "6px", display: "block" }} />
             </motion.div>
           </div>
 

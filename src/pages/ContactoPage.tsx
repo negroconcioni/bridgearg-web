@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/PageTransition";
@@ -55,7 +55,10 @@ const ContactoPage = () => {
 
   const obraParam = searchParams.get("obra");
   const artistaParam = searchParams.get("artista");
+  const artworkParam = searchParams.get("artwork");
+  const artistParam = searchParams.get("artist");
   const subjectParam = searchParams.get("subject");
+  const isArtworkInquiryParam = subjectParam === "artwork-inquiry";
 
   const normalizedSubjectParam =
     subjectParam &&
@@ -65,13 +68,19 @@ const ContactoPage = () => {
 
   const initialSubject = normalizedSubjectParam
     ? normalizedSubjectParam
+    : isArtworkInquiryParam
+      ? "Artwork inquiry"
     : obraParam
       ? "Artwork inquiry"
       : artistaParam
         ? "Artist representation"
         : "";
 
-  const initialMessage = obraParam
+  const initialMessage = isArtworkInquiryParam
+    ? artworkParam?.trim() && artistParam?.trim()
+      ? `Hi, I'm interested in ${artworkParam.trim()} by ${artistParam.trim()}. Could you share more details?`
+      : ""
+    : obraParam
     ? `I'm interested in the work: ${obraParam}`
     : artistaParam
       ? `I'd like to know more about: ${artistaParam}`
@@ -90,6 +99,7 @@ const ContactoPage = () => {
   });
   const [sending, setSending] = useState(false);
   const [formSent, setFormSent] = useState(false);
+  const [legalAccepted, setLegalAccepted] = useState(false);
   const [errors, setErrors] = useState<{
     name: string;
     email: string;
@@ -150,6 +160,7 @@ const ContactoPage = () => {
         title: "Message sent",
         description: "Thank you for your inquiry. We will respond shortly.",
       });
+      setLegalAccepted(false);
       setFormSent(true);
     } catch (err) {
       toast({
@@ -324,7 +335,7 @@ const ContactoPage = () => {
                   color: "#1e1517",
                 }}
               >
-                Buenos Aires
+                Cordoba
               </b>
             </div>
             <div
@@ -412,7 +423,7 @@ const ContactoPage = () => {
                   color: "#1e1517",
                 }}
               >
-                New York
+                Plantation, FL
               </b>
             </div>
           </section>
@@ -501,6 +512,7 @@ const ContactoPage = () => {
                         subject: initialSubject || undefined,
                         message: initialMessage,
                       });
+                      setLegalAccepted(false);
                       setFormSent(false);
                     }}
                     style={{
@@ -640,9 +652,89 @@ const ContactoPage = () => {
                   )}
                 </div>
 
+                <div style={{ marginTop: "4px" }}>
+                  <label
+                    htmlFor="legal-accepted"
+                    style={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: "12px",
+                      cursor: formSent ? "not-allowed" : "pointer",
+                    }}
+                  >
+                    <input
+                      id="legal-accepted"
+                      type="checkbox"
+                      checked={legalAccepted}
+                      disabled={formSent}
+                      onChange={(e) => setLegalAccepted(e.target.checked)}
+                      style={{
+                        position: "absolute",
+                        opacity: 0,
+                        pointerEvents: "none",
+                      }}
+                    />
+                    <span
+                      aria-hidden
+                      style={{
+                        width: "18px",
+                        height: "18px",
+                        border: "1px solid #1e1517",
+                        backgroundColor: legalAccepted ? "#7FB2D1" : "transparent",
+                        color: "#fcf8ea",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "12px",
+                        lineHeight: 1,
+                        marginTop: "2px",
+                        flexShrink: 0,
+                      }}
+                    >
+                      {legalAccepted ? "✓" : ""}
+                    </span>
+                    <span
+                      style={{
+                        fontFamily: '"Onest", sans-serif',
+                        fontSize: "13px",
+                        lineHeight: 1.6,
+                        color: "rgba(30,21,23,0.78)",
+                      }}
+                    >
+                      I have read and accept the{" "}
+                      <Link
+                        to="/legal#terms"
+                        style={{ color: "#7FB2D1", textDecoration: "none", borderBottom: "1px solid transparent" }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.borderBottomColor = "#7FB2D1";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.borderBottomColor = "transparent";
+                        }}
+                      >
+                        Terms &amp; Conditions
+                      </Link>{" "}
+                      and{" "}
+                      <Link
+                        to="/legal#privacy"
+                        style={{ color: "#7FB2D1", textDecoration: "none", borderBottom: "1px solid transparent" }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.borderBottomColor = "#7FB2D1";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.borderBottomColor = "transparent";
+                        }}
+                      >
+                        Privacy Policy
+                      </Link>
+                      .
+                    </span>
+                  </label>
+                </div>
+
                 <button
                   type="submit"
-                  disabled={sending || formSent}
+                  disabled={sending || formSent || !legalAccepted}
                   className="transition duration-300 enabled:hover:border-[#1e1517] enabled:hover:bg-transparent enabled:hover:text-[#1e1517]"
                   style={{
                     marginTop: "18px",
@@ -654,9 +746,9 @@ const ContactoPage = () => {
                     fontSize: "12px",
                     letterSpacing: "0.2em",
                     textTransform: "uppercase",
-                    cursor: sending || formSent ? "not-allowed" : "pointer",
+                    cursor: sending || formSent || !legalAccepted ? "not-allowed" : "pointer",
                     fontFamily: '"Onest", sans-serif',
-                    opacity: sending || formSent ? 0.65 : 1,
+                    opacity: sending || formSent || !legalAccepted ? 0.65 : 1,
                   }}
                 >
                   {sending ? (
@@ -774,7 +866,7 @@ const ContactoPage = () => {
                       fontFamily: '"Onest", sans-serif',
                     }}
                   >
-                    Buenos Aires
+                    Cordoba
                   </span>
                   <p
                     style={{
@@ -800,7 +892,7 @@ const ContactoPage = () => {
                       fontFamily: '"Onest", sans-serif',
                     }}
                   >
-                    New York
+                    Plantation, FL
                   </span>
                   <p
                     style={{

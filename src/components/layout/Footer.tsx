@@ -76,8 +76,8 @@ export function Footer() {
             </h4>
             <div className="space-y-3 font-display text-sm text-[#fcf8ea]">
               <p>info@bridgearg.com</p>
-              <p>Buenos Aires, Argentina</p>
-              <p>New York, United States</p>
+              <p>Cordoba, Argentina</p>
+              <p>Plantation, FL, United States</p>
             </div>
           </div>
 
@@ -169,9 +169,20 @@ export function Footer() {
 
           {/* Copyright + social */}
           <div className="flex flex-col items-center justify-between gap-4 border-t border-[#fcf8ea]/10 pt-4 md:flex-row">
-            <p className="font-display text-xs uppercase tracking-[0.1em] text-[#fcf8ea]/72">
-              © 2026 BridgeArg
-            </p>
+            <div className="flex flex-col items-center gap-2 md:items-start">
+              <p className="font-display text-xs uppercase tracking-[0.1em] text-[#fcf8ea]/72">
+                © 2026 BridgeArg
+              </p>
+              <p className="font-display text-[11px] text-[#fcf8ea]/58">
+                <Link to="/legal#terms" className="transition-colors hover:text-[#7FB2D1]">
+                  Terms &amp; Conditions
+                </Link>
+                <span className="px-2 text-[#fcf8ea]/35">·</span>
+                <Link to="/legal#privacy" className="transition-colors hover:text-[#7FB2D1]">
+                  Privacy Policy
+                </Link>
+              </p>
+            </div>
             <div className="flex items-center gap-6">
                 {/* TODO: Reemplazar con URLs reales de redes sociales */}
                 {/* Instagram: https://www.instagram.com/bridgearg_ */}

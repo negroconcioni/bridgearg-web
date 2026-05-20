@@ -122,7 +122,7 @@ const NosotrosPage = () => {
                 }}
               >
                 BridgeArg exists to help contemporary Argentine artists cross borders with clarity,
-                care and professional structure — connecting Buenos Aires, New York and every shore
+                care and professional structure — connecting Cordoba, Plantation, FL and every shore
                 in between.
               </p>
             </div>
@@ -716,7 +716,7 @@ const NosotrosPage = () => {
                   fontFamily: '"Onest", sans-serif',
                 }}
               >
-                BridgeArg · Buenos Aires — New York
+                BridgeArg · Cordoba — Plantation, FL
               </p>
             </div>
           </section>
