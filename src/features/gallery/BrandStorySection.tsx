@@ -5,7 +5,7 @@ import { useIsMobile, useIsTablet } from "@/hooks/use-mobile";
 
 const assetSrc = "/assets/BRIDGEARG%20-%20Exportacion%20logos%20-%20PNG-16.png";
 const image1Src = images.theProcess;
-const image2Src = images.fondoCaro;
+const image2Src = images.cuadroCarmela;
 
 export function BrandStorySection() {
   const isMobile = useIsMobile();
@@ -130,21 +130,19 @@ export function BrandStorySection() {
                     marginTop: "25px",
                   }}
                 >
-                  The Process
+                  Curatorial Management
                 </span>
                 <h3
                   className="font-display font-semibold text-[#1e1517] tracking-tight leading-tight"
                   style={{ fontSize: "clamp(22px,2.5vw,32px)" }}
                 >
-                  From our shores to your home.
+                  and Visual Arts.
                 </h3>
                 <p className="font-display text-base leading-relaxed text-[#1e1517]/80 md:text-lg">
-                We handle the entire journey —curation, export compliance, and international logistics— 
-                so you can enjoy unique Argentine art without the complexities of global shipping.
+                "To understand art as a space of absolute freedom, an invisible bridge connecting the
+                artist's sensibility with the viewer's gaze."<br />
                 </p>
                 <p className="font-display text-base leading-relaxed text-[#1e1517]/80 md:text-lg">
-                Our professional framework ensures that every piece arrives safely,
-                 legally, and transparently to your door
                 </p>
               </div>
             </motion.div>
@@ -183,7 +181,7 @@ export function BrandStorySection() {
                     margin: 0,
                   }}
                 >
-                  <span style={{ display: "block" }}>BridgeArg is</span>
+                  <span style={{ display: "block" }}>Carmela Gastaldi</span>
                   <span
                     style={{
                       display: "inline-block",
@@ -193,13 +191,18 @@ export function BrandStorySection() {
                       transformOrigin: "left center",
                     }}
                   >
-                    not an open marketplace.
+                    Curatorial Director
                   </span>
                 </h2>
                 <p className="font-display text-base leading-relaxed text-[#1e1517]/80 md:text-lg">
-                  Every artist is selected for their trajectory, identity and ability to sustain a
-                  professional international relationship — so collectors can discover works with cultural
-                  value and depth.
+                Carmela Gastaldi (Córdoba, 1959), a cultural manager and visual artist with a diverse
+                background encompassing painting, restoration, and watercolor, found in the visual arts a territory of freedom and constant exploration.  
+                a territory of freedom and constant exploration. Her sharp aesthetic criteria ensure her
+                strong presence in the local scene; the artists on her platform unanimously describe her
+                as a highly talented professional with a profound knowledge of her craft, unanimously
+                highlighting her objectivity, transparency, and honesty. For over a decade, she has
+                dedicated herself to this role, working across various institutions. Balancing
+                management and studio work, Carmela drives art as a vital and transformative dialogue.
                 </p>
               </div>
               <Link
