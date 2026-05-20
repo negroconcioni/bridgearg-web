@@ -839,7 +839,7 @@ const ContactoPage = () => {
                       fontFamily: '"Onest", sans-serif',
                     }}
                   >
-                    Whatsapp
+                    Whatsapp | iMessage |Text Message
                   </span>
                   <p
                     style={{
@@ -851,7 +851,7 @@ const ContactoPage = () => {
                       margin: 0,
                     }}
                   >
-                    +54 9 11 0000 0000
+                    +1 (954) 955-8861
                   </p>
                 </div>
                 <div style={{ borderTop: "1px solid rgba(30,21,23,0.18)", paddingTop: "22px" }}>
