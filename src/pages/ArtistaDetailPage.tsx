@@ -226,7 +226,7 @@ const ArtistaDetailPage = () => {
                   fontFamily: '"Onest", sans-serif',
                 }}
               >
-                {heroBio}
+                {artist.description ?? heroBio}
               </p>
             </div>
 
