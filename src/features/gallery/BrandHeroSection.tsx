@@ -15,6 +15,7 @@ const heroImages = [
   images.fondoBoyo,
   images.fondoFabio,
   images.fondoRoger,
+  images.fondoSara,
 ];
 const heroArtists = [
   "Jose Benito",
