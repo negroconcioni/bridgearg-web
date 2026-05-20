@@ -27,6 +27,7 @@ const heroArtists = [
   "Boyo Quintana",
   "Fabio Egea",
   "Roger Mantegani",
+  "Sara Goldman",
 ];
 const SLIDE_DURATION = 9000; // milisegundos
 
