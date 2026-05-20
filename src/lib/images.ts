@@ -19,5 +19,5 @@ export const images = {
   fondoArtistas: "https://wzofuvxsvomntglezygh.supabase.co/storage/v1/object/public/ui-assets/fondo_artists.jpg",
   objectsHistory: "https://wzofuvxsvomntglezygh.supabase.co/storage/v1/object/public/ui-assets/objectsHistory2.jpg",
   cuadroCarmela: "https://wzofuvxsvomntglezygh.supabase.co/storage/v1/object/public/ui-assets/cuadroCarmela.png",
-  fotoCarmela: "https://wzofuvxsvomntglezygh.supabase.co/storage/v1/object/public/ui-assets/carmela.jpeg",
+  fotoCarmela: "https://wzofuvxsvomntglezygh.supabase.co/storage/v1/object/public/ui-assets/carmela2.jpeg",
 };
