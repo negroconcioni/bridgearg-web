@@ -4,8 +4,8 @@ import { images } from "@/lib/images";
 import { useIsMobile, useIsTablet } from "@/hooks/use-mobile";
 
 const assetSrc = "/assets/BRIDGEARG%20-%20Exportacion%20logos%20-%20PNG-16.png";
-const image1Src = images.theProcess;
-const image2Src = images.cuadroCarmela;
+const image1Src = images.cuadroCarmela;
+const image2Src = images.fotoCarmela;
 
 export function BrandStorySection() {
   const isMobile = useIsMobile();
