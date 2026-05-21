@@ -15,6 +15,7 @@ import {
 } from "@/lib/api";
 import { WorkImage } from "@/components/WorkImage";
 import { getWorkImageUrl } from "@/lib/work-images";
+import { formatDimensionsFromString, formatPounds } from "@/lib/units";
 import { toast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
 import { useIsMobile, useIsTablet } from "@/hooks/use-mobile";
@@ -171,16 +172,8 @@ const ArtworkDetailPage = () => {
     );
   }
 
-  const dimensionsText =
-    [
-      work.dimensions,
-      [work.width_cm, work.height_cm, work.depth_cm].filter(Boolean).length
-        ? [work.width_cm, work.height_cm, work.depth_cm].filter(Boolean).join(" × ") + " cm"
-        : null,
-    ]
-      .filter(Boolean)
-      .join(" · ") || null;
-  const weightText = work.weight_kg != null ? `${work.weight_kg} kg` : null;
+  const dimensionsText = formatDimensionsFromString(work.dimensions);
+  const weightText = formatPounds(work.weight_kg);
 
   const allImages = [work.imagenUrl, ...(work.galleryUrls ?? [])].filter(Boolean);
   const currentImage = activeImageUrl ?? allImages[0] ?? "";
@@ -330,24 +323,14 @@ const ArtworkDetailPage = () => {
                   <div className="tech-box mb-8">
                     <h3 className="text-technical text-foreground mb-3">Details</h3>
                     <dl className="space-y-2 text-sm">
-                      {dimensionsText && (
-                        <div>
-                          <dt className="text-muted-foreground">Dimensions</dt>
-                          <dd className="font-medium text-foreground">{dimensionsText}</dd>
-                        </div>
-                      )}
-                      {weightText && (
-                        <div>
-                          <dt className="text-muted-foreground">Weight</dt>
-                          <dd className="font-medium text-foreground">{weightText}</dd>
-                        </div>
-                      )}
-                      {!dimensionsText && !weightText && (
-                        <>
-                          {/* TODO: Si 'Details on request' aparece, es porque dimensions/weight no están cargados en Supabase */}
-                          <p className="text-muted-foreground">Details on request.</p>
-                        </>
-                      )}
+                      <div>
+                        <dt className="text-muted-foreground">Dimensions</dt>
+                        <dd className="font-medium text-foreground">{dimensionsText}</dd>
+                      </div>
+                      <div>
+                        <dt className="text-muted-foreground">Weight</dt>
+                        <dd className="font-medium text-foreground">{weightText}</dd>
+                      </div>
                     </dl>
                   </div>
 
