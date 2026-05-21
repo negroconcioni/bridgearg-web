@@ -10,10 +10,10 @@ const PrivacyContent = () => {
       </p>
       <h2 className="text-3xl md:text-4xl font-bold mb-4">Privacy Policy</h2>
       <p className="text-sm opacity-70 mb-1">
-        <strong>Effective Date:</strong> [*], 2026
+        <strong>Effective Date:</strong> May 20, 2026
       </p>
       <p className="text-sm opacity-70 mb-8">
-        <strong>Last Updated:</strong> [*], 2026
+        <strong>Last Updated:</strong> May 20, 2026
       </p>
 
       {/* SECCIÓN 1 */}

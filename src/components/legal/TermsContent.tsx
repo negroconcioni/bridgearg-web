@@ -12,10 +12,10 @@ const TermsContent = () => {
         Terms and Conditions
       </h2>
       <p className="text-sm opacity-70 mb-1">
-        <strong>Effective Date:</strong> [*], 2026
+        <strong>Effective Date:</strong> May 20, 2026
       </p>
       <p className="text-sm opacity-70 mb-8">
-        <strong>Last Updated:</strong> [*], 2026
+        <strong>Last Updated:</strong> May 20, 2026
       </p>
 
       <p>
