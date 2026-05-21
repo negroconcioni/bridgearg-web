@@ -197,21 +197,6 @@ const ContactoPage = () => {
               minHeight: isMobile ? "auto" : "62vh",
             }}
           >
-            <div
-              style={{
-                position: "absolute",
-                width: isMobile ? "240px" : "390px",
-                height: isMobile ? "240px" : "390px",
-                border: "1px solid rgba(127,178,209,0.32)",
-                borderRadius: "50%",
-                right: isMobile ? "8vw" : "14vw",
-                top: isMobile ? "80px" : "110px",
-                opacity: 0.55,
-                pointerEvents: "none",
-                zIndex: 0,
-              }}
-              aria-hidden
-            />
             <div style={{ position: "relative", zIndex: 2 }}>
               <p
                 style={{
