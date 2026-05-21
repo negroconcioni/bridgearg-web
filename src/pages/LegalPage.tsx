@@ -1,10 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/PageTransition";
 import { SEO } from "@/components/SEO";
 import { useIsMobile, useIsTablet } from "@/hooks/use-mobile";
+import TermsContent from "@/components/legal/TermsContent";
+import PrivacyContent from "@/components/legal/PrivacyContent";
 
 type LegalSectionId = "terms" | "privacy";
 
@@ -17,11 +19,35 @@ const LegalPage = () => {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
   const location = useLocation();
+  const navRef = useRef<HTMLElement | null>(null);
   const [activeSection, setActiveSection] = useState<LegalSectionId>("terms");
 
   const sectionIds = useMemo(() => NAV_ITEMS.map((item) => item.id), []);
 
+  const getHeaderHeight = () => {
+    if (typeof window === "undefined") return 80;
+    const rawHeaderHeight = getComputedStyle(document.documentElement).getPropertyValue("--header-h");
+    const parsedHeaderHeight = Number.parseInt(rawHeaderHeight, 10);
+    return Number.isNaN(parsedHeaderHeight) ? 80 : parsedHeaderHeight;
+  };
+
+  const getScrollOffset = () => {
+    const headerHeight = getHeaderHeight();
+    const stickyNavHeight = isMobile ? 0 : (navRef.current?.offsetHeight ?? 0);
+    return headerHeight + stickyNavHeight + 18;
+  };
+
+  const scrollToSection = (id: LegalSectionId, behavior: ScrollBehavior = "smooth") => {
+    const target = document.getElementById(id);
+    if (!target) return;
+    setActiveSection(id);
+    const targetTop = target.getBoundingClientRect().top + window.scrollY - getScrollOffset();
+    window.scrollTo({ top: Math.max(targetTop, 0), behavior });
+    window.history.replaceState(null, "", `/legal#${id}`);
+  };
+
   useEffect(() => {
+    const observerOffset = getScrollOffset();
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries
@@ -32,8 +58,8 @@ const LegalPage = () => {
         }
       },
       {
-        threshold: [0.2, 0.4, 0.7],
-        rootMargin: "-130px 0px -45% 0px",
+        threshold: [0.15, 0.35, 0.6],
+        rootMargin: `-${observerOffset}px 0px -45% 0px`,
       },
     );
 
@@ -43,25 +69,13 @@ const LegalPage = () => {
     });
 
     return () => observer.disconnect();
-  }, [sectionIds]);
+  }, [sectionIds, isMobile]);
 
   useEffect(() => {
-    const hash = location.hash.replace("#", "");
-    if (!hash) return;
-    const target = document.getElementById(hash);
-    if (!target) return;
-    requestAnimationFrame(() => {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
+    const hash = location.hash.replace("#", "") as LegalSectionId;
+    if (!sectionIds.includes(hash)) return;
+    requestAnimationFrame(() => scrollToSection(hash, "smooth"));
   }, [location.hash]);
-
-  const scrollToSection = (id: LegalSectionId) => {
-    const target = document.getElementById(id);
-    if (!target) return;
-    setActiveSection(id);
-    target.scrollIntoView({ behavior: "smooth", block: "start" });
-    window.history.replaceState(null, "", `/legal#${id}`);
-  };
 
   return (
     <PageTransition>
@@ -75,9 +89,7 @@ const LegalPage = () => {
         <main>
           <section
             style={{
-              padding: isMobile
-                ? "44px 20px 36px"
-                : "80px clamp(24px, 7vw, 120px) 64px",
+              padding: isMobile ? "44px 20px 36px" : isTablet ? "72px 32px 56px" : "80px clamp(24px, 7vw, 120px) 64px",
               borderBottom: "1px solid rgba(30,21,23,0.16)",
             }}
           >
@@ -121,9 +133,10 @@ const LegalPage = () => {
           </section>
 
           <nav
+            ref={navRef}
             style={{
               position: isMobile ? "static" : "sticky",
-              top: "80px",
+              top: "var(--header-h)",
               zIndex: 20,
               backgroundColor: "rgba(127,178,209,0.95)",
               borderBottom: "1px solid rgba(30,21,23,0.16)",
@@ -145,7 +158,7 @@ const LegalPage = () => {
                   <button
                     key={item.id}
                     type="button"
-                    onClick={() => scrollToSection(item.id)}
+                    onClick={() => scrollToSection(item.id, "smooth")}
                     style={{
                       border: "1px solid rgba(252,248,234,0.6)",
                       backgroundColor: active ? "#fcf8ea" : "transparent",
@@ -169,69 +182,12 @@ const LegalPage = () => {
           <section
             id="terms"
             style={{
-              padding: isMobile ? "44px 20px" : "86px clamp(24px, 7vw, 120px)",
-              scrollMarginTop: "150px",
+              padding: isMobile ? "44px 20px" : isTablet ? "72px 32px" : "86px clamp(24px, 7vw, 120px)",
+              scrollMarginTop: "calc(var(--header-h) + 140px)",
             }}
           >
-            <div className="mx-auto max-w-3xl">
-              <h2
-                style={{
-                  margin: 0,
-                  fontFamily: '"Onest", sans-serif',
-                  fontSize: isMobile ? "36px" : "clamp(42px, 5vw, 62px)",
-                  letterSpacing: "-0.04em",
-                  color: "#1e1517",
-                }}
-              >
-                Terms & Conditions
-              </h2>
-              <p
-                style={{
-                  margin: "14px 0 36px",
-                  fontSize: "12px",
-                  letterSpacing: "0.16em",
-                  textTransform: "uppercase",
-                  color: "rgba(30,21,23,0.55)",
-                  fontFamily: '"Onest", sans-serif',
-                }}
-              >
-                Last updated: [PLACEHOLDER DATE]
-              </p>
-
-              {/* TODO: replace with final legal text */}
-              <p className="mb-8 font-['Onest',sans-serif] text-base leading-8 text-[rgba(30,21,23,0.78)]">
-                PLACEHOLDER_TERMS_CONTENT. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Proin suscipit, neque eu volutpat aliquam, est urna vulputate risus, vitae feugiat
-                lacus erat id ipsum. Donec ac tortor urna. Curabitur non sem vitae tortor vehicula
-                feugiat sed quis justo. Aliquam sed ligula id sapien vulputate molestie.
-              </p>
-
-              {[
-                "1. Acceptance of Terms",
-                "2. Use of the Site",
-                "3. Intellectual Property",
-                "4. Limitation of Liability",
-                "5. Governing Law",
-              ].map((title) => (
-                <div key={title} style={{ marginBottom: "28px" }}>
-                  <h3
-                    style={{
-                      margin: "0 0 10px",
-                      fontFamily: '"Onest", sans-serif',
-                      fontSize: "23px",
-                      fontWeight: 600,
-                      color: "#1e1517",
-                    }}
-                  >
-                    {title}
-                  </h3>
-                  <p className="font-['Onest',sans-serif] text-base leading-8 text-[rgba(30,21,23,0.78)]">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras facilisis sem nec
-                    luctus pretium. Praesent semper, massa vel lacinia feugiat, velit purus suscipit
-                    nulla, eu ullamcorper lorem ligula nec lacus.
-                  </p>
-                </div>
-              ))}
+            <div className="mx-auto max-w-3xl text-[rgba(30,21,23,0.82)]">
+              <TermsContent />
             </div>
           </section>
 
@@ -239,76 +195,19 @@ const LegalPage = () => {
             style={{
               height: "1px",
               backgroundColor: "rgba(30,21,23,0.18)",
-              margin: isMobile ? "0 20px" : "0 clamp(24px, 7vw, 120px)",
+              margin: isMobile ? "52px 20px" : "72px clamp(24px, 7vw, 120px)",
             }}
           />
 
           <section
             id="privacy"
             style={{
-              padding: isMobile ? "44px 20px 70px" : "86px clamp(24px, 7vw, 120px) 100px",
-              scrollMarginTop: "150px",
+              padding: isMobile ? "44px 20px 70px" : isTablet ? "72px 32px 84px" : "86px clamp(24px, 7vw, 120px) 100px",
+              scrollMarginTop: "calc(var(--header-h) + 140px)",
             }}
           >
-            <div className="mx-auto max-w-3xl">
-              <h2
-                style={{
-                  margin: 0,
-                  fontFamily: '"Onest", sans-serif',
-                  fontSize: isMobile ? "36px" : "clamp(42px, 5vw, 62px)",
-                  letterSpacing: "-0.04em",
-                  color: "#1e1517",
-                }}
-              >
-                Privacy Policy
-              </h2>
-              <p
-                style={{
-                  margin: "14px 0 36px",
-                  fontSize: "12px",
-                  letterSpacing: "0.16em",
-                  textTransform: "uppercase",
-                  color: "rgba(30,21,23,0.55)",
-                  fontFamily: '"Onest", sans-serif',
-                }}
-              >
-                Last updated: [PLACEHOLDER DATE]
-              </p>
-
-              {/* TODO: replace with final legal text */}
-              <p className="mb-8 font-['Onest',sans-serif] text-base leading-8 text-[rgba(30,21,23,0.78)]">
-                PLACEHOLDER_PRIVACY_CONTENT. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Suspendisse potenti. Integer viverra lacus ut feugiat finibus. Mauris accumsan magna
-                sit amet neque convallis, at tristique nulla hendrerit. Nulla facilisi.
-              </p>
-
-              {[
-                "1. Information We Collect",
-                "2. How We Use Your Information",
-                "3. Cookies",
-                "4. Third-Party Services",
-                "5. Your Rights",
-                "6. Contact Us",
-              ].map((title) => (
-                <div key={title} style={{ marginBottom: "28px" }}>
-                  <h3
-                    style={{
-                      margin: "0 0 10px",
-                      fontFamily: '"Onest", sans-serif',
-                      fontSize: "23px",
-                      fontWeight: 600,
-                      color: "#1e1517",
-                    }}
-                  >
-                    {title}
-                  </h3>
-                  <p className="font-['Onest',sans-serif] text-base leading-8 text-[rgba(30,21,23,0.78)]">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent non nisi ac
-                    ipsum cursus gravida. Sed vel ligula massa. Duis feugiat, sem et vulputate
-                    pulvinar, ante lorem ultrices mauris, in elementum nisi nisl non urna.
-                  </p>
-                </div>
-              ))}
+            <div className="mx-auto max-w-3xl text-[rgba(30,21,23,0.82)]">
+              <PrivacyContent />
             </div>
           </section>
 

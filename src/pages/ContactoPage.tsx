@@ -748,7 +748,7 @@ const ContactoPage = () => {
                     textTransform: "uppercase",
                     cursor: sending || formSent || !legalAccepted ? "not-allowed" : "pointer",
                     fontFamily: '"Onest", sans-serif',
-                    opacity: sending || formSent || !legalAccepted ? 0.65 : 1,
+                    opacity: sending || formSent || !legalAccepted ? 0.5 : 1,
                   }}
                 >
                   {sending ? (
