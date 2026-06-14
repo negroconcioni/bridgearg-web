@@ -75,7 +75,7 @@ export function Footer() {
               Contact
             </h4>
             <div className="space-y-3 font-display text-sm text-[#fcf8ea]">
-              <p>info@bridgearg.com</p>
+              <p>info@bridgearg.net</p>
               <p>Cordoba, Argentina</p>
               <p>Plantation, FL, United States</p>
             </div>

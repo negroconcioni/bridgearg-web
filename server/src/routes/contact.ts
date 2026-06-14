@@ -49,7 +49,7 @@ router.post("/contact", async (req: Request, res: Response): Promise<void> => {
       to: TO,
       subject: `[BridgeArg] ${payload.subject}`,
       html,
-      replyTo: payload.email,
+      reply_to: payload.email,
     });
 
     if (error) {

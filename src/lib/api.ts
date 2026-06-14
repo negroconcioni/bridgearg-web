@@ -1,3 +1,5 @@
+import emailjs from "@emailjs/browser";
+
 const API_BASE = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
 
 /** Format price in USD with en-US locale (e.g. "USD 4,500.00"). */
@@ -457,11 +459,19 @@ export interface ContactPayload {
 }
 
 export async function submitContact(payload: ContactPayload): Promise<void> {
-  const res = await fetch(`${API_BASE}/api/contact`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error ?? "Could not send your message");
+  const result = await emailjs.send(
+    import.meta.env.VITE_EMAILJS_SERVICE_ID,
+    import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+    {
+      from_name: payload.name,
+      from_email: payload.email,
+      subject: payload.subject,
+      message: payload.message,
+    },
+    import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+  );
+
+  if (result.status !== 200) {
+    throw new Error("Could not send your message");
+  }
 }

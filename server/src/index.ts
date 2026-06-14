@@ -17,6 +17,13 @@ if (CORS_ORIGINS.length === 1 && CORS_ORIGINS[0] === "http://localhost:5173") {
   CORS_ORIGINS.push("http://localhost:8080");
 }
 
+app.use(
+  cors({
+    origin: CORS_ORIGINS,
+    credentials: true,
+  })
+);
+
 // Webhooks: body raw para verificar firma de Stripe
 app.use(
   "/api/webhook",
@@ -31,13 +38,6 @@ app.use(
 
 // Resto de rutas usan JSON
 app.use(express.json());
-
-app.use(
-  cors({
-    origin: CORS_ORIGINS,
-    credentials: true,
-  })
-);
 
 app.use("/api", worksRouter);
 app.use("/api", checkoutRouter);
