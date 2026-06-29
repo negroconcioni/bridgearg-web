@@ -16,3 +16,11 @@ supabase/functions/.env.local
 # Logs
 *.log
 
+
+# Cursor / VSCode
+.cursor/
+.vscode/
+
+# Logs
+*.log
+
