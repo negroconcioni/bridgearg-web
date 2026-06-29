@@ -9,3 +9,10 @@ server/prisma/*.db-journal
 supabase/functions/.env.local
 .DS_Store
 **/.DS_Store
+# Cursor / VSCode
+.cursor/
+.vscode/
+
+# Logs
+*.log
+
