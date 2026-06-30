@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Loader2, Plus, Trash2 } from "lucide-react";
+import imageCompression from "browser-image-compression";
 import { getSupabase } from "@/lib/supabaseClient";
 import { adminWrite, type PiezaConjunto } from "@/lib/api";
 import { Button } from "@/components/ui/button";
@@ -189,6 +190,17 @@ export function ObraModal({ open, onOpenChange, artworkId, onSaved, initialLoteI
     const sb = getSupabase();
     const out: string[] = [];
     for (const file of files) {
+      let fileToUpload: File = file;
+      try {
+        fileToUpload = await imageCompression(file, {
+          maxWidthOrHeight: 2000,
+          initialQuality: 0.82,
+          useWebWorker: true,
+          fileType: "image/jpeg",
+        });
+      } catch (compressionError) {
+        console.error("Image compression failed, uploading original file:", compressionError);
+      }
       const safe = file.name.replace(/[^\w.-]+/g, "_");
       const path = `${prefix}/${crypto.randomUUID()}-${safe}`;
       const signed = await adminWrite("storage.signUpload", { path }) as {
@@ -196,7 +208,7 @@ export function ObraModal({ open, onOpenChange, artworkId, onSaved, initialLoteI
       };
       const token = signed.token;
       if (!token) throw new Error("Could not sign upload URL");
-      const { error } = await sb.storage.from("artworks").uploadToSignedUrl(path, token, file, {
+      const { error } = await sb.storage.from("artworks").uploadToSignedUrl(path, token, fileToUpload, {
         upsert: false,
       });
       if (error) throw new Error(error.message);
