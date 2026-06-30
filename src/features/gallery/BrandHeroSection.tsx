@@ -111,10 +111,55 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
   }, [isPlaying]);
 
   useEffect(() => {
-    heroImages.forEach((src) => {
+    const activeSrc = heroImages[activeImageIndex];
+    if (activeSrc) {
       const img = new Image();
-      img.src = src;
-    });
+      img.src = activeSrc;
+    }
+
+    let cancelled = false;
+    let timeoutId: number | null = null;
+    let idleId: number | null = null;
+
+    const preloadRest = () => {
+      if (cancelled) return;
+      heroImages.forEach((src, index) => {
+        if (index === activeImageIndex) return;
+        const img = new Image();
+        img.src = src;
+      });
+    };
+
+    const schedulePreload = () => {
+      if (document.readyState === "complete") {
+        const win = window as Window & {
+          requestIdleCallback?: (callback: IdleRequestCallback) => number;
+          cancelIdleCallback?: (handle: number) => void;
+        };
+        if (typeof win.requestIdleCallback === "function") {
+          idleId = win.requestIdleCallback(() => preloadRest());
+        } else {
+          timeoutId = window.setTimeout(() => preloadRest(), 1);
+        }
+        return;
+      }
+
+      window.addEventListener("load", preloadRest, { once: true });
+    };
+
+    schedulePreload();
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener("load", preloadRest);
+      if (timeoutId !== null) window.clearTimeout(timeoutId);
+      const win = window as Window & {
+        cancelIdleCallback?: (handle: number) => void;
+      };
+      if (idleId !== null && typeof win.cancelIdleCallback === "function") {
+        win.cancelIdleCallback(idleId);
+      }
+    };
   }, []);
 
   const resetProgressAnimationFromZero = () => {
@@ -246,11 +291,13 @@ export function BrandHeroSection({ logoWidth = "420px" }: BrandHeroProps) {
         }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 1.1, ease: "easeOut", delay: 0.2 }}
+        transition={{ duration: 1.1, ease: "easeOut", delay: 0 }}
       >
         <img
           src="/assets/logos/BRIDGEARG - Exportacion logos-02.svg"
           alt="BridgeArg"
+          fetchPriority="high"
+          loading="eager"
           style={{
             alignSelf: "center",
             width: "min(520px, 72vw)",
