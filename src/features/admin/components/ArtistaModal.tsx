@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Loader2 } from "lucide-react";
 import { getSupabase } from "@/lib/supabaseClient";
-import { getSupabaseAdmin, isSupabaseAdminConfigured } from "@/lib/supabaseAdminClient";
+import { adminWrite } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -85,11 +85,6 @@ export function ArtistaModal({ open, onOpenChange, artistId, onSaved }: Props) {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!isSupabaseAdminConfigured()) {
-      toast({ title: "Falta VITE_SUPABASE_SERVICE_KEY", variant: "destructive" });
-      return;
-    }
-    const admin = getSupabaseAdmin();
     setSaving(true);
     try {
       const payload = {
@@ -102,8 +97,7 @@ export function ArtistaModal({ open, onOpenChange, artistId, onSaved }: Props) {
         comision_artista: comisionArtista,
       };
       if (artistId != null) {
-        const { error } = await admin.from("artists").update(payload).eq("id", artistId);
-        if (error) throw new Error(error.message);
+        await adminWrite("artist.update", { id: artistId, ...payload });
         toast({ title: "Artista actualizado" });
       } else {
         const base = slugify(name);
@@ -115,8 +109,7 @@ export function ArtistaModal({ open, onOpenChange, artistId, onSaved }: Props) {
           n += 1;
           slug = `${base}-${n}`;
         }
-        const { error } = await admin.from("artists").insert({ ...payload, slug });
-        if (error) throw new Error(error.message);
+        await adminWrite("artist.create", { ...payload, slug });
         toast({ title: "Artista creado" });
       }
       onSaved?.();

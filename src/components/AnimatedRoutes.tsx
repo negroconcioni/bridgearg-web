@@ -7,6 +7,7 @@ import ArtworksPage from "@/pages/ObrasPage";
 import ArtworkDetailPage from "@/pages/ObraDetailPage";
 import CheckoutSuccessPage from "@/pages/CheckoutSuccessPage";
 import CheckoutCancelPage from "@/pages/CheckoutCancelPage";
+import VerificationCallbackPage from "@/pages/VerificationCallbackPage";
 import NosotrosPage from "@/pages/NosotrosPage";
 import ContactoPage from "@/pages/ContactoPage";
 import NotFound from "@/pages/NotFound";
@@ -26,6 +27,7 @@ export const AnimatedRoutes = () => {
         <Route path="/collection" element={<Navigate to="/artworks" replace />} />
         <Route path="/artworks" element={<ArtworksPage />} />
         <Route path="/artworks/:id" element={<ArtworkDetailPage />} />
+        <Route path="/verify/callback" element={<VerificationCallbackPage />} />
         <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
         <Route path="/checkout/cancel" element={<CheckoutCancelPage />} />
         <Route path="/nosotros" element={<NosotrosPage />} />

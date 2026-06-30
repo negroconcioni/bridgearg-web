@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Pencil, Trash2 } from "lucide-react";
 import { getSupabase } from "@/lib/supabaseClient";
-import { getSupabaseAdmin, isSupabaseAdminConfigured } from "@/lib/supabaseAdminClient";
+import { adminWrite } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -64,14 +64,8 @@ export default function ArtistasPage() {
 
   async function confirmDelete() {
     if (!deleteTarget) return;
-    if (!isSupabaseAdminConfigured()) {
-      toast({ title: "Falta service key", variant: "destructive" });
-      return;
-    }
     try {
-      const admin = getSupabaseAdmin();
-      const { error } = await admin.from("artists").delete().eq("id", deleteTarget.id);
-      if (error) throw new Error(error.message);
+      await adminWrite("artist.delete", { id: deleteTarget.id });
       toast({ title: "Artista eliminado" });
       void qc.invalidateQueries({ queryKey: ["admin", "artists"] });
       void qc.invalidateQueries({ queryKey: ["admin", "artworks"] });
@@ -95,7 +89,6 @@ export default function ArtistasPage() {
         <Button
           type="button"
           className="rounded-none"
-          disabled={!isSupabaseAdminConfigured()}
           onClick={() => {
             setEditingId(null);
             setEditorOpen(true);
@@ -161,7 +154,6 @@ export default function ArtistasPage() {
                     size="sm"
                     variant="outline"
                     className="flex-1 rounded-none"
-                    disabled={!isSupabaseAdminConfigured()}
                     onClick={(e) => {
                       e.stopPropagation();
                       setEditingId(a.id);
@@ -176,7 +168,6 @@ export default function ArtistasPage() {
                     size="sm"
                     variant="outline"
                     className="rounded-none text-destructive hover:text-destructive"
-                    disabled={!isSupabaseAdminConfigured()}
                     onClick={(e) => {
                       e.stopPropagation();
                       setDeleteTarget(a);

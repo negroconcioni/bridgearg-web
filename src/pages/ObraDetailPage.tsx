@@ -6,12 +6,13 @@ import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/PageTransition";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, Mail, Package, FileCheck, Share2 } from "lucide-react";
+import { ArrowLeft, Mail, Package, FileCheck, Share2, Loader2 } from "lucide-react";
 import {
   getWork,
   getWorks,
   type WorkFromApi,
   FALLBACK_ARTIST_NAME,
+  createDiditSession,
 } from "@/lib/api";
 import { WorkImage } from "@/components/WorkImage";
 import { getWorkImageUrl } from "@/lib/work-images";
@@ -29,6 +30,7 @@ const ArtworkDetailPage = () => {
   const [work, setWork] = useState<WorkFromApi | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeImageUrl, setActiveImageUrl] = useState<string | null>(null);
+  const [acquireLoading, setAcquireLoading] = useState(false);
 
   const { data: relatedWorks = [] } = useQuery({
     queryKey: ["works", work?.artistSlug],
@@ -81,6 +83,29 @@ const ArtworkDetailPage = () => {
     navigate(
       `/contacto?subject=artwork-inquiry&artwork=${encodeURIComponent(work.title)}&artist=${encodeURIComponent(artistName)}`,
     );
+  };
+
+  const handleAcquire = async () => {
+    if (!work || acquireLoading) return;
+    setAcquireLoading(true);
+    try {
+      const session = await createDiditSession(work.id);
+      sessionStorage.setItem(
+        "didit_verification_context",
+        JSON.stringify({
+          artworkId: work.id,
+          verificationId: session.verificationId,
+        }),
+      );
+      window.location.href = session.url;
+    } catch (err) {
+      toast({
+        title: "Verification unavailable",
+        description: err instanceof Error ? err.message : "Could not start identity verification.",
+        variant: "destructive",
+      });
+      setAcquireLoading(false);
+    }
   };
 
   const artistName = work?.artistName?.trim() || FALLBACK_ARTIST_NAME;
@@ -340,15 +365,30 @@ const ArtworkDetailPage = () => {
 
                   <div className="flex flex-wrap gap-4">
                     {isAvailable ? (
-                      <Button
-                        variant="acquire"
-                        size="xl"
-                        onClick={handleInquire}
-                        className="gap-2"
-                      >
-                        <Mail className="h-5 w-5" />
-                        Inquire
-                      </Button>
+                      <>
+                        <Button
+                          variant="acquire"
+                          size="xl"
+                          onClick={handleAcquire}
+                          className="gap-2"
+                          disabled={acquireLoading}
+                          aria-busy={acquireLoading}
+                        >
+                          {acquireLoading ? (
+                            <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
+                          ) : null}
+                          {acquireLoading ? "Redirecting..." : "Acquire"}
+                        </Button>
+                        <Button
+                          variant="acquire"
+                          size="xl"
+                          onClick={handleInquire}
+                          className="gap-2"
+                        >
+                          <Mail className="h-5 w-5" />
+                          Inquire
+                        </Button>
+                      </>
                     ) : (
                       <Button variant="acquire" size="xl" asChild className="gap-2">
                         <Link

@@ -73,7 +73,7 @@ Deno.serve(async (req) => {
     });
   }
 
-  let body: { artworkId?: number };
+  let body: { artworkId?: number; verificationId?: string };
   try {
     body = await req.json();
   } catch {
@@ -83,9 +83,9 @@ Deno.serve(async (req) => {
     });
   }
 
-  const { artworkId } = body;
-  if (typeof artworkId !== "number" || artworkId < 1) {
-    return new Response(JSON.stringify({ error: "artworkId required (number >= 1)" }), {
+  const { artworkId, verificationId } = body;
+  if (typeof artworkId !== "number" || artworkId < 1 || typeof verificationId !== "string" || !verificationId.trim()) {
+    return new Response(JSON.stringify({ error: "artworkId and verificationId are required" }), {
       status: 400,
       headers: withCors(req, { "Content-Type": "application/json" }),
     });
@@ -130,6 +130,30 @@ Deno.serve(async (req) => {
     });
   }
 
+  const { data: verification, error: verificationError } = await supabase
+    .from("purchase_verifications")
+    .select("id, artwork_id, status, consumed_at")
+    .eq("id", verificationId.trim())
+    .single();
+
+  if (verificationError || !verification) {
+    return new Response(JSON.stringify({ error: "Verification is not valid for checkout" }), {
+      status: 403,
+      headers: withCors(req, { "Content-Type": "application/json" }),
+    });
+  }
+
+  if (
+    Number((verification as { artwork_id?: number | null }).artwork_id ?? 0) !== artworkId ||
+    (verification as { status?: string }).status !== "approved" ||
+    Boolean((verification as { consumed_at?: string | null }).consumed_at)
+  ) {
+    return new Response(JSON.stringify({ error: "Verification is not valid for checkout" }), {
+      status: 403,
+      headers: withCors(req, { "Content-Type": "application/json" }),
+    });
+  }
+
   const priceUsd = Number((artwork as { price_usd?: number }).price_usd ?? 0);
   const unitAmountCents = Math.round(priceUsd * 100);
   const title = (artwork as { title: string }).title;
@@ -166,6 +190,27 @@ Deno.serve(async (req) => {
         allowed_countries: ["AR", "US", "MX", "CO", "ES", "FR", "DE", "GB", "IT"],
       },
     });
+
+    const { data: consumeRows, error: consumeError } = await supabase
+      .from("purchase_verifications")
+      .update({ consumed_at: new Date().toISOString() })
+      .eq("id", verificationId.trim())
+      .is("consumed_at", null)
+      .select("id");
+
+    if (consumeError) {
+      return new Response(JSON.stringify({ error: "Failed to consume verification" }), {
+        status: 500,
+        headers: withCors(req, { "Content-Type": "application/json" }),
+      });
+    }
+
+    if (!consumeRows || consumeRows.length === 0) {
+      return new Response(JSON.stringify({ error: "Verification is not valid for checkout" }), {
+        status: 403,
+        headers: withCors(req, { "Content-Type": "application/json" }),
+      });
+    }
 
     return new Response(JSON.stringify({ url: session.url ?? null }), {
       status: 200,

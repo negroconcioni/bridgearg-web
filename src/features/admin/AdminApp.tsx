@@ -3,7 +3,6 @@ import { Outlet, useLocation } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/SupabaseAuthContext";
 import { getSupabase } from "@/lib/supabaseClient";
-import { isSupabaseAdminConfigured } from "@/lib/supabaseAdminClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -117,11 +116,6 @@ export default function AdminApp() {
             {location.pathname.replace(/^\/admin\/?/, "") || "obras"}
           </div>
           <div className="flex items-center gap-3">
-            {!isSupabaseAdminConfigured() ? (
-              <span className="hidden text-[10px] text-amber-800 sm:inline">
-                Falta <code>VITE_SUPABASE_SERVICE_KEY</code> para crear/editar/borrar
-              </span>
-            ) : null}
             <Button
               type="button"
               variant="outline"

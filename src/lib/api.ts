@@ -373,12 +373,82 @@ export async function getWork(id: number): Promise<WorkFromApi | null> {
   return fetchWorkFromArtworks(supabase, id);
 }
 
+export async function adminWrite(action: string, payload: unknown): Promise<unknown> {
+  const { getSupabase } = await import("@/lib/supabaseClient");
+  const supabase = getSupabase();
+  const { data, error } = await supabase.functions.invoke("admin-write", {
+    body: { action, payload },
+  });
+
+  if (error) {
+    throw new Error(error.message ?? "Admin write failed");
+  }
+
+  const result = data as { ok?: boolean; data?: unknown; error?: string } | null;
+  if (!result || result.ok !== true) {
+    throw new Error(result?.error ?? "Admin write failed");
+  }
+
+  return result.data;
+}
+
+export interface CheckoutInput {
+  artworkId: number;
+  verificationId?: string;
+}
+
+export interface DiditSessionResult {
+  url: string;
+  verificationId: string;
+}
+
+export async function createDiditSession(artworkId: number): Promise<DiditSessionResult> {
+  const { getSupabase } = await import("@/lib/supabaseClient");
+  const supabase = getSupabase();
+  const { data, error } = await supabase.functions.invoke("didit-session", {
+    body: { artworkId },
+  });
+
+  if (error) {
+    throw new Error(error.message ?? "Could not create Didit session");
+  }
+
+  const result = (data ?? {}) as { url?: string | null; verificationId?: string | null; error?: string };
+  if (result.error) {
+    throw new Error(result.error);
+  }
+  if (!result.url || !result.verificationId) {
+    throw new Error("Could not create Didit session");
+  }
+
+  return {
+    url: result.url,
+    verificationId: result.verificationId,
+  };
+}
+
+export async function getPurchaseVerificationStatus(
+  verificationId: string,
+): Promise<"pending" | "approved" | "declined" | "in_review" | "abandoned" | null> {
+  const { getSupabase } = await import("@/lib/supabaseClient");
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from("purchase_verifications")
+    .select("status")
+    .eq("id", verificationId)
+    .single();
+
+  if (error || !data || typeof data.status !== "string") return null;
+  return data.status as "pending" | "approved" | "declined" | "in_review" | "abandoned";
+}
+
 /** Creates a Checkout Session via the backend API (Express). */
-export async function createCheckoutSession(artworkId: number): Promise<{ url: string | null }> {
+export async function createCheckoutSession(input: CheckoutInput | number): Promise<{ url: string | null }> {
+  const payload = typeof input === "number" ? { artworkId: input } : input;
   const res = await fetch(`${API_BASE}/api/checkout`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ artworkId }),
+    body: JSON.stringify(payload),
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.error ?? "Could not create checkout session");
@@ -402,22 +472,23 @@ export class CheckoutError extends Error {
  * falls back to Express POST /api/checkout when Supabase is not configured or Edge Function fails.
  * Use this for checkout to support both Supabase-only and Express-only deployments.
  */
-export async function createCheckout(artworkId: number): Promise<{ url: string | null }> {
+export async function createCheckout(input: CheckoutInput | number): Promise<{ url: string | null }> {
+  const payload = typeof input === "number" ? { artworkId: input } : input;
   const { isSupabaseConfigured } = await import("@/lib/supabaseClient");
 
   if (isSupabaseConfigured) {
     try {
       // ⚠️ Asegurate de que STRIPE_SECRET_KEY sea la clave live antes de producción.
-      return await createStripeCheckoutViaEdgeFunction(artworkId);
+      return await createStripeCheckoutViaEdgeFunction(payload);
     } catch (err) {
       console.warn("Supabase Edge Function checkout failed, falling back to Express:", err);
       // ⚠️ Asegurate de que STRIPE_SECRET_KEY sea la clave live antes de producción.
-      return createCheckoutSession(artworkId);
+      return createCheckoutSession(payload);
     }
   }
 
   // ⚠️ Asegurate de que STRIPE_SECRET_KEY sea la clave live antes de producción.
-  return createCheckoutSession(artworkId);
+  return createCheckoutSession(payload);
 }
 
 /**
@@ -425,12 +496,13 @@ export async function createCheckout(artworkId: number): Promise<{ url: string |
  * Invokes supabase.functions.invoke("stripe-checkout", { body: { artworkId } }).
  * Returns the Stripe URL for redirect; throws CheckoutError with kind for friendly UI.
  */
-export async function createStripeCheckoutViaEdgeFunction(artworkId: number): Promise<{ url: string | null }> {
+export async function createStripeCheckoutViaEdgeFunction(input: CheckoutInput | number): Promise<{ url: string | null }> {
+  const payload = typeof input === "number" ? { artworkId: input } : input;
   const { getSupabase } = await import("@/lib/supabaseClient");
   const supabase = getSupabase();
   // ⚠️ Asegurate de que STRIPE_SECRET_KEY sea la clave live antes de producción.
   const { data, error } = await supabase.functions.invoke("stripe-checkout", {
-    body: { artworkId },
+    body: payload,
   });
   if (error) {
     const msg = error.message ?? "Could not create checkout session";

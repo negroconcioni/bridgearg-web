@@ -3,7 +3,6 @@ import { NavLink, useLocation } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Menu, X } from "lucide-react";
 import { getSupabase } from "@/lib/supabaseClient";
-import { getSupabaseAdmin, isSupabaseAdminConfigured } from "@/lib/supabaseAdminClient";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import type { AdminLoteRow } from "@/features/admin/types";
@@ -45,9 +44,9 @@ export function AdminSidebar() {
 
   const createLote = useMutation({
     mutationFn: async () => {
-      const admin = getSupabaseAdmin();
+      const sb = getSupabase();
       const nombre = `Nuevo lote ${new Date().toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" })}`;
-      const { data, error } = await admin.from("lotes").insert({ nombre }).select("id").single();
+      const { data, error } = await sb.from("lotes").insert({ nombre }).select("id").single();
       if (error) throw new Error(error.message);
       return data as { id: number };
     },
@@ -97,7 +96,7 @@ export function AdminSidebar() {
           variant="outline"
           size="sm"
           className="mt-3 w-full rounded-none border-white/25 bg-transparent text-[10px] uppercase tracking-wider text-[#faf9ef] hover:bg-white/10 hover:text-[#faf9ef]"
-          disabled={!isSupabaseAdminConfigured() || createLote.isPending}
+          disabled={createLote.isPending}
           onClick={() => createLote.mutate()}
         >
           <Plus className="h-3.5 w-3.5" />

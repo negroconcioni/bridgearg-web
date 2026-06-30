@@ -1,8 +1,7 @@
 import * as React from "react";
 import { Loader2, Plus, Trash2 } from "lucide-react";
 import { getSupabase } from "@/lib/supabaseClient";
-import { getSupabaseAdmin, isSupabaseAdminConfigured } from "@/lib/supabaseAdminClient";
-import type { PiezaConjunto } from "@/lib/api";
+import { adminWrite, type PiezaConjunto } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -187,14 +186,18 @@ export function ObraModal({ open, onOpenChange, artworkId, onSaved, initialLoteI
 
   async function uploadNewFiles(prefix: string): Promise<string[]> {
     if (files.length === 0) return [];
-    const admin = getSupabaseAdmin();
+    const sb = getSupabase();
     const out: string[] = [];
     for (const file of files) {
       const safe = file.name.replace(/[^\w.-]+/g, "_");
       const path = `${prefix}/${crypto.randomUUID()}-${safe}`;
-      const { error } = await admin.storage.from("artworks").upload(path, file, {
+      const signed = await adminWrite("storage.signUpload", { path }) as {
+        token?: string;
+      };
+      const token = signed.token;
+      if (!token) throw new Error("Could not sign upload URL");
+      const { error } = await sb.storage.from("artworks").uploadToSignedUrl(path, token, file, {
         upsert: false,
-        contentType: file.type || undefined,
       });
       if (error) throw new Error(error.message);
       out.push(path);
@@ -204,10 +207,6 @@ export function ObraModal({ open, onOpenChange, artworkId, onSaved, initialLoteI
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!isSupabaseAdminConfigured()) {
-      toast({ title: "Falta VITE_SUPABASE_SERVICE_KEY", variant: "destructive" });
-      return;
-    }
     if (!form.artist_id) {
       toast({ title: "Elegí un artista", variant: "destructive" });
       return;
@@ -266,14 +265,11 @@ export function ObraModal({ open, onOpenChange, artworkId, onSaved, initialLoteI
         extra_image_paths: finalExtras,
       };
 
-      const admin = getSupabaseAdmin();
       if (artworkId != null) {
-        const { error } = await admin.from("artworks").update(payload).eq("id", artworkId);
-        if (error) throw new Error(error.message);
+        await adminWrite("artwork.update", { id: artworkId, ...payload });
         toast({ title: "Obra actualizada" });
       } else {
-        const { error } = await admin.from("artworks").insert(payload);
-        if (error) throw new Error(error.message);
+        await adminWrite("artwork.create", payload);
         toast({ title: "Obra creada" });
       }
       onSaved?.();
