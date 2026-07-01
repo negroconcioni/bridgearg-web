@@ -43,13 +43,10 @@ export function ArtistsSection() {
     const total = artists.length;
     if (total === 0) return [];
     if (total === 1) return [artists[0]];
-    if (total === 2) return [artists[0], artists[0], artists[1], artists[1]];
 
     return [
-      artists[(index - 1 + total) % total],
       artists[index % total],
       artists[(index + 1) % total],
-      artists[(index + 2) % total],
     ];
   };
 
@@ -62,29 +59,21 @@ export function ArtistsSection() {
         <div className="flex items-center justify-center gap-2 sm:gap-8 md:gap-14 xl:gap-20 2xl:gap-24" style={{ gap: isMobile ? "8px" : isTablet ? "18px" : undefined }}>
         <AnimatePresence mode="popLayout" initial={false}>
           {getVisibleArtists().map((artist, i) => {
-            const isCenter = i === 1 || i === 2;
+            const showName = i === 0 || i === 1;
 
             return (
               <motion.div
                 key={`${artist.id}-${i}`}
                 layout
-                initial={{ opacity: 0, x: 100, scale: 0.8 }}
-                animate={{
-                  opacity: isCenter ? 1 : 0.2,
-                  x: 0,
-                  scale: isCenter ? 1 : 0.7,
-                }}
-                exit={{ opacity: 0, x: -100, scale: 0.8 }}
-                transition={{ duration: 1.2, ease: [0.32, 0.72, 0, 1] }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
                 className="flex cursor-pointer flex-col items-center"
                 onClick={() => navigate(`/artistas/${artist.slug}`)}
               >
                 <div
-                  className={`overflow-hidden rounded-full border border-[#1e1517]/10 transition-all duration-500 ${
-                    isCenter
-                      ? "aspect-square w-16 grayscale hover:scale-105 hover:grayscale-0 sm:w-28 md:w-48 lg:w-56 xl:w-60 2xl:w-64"
-                      : "aspect-square w-8 grayscale sm:w-14 md:w-28 lg:w-32 xl:w-36 2xl:w-40"
-                  }`}
+                  className="aspect-square w-16 overflow-hidden border border-[#1e1517]/10 sm:w-28 md:w-48 lg:w-56 xl:w-60 2xl:w-64"
                 >
                   <img
                     src={artist.imageUrl ?? ""}
@@ -92,7 +81,7 @@ export function ArtistsSection() {
                     className="h-full w-full object-cover"
                   />
                 </div>
-                {isCenter && (
+                {showName && (
                   <p className="mt-4 font-display text-[10px] uppercase tracking-[0.22em] text-[#1e1517] sm:mt-5 md:mt-6 md:text-xs 2xl:text-sm">
                     {artist.name}
                   </p>

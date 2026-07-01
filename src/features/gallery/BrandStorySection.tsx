@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { images } from "@/lib/images";
 import { useIsMobile, useIsTablet } from "@/hooks/use-mobile";
 
-const assetSrc = "/assets/BRIDGEARG%20-%20Exportacion%20logos%20-%20PNG-16.png";
 const image1Src = images.cuadroCarmela;
 const image2Src = images.fotoCarmela;
 
@@ -81,29 +80,21 @@ export function BrandStorySection() {
       <section className="bg-background px-6 py-24 md:px-12 md:py-32 lg:px-24">
         <div className="mx-auto max-w-[1800px] space-y-32">
 
-          {/* Block 1 — image left, text right */}
-          <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-2 md:gap-20">
-            {/* Image with thin border lines */}
-            <motion.div
-              className="relative"
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-            >
-              <img src={image1Src} alt="" style={{ width: "100%", height: isMobile ? "280px" : isTablet ? "360px" : "clamp(280px, 40vw, 520px)", objectFit: "cover", borderRadius: "6px" }} />
-            </motion.div>
-
-            {/* Text right */}
-            <motion.div
-              className="flex flex-col gap- "
-              style={{ paddingLeft: "clamp(0px, 5vw, 20px)", 
-                paddingRight: "clamp(0px, 5vw, 20px)", width: "100%", gap: isMobile ? "20px" : undefined }}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, ease: "easeOut", delay: 0.15 }}
-            >
+          {/* Block 1 — quote */}
+          <motion.div
+            className="flex flex-col"
+            style={{
+              paddingLeft: "clamp(0px, 5vw, 20px)",
+              paddingRight: "clamp(0px, 5vw, 20px)",
+              width: "100%",
+              gap: isMobile ? "20px" : undefined,
+            }}
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: "easeOut", delay: 0.15 }}
+          >
+            <div className="mx-auto w-full max-w-4xl">
               <div
                 className="flex flex-col gap-4"
                 style={{
@@ -113,10 +104,6 @@ export function BrandStorySection() {
                   paddingBottom: "16px",
                 }}
               >
-                <img src={assetSrc} alt="" style={{ position: "absolute", top: "-16px", left: "-16px", width: "24px", height: "24px", transform: "rotate(0deg)" }} />
-                <img src={assetSrc} alt="" style={{ position: "absolute", top: "-16px", right: "-16px", width: "24px", height: "24px", transform: "rotate(90deg)" }} />
-                <img src={assetSrc} alt="" style={{ position: "absolute", bottom: "-16px", left: "-16px", width: "24px", height: "24px", transform: "rotate(270deg)" }} />
-                <img src={assetSrc} alt="" style={{ position: "absolute", bottom: "-16px", right: "-16px", width: "24px", height: "24px", transform: "rotate(180deg)" }} />
                 <span
                   style={{
                     fontFamily: '"Onest", sans-serif',
@@ -145,8 +132,8 @@ export function BrandStorySection() {
                 <p className="font-display text-base leading-relaxed text-[#1e1517]/80 md:text-lg">
                 </p>
               </div>
-            </motion.div>
-          </div>
+            </div>
+          </motion.div>
 
           {/* Block 2 — text left, image right */}
           <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-2 md:gap-20">
@@ -168,10 +155,6 @@ export function BrandStorySection() {
                   paddingBottom: "16px",
                 }}
               >
-                <img src={assetSrc} alt="" style={{ position: "absolute", top: "-16px", left: "-16px", width: "24px", height: "24px", transform: "rotate(0deg)" }} />
-                <img src={assetSrc} alt="" style={{ position: "absolute", top: "-16px", right: "-16px", width: "24px", height: "24px", transform: "rotate(90deg)" }} />
-                <img src={assetSrc} alt="" style={{ position: "absolute", bottom: "-16px", left: "-16px", width: "24px", height: "24px", transform: "rotate(270deg)" }} />
-                <img src={assetSrc} alt="" style={{ position: "absolute", bottom: "-16px", right: "-16px", width: "24px", height: "24px", transform: "rotate(180deg)" }} />
                 <h2
                   className="tracking-tight leading-tight text-[#1e1517]"
                   style={{

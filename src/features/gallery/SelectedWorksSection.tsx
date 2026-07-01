@@ -135,7 +135,7 @@ export function SelectedWorksSection() {
                     transition: "opacity 0.4s ease-in-out",
                   }}
                 >
-                  <div className="relative aspect-[3/4] overflow-hidden bg-[rgba(30,21,23,0.04)]">
+                  <div className="relative aspect-[3/4] overflow-hidden bg-[#1e1517]">
                     <OptimizedImage
                       src={work.imagenUrl}
                       title={work.title}
